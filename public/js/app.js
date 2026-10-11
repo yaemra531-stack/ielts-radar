@@ -375,16 +375,20 @@ function renderTimeline() {
 
   const dpStats = document.getElementById('dp-progress-stats');
   if (dpStats) {
-    dpStats.textContent = `${readDayItems} / ${totalDayItems} 篇 (${progressPct}%) · ${remaining > 0 ? '剩余 ' + remaining + ' 篇待阅读' : '全部已读'}`;
+    dpStats.textContent = `${readDayItems} / ${totalDayItems} 篇 (${progressPct}%)`;
   }
 
+  const dpRemaining = document.getElementById('dp-progress-remaining');
   const dpMilestone = document.getElementById('dp-milestone-banner');
-  if (dpMilestone) {
-    if (totalDayItems > 0 && readDayItems === totalDayItems) {
-      dpMilestone.style.display = 'flex';
-    } else {
-      dpMilestone.style.display = 'none';
+  if (totalDayItems > 0 && readDayItems === totalDayItems) {
+    if (dpRemaining) dpRemaining.style.display = 'none';
+    if (dpMilestone) dpMilestone.style.display = 'inline';
+  } else {
+    if (dpRemaining) {
+      dpRemaining.style.display = 'inline';
+      dpRemaining.textContent = remaining > 0 ? `剩余 ${remaining} 篇待阅读` : '全部已读';
     }
+    if (dpMilestone) dpMilestone.style.display = 'none';
   }
 
   // 5. 更新顶部 Agent 切换栏数字

@@ -2204,103 +2204,99 @@ textarea.input-field {
 }
 
 /* ==========================================================================
-   每日认知进度条与达成反馈组件 (Daily 10 Progress)
+   右上角极简环境式每日认知进度 (Header Cognitive Widget)
    ========================================================================== */
-.daily-progress-widget {
+.th-cognitive-header-widget {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  margin-top: 10px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  padding: 8px 12px;
+  min-width: 230px;
+  max-width: 270px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: all var(--transition-fast);
 }
 
-.dp-header-row {
+.th-cp-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 7px;
+  margin-bottom: 5px;
 }
 
-.dp-label-group {
+.th-cp-label-wrap {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .dp-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
 }
 
-.dp-title {
-  font-size: 12.5px;
+.th-cp-label {
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-title);
   letter-spacing: -0.01em;
 }
 
-.dp-stats {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
+.th-cp-stats {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
 }
 
-.dp-track {
-  height: 6px;
+.th-cp-track {
+  height: 4px;
   background: var(--bg-tertiary);
   border-radius: 999px;
   overflow: hidden;
   width: 100%;
 }
 
-.dp-fill {
+.th-cp-fill {
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dp-milestone-banner {
-  margin-top: 9px;
-  padding: 7px 12px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.22);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #059669;
+.th-cp-sub-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.th-cp-remaining {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.th-cp-milestone {
+  font-size: 11px;
+  font-weight: 600;
+  color: #059669;
   animation: fadeIn 0.3s ease;
 }
 
-/* 导出 AI 讨论快捷按钮 */
-.btn-export-ai {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-title);
-  font-weight: 500;
-  font-size: 13px;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+/* 侧边栏操作按钮定制：导入按钮 */
+.sidebar-action-btn.primary {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.25);
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.btn-export-ai:hover {
-  background: var(--bg-tertiary);
+.sidebar-action-btn.primary:hover {
+  background: var(--accent);
+  color: #ffffff;
   border-color: var(--accent);
-  color: var(--accent);
 }
 
 /* ==========================================================================

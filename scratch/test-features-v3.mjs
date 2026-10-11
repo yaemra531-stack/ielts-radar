@@ -94,22 +94,28 @@ const ss1 = await send('Page.captureScreenshot', { format: 'png' });
 fs.writeFileSync(path.join(ARTIFACTS_DIR, 'screenshot_daily_progress_widget.png'), Buffer.from(ss1.data, 'base64'));
 console.log('Saved screenshot_daily_progress_widget.png');
 
-console.log('--- 3. 验证并打开 AI 选题讨论导出弹窗 ---');
+console.log('--- 3. 验证左下角【导入日报】与【导出 AI 选题讨论】---');
 const openModalRes = await evalInPage(`
   (() => {
-    const btn = document.getElementById('btn-open-ai-export');
-    if (!btn) return { error: 'btn-open-ai-export not found' };
-    btn.click();
+    // 测试左下角导入按钮
+    const importBtn = document.getElementById('btn-open-import');
+    if (importBtn) importBtn.click();
+    const importModalActive = document.getElementById('modal-import')?.classList.contains('active');
+    document.getElementById('modal-import')?.classList.remove('active');
+
+    // 测试左下角导出菜单中的 AI 选题讨论
+    const exportAiBtn = document.getElementById('btn-export-ai-dropdown');
+    if (exportAiBtn) exportAiBtn.click();
     const modal = document.getElementById('modal-ai-export');
     const preview = document.getElementById('ai-export-preview');
     return {
-      modalActive: modal.classList.contains('active'),
-      previewLength: preview ? preview.value.length : 0,
-      previewHeader: preview ? preview.value.slice(0, 300) : ''
+      importModalOpened: importModalActive,
+      modalActive: modal ? modal.classList.contains('active') : false,
+      previewLength: preview ? preview.value.length : 0
     };
   })()
 `);
-console.log('AI Modal Info:', openModalRes);
+console.log('Sidebar Actions Test:', openModalRes);
 
 await new Promise(r => setTimeout(r, 600));
 
