@@ -72,39 +72,49 @@ export const Parser = {
     const targetAgent = (isTopObject && jsonObj.agent) || defaultAgent;
     const targetDate = (isTopObject && (jsonObj.report_date || jsonObj.date)) || defaultDate;
     const promptVersion = (isTopObject && jsonObj.prompt_version) || null;
+    const coverage = (isTopObject && jsonObj.coverage !== undefined) ? jsonObj.coverage : null;
 
     let rawList = Array.isArray(jsonObj) ? jsonObj : (jsonObj.items || [jsonObj]);
     const items = [];
     const warnings = [];
 
     rawList.forEach((raw, idx) => {
+      const score = (raw.score !== undefined && raw.score !== null) ? Number(raw.score) : null;
+
       // 计算互动数据
       let engagement = raw.engagement || raw.stats || '';
-      if (!engagement && (raw.likes !== undefined || raw.favorites !== undefined)) {
+      if (!engagement && (raw.likes !== undefined || raw.favorites !== undefined || raw.score !== undefined)) {
         const parts = [];
         if (raw.likes !== undefined && raw.likes !== null) parts.push(`赞 ${raw.likes}`);
         if (raw.favorites !== undefined && raw.favorites !== null) parts.push(`藏 ${raw.favorites}`);
+        if (score !== null) parts.push(`得分 ${score}`);
         engagement = parts.join(' · ');
       }
       if (!engagement) engagement = '待确认';
 
+      const platform = raw.platform || this.inferPlatform(raw.url || '', targetAgent);
+      const url = raw.url || raw.link || '';
+      const title = raw.title || '待确认';
+      const stableId = this.extractStableContentId(platform, url, title);
+
       const item = {
         id: `item_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 7)}`,
+        stableId: stableId,
         agent: raw.agent || targetAgent,
-        title: raw.title || '待确认',
+        title: title,
         author: raw.author !== undefined ? raw.author : null,
-        platform: raw.platform || this.inferPlatform(raw.url || '', targetAgent),
+        platform: platform,
         publishDate: raw.published_at || raw.publishDate || raw.date || '待确认',
         likes: raw.likes !== undefined ? raw.likes : null,
         favorites: raw.favorites !== undefined ? raw.favorites : null,
+        score: score,
         engagement: engagement,
         discovery_reason: raw.discovery_reason !== undefined ? raw.discovery_reason : null,
         summary: raw.summary || raw.desc || raw.description || '待确认',
         reader_value: raw.reader_value !== undefined ? raw.reader_value : (raw.readerValue || raw.value || ''),
-        score: raw.score !== undefined ? raw.score : null,
         comments_checked: raw.comments_checked !== undefined ? raw.comments_checked : false,
         audience_questions: Array.isArray(raw.audience_questions) ? raw.audience_questions : [],
-        url: raw.url || raw.link || '',
+        url: url,
         isRead: false
       };
 
@@ -114,7 +124,7 @@ export const Parser = {
       items.push(item);
     });
 
-    return { agent: targetAgent, date: targetDate, promptVersion, items, warnings };
+    return { agent: targetAgent, date: targetDate, promptVersion, coverage, items, warnings };
   },
 
   /**
@@ -307,8 +317,11 @@ export const Parser = {
       }
     }
 
+    const stableId = this.extractStableContentId(platform, url, title);
+
     return {
       id: `item_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 7)}`,
+      stableId: stableId,
       agent: defaultAgent,
       title: title || '待确认',
       platform: platform || '待确认',
@@ -334,5 +347,242 @@ export const Parser = {
     if (s.includes('bilibili') || s.includes('b站')) return 'B站';
 
     return defaultAgent === 'WorkBuddy' ? '小红书' : 'YouTube';
+  },
+
+  /**
+   * 规范化 URL（去除常见跟踪和临时参数，保留主体链接）
+   */
+  normalizeUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    try {
+      const u = new URL(url);
+      const searchParams = new URLSearchParams(u.search);
+      const keysToDelete = [];
+      for (const key of searchParams.keys()) {
+        if (key.startsWith('utm_') || key.startsWith('xsec_') || ['spm', 'from', 's', 'ref', 'source', 'share_source'].includes(key)) {
+          keysToDelete.push(key);
+        }
+      }
+      keysToDelete.forEach(k => searchParams.delete(k));
+      u.search = searchParams.toString();
+      return (u.origin + u.pathname + (u.search ? '?' + u.search : '')).replace(/\/+$/, '');
+    } catch (_) {
+      return url.split('?')[0].replace(/\/+$/, '').trim();
+    }
+  },
+
+  /**
+   * 提取跨平台的稳定内容唯一 ID (Stable Content ID)
+   */
+  extractStableContentId(platform = '', url = '', title = '') {
+    const plat = (platform || '').trim();
+    const cleanUrl = url ? url.trim() : '';
+
+    // 1. 小红书: /explore/6aaa332b... 或 /discovery/item/6aaa332b...
+    if (/小红书|xhs|xiaohongshu/i.test(plat) || /xiaohongshu\.com|xhslink\.com/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/(?:explore|discovery\/item)\/([a-zA-Z0-9]+)/i);
+      if (match) return `xhs_${match[1].toLowerCase()}`;
+    }
+
+    // 2. 抖音: /video/7692821830976998656
+    if (/抖音|douyin|tiktok/i.test(plat) || /douyin\.com|tiktok\.com/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/video\/(\d+)/i);
+      if (match) return `douyin_${match[1]}`;
+    }
+
+    // 3. X (Twitter): /status/2108911522022121959
+    if (/^x$/i.test(plat) || /twitter|x\.com/i.test(plat) || /x\.com|twitter\.com/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/status\/(\d+)/i);
+      if (match) return `x_${match[1]}`;
+    }
+
+    // 4. Reddit: /comments/1wtwdr1/... 或 /redd.it/1wtwdr1
+    if (/reddit/i.test(plat) || /reddit\.com|redd\.it/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/(?:comments|redd\.it)\/([a-zA-Z0-9]+)/i);
+      if (match) return `reddit_${match[1].toLowerCase()}`;
+    }
+
+    // 5. YouTube: /watch?v=... 或 /youtu.be/... 或 /shorts/...
+    if (/youtube/i.test(plat) || /youtube\.com|youtu\.be/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/i);
+      if (match) return `youtube_${match[1]}`;
+    }
+
+    // 6. B站 (Bilibili): /video/BV...
+    if (/bilibili|b站/i.test(plat) || /bilibili\.com/i.test(cleanUrl)) {
+      const match = cleanUrl.match(/(BV[a-zA-Z0-9]+)/i);
+      if (match) return `bilibili_${match[1]}`;
+    }
+
+    // 7. 通用降级: 规范化 URL 路径
+    if (cleanUrl) {
+      const normalized = this.normalizeUrl(cleanUrl);
+      const noProto = normalized.replace(/^https?:\/\//i, '').replace(/[\/\?#&:]+/g, '_');
+      return `${plat ? plat.toLowerCase() : 'web'}_${noProto.substring(0, 50)}`;
+    }
+
+    // 8. 无 URL 降级: platform + title 干净字符串
+    if (title && title !== '待确认') {
+      const cleanTitle = title.replace(/\s+/g, '_').substring(0, 40).toLowerCase();
+      return `${plat ? plat.toLowerCase() : 'item'}_${cleanTitle}`;
+    }
+
+    return `item_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+  },
+
+  /**
+   * 在已有条目列表中查找匹配的已有条目
+   */
+  matchExistingItem(newItem, existingItems = []) {
+    if (!newItem || !Array.isArray(existingItems) || existingItems.length === 0) return null;
+
+    const newStableId = newItem.stableId || this.extractStableContentId(newItem.platform, newItem.url, newItem.title);
+    const newNormUrl = this.normalizeUrl(newItem.url);
+    const newNormTitle = (newItem.title || '').trim().toLowerCase();
+
+    for (const existing of existingItems) {
+      // 1. 如果已有条目有 stableId 且相同
+      const existingStableId = existing.stableId || this.extractStableContentId(existing.platform, existing.url, existing.title);
+      if (newStableId && existingStableId && newStableId === existingStableId) {
+        return existing;
+      }
+
+      // 2. 如果 URL 规范化后一致
+      if (newNormUrl && existing.url) {
+        const existNormUrl = this.normalizeUrl(existing.url);
+        if (existNormUrl && existNormUrl === newNormUrl) {
+          return existing;
+        }
+      }
+
+      // 3. 同一平台且标题完全一致
+      if (newItem.platform && existing.platform && newItem.platform === existing.platform) {
+        const existNormTitle = (existing.title || '').trim().toLowerCase();
+        if (newNormTitle && existNormTitle && newNormTitle === existNormTitle && newNormTitle !== '待确认') {
+          return existing;
+        }
+      }
+    }
+
+    return null;
+  },
+
+  /**
+   * 细粒度计算已有条目与新导入条目之间的字段差异
+   */
+  computeItemDiff(existingItem, newItem) {
+    if (!existingItem || !newItem) {
+      return { hasChanges: false, diffs: [] };
+    }
+
+    const diffs = [];
+
+    // 1. 标题
+    if ((existingItem.title || '').trim() !== (newItem.title || '').trim()) {
+      diffs.push({
+        field: 'title',
+        label: '标题',
+        oldVal: existingItem.title || '（空）',
+        newVal: newItem.title || '（空）'
+      });
+    }
+
+    // 2. 作者
+    if (newItem.author !== undefined && newItem.author !== null && (existingItem.author || '').trim() !== (newItem.author || '').trim()) {
+      diffs.push({
+        field: 'author',
+        label: '作者',
+        oldVal: existingItem.author || '（空）',
+        newVal: newItem.author || '（空）'
+      });
+    }
+
+    // 3. 发布日期
+    if (newItem.publishDate && newItem.publishDate !== '待确认' && existingItem.publishDate !== newItem.publishDate) {
+      diffs.push({
+        field: 'publishDate',
+        label: '发布日期',
+        oldVal: existingItem.publishDate || '（空）',
+        newVal: newItem.publishDate || '（空）'
+      });
+    }
+
+    // 4. 互动数据 (点赞、收藏、Score)
+    const oldLikes = existingItem.likes;
+    const newLikes = newItem.likes;
+    const oldFavs = existingItem.favorites;
+    const newFavs = newItem.favorites;
+    const oldScore = existingItem.score;
+    const newScore = newItem.score;
+
+    const statsChanged = (newLikes !== undefined && newLikes !== null && newLikes !== oldLikes) ||
+                         (newFavs !== undefined && newFavs !== null && newFavs !== oldFavs) ||
+                         (newScore !== undefined && newScore !== null && newScore !== oldScore) ||
+                         (newItem.engagement && newItem.engagement !== '待确认' && newItem.engagement !== existingItem.engagement);
+
+    if (statsChanged) {
+      const oldStatStr = existingItem.engagement || `赞 ${oldLikes ?? '-'} · 藏 ${oldFavs ?? '-'}` + (oldScore !== null && oldScore !== undefined ? ` · 得分 ${oldScore}` : '');
+      const newStatStr = newItem.engagement || `赞 ${newLikes ?? '-'} · 藏 ${newFavs ?? '-'}` + (newScore !== null && newScore !== undefined ? ` · 得分 ${newScore}` : '');
+      diffs.push({
+        field: 'engagement',
+        label: '互动数据',
+        oldVal: oldStatStr,
+        newVal: newStatStr
+      });
+    }
+
+    // 5. ① 发现：为什么最近值得关注？
+    const oldDisc = (existingItem.discovery_reason || '').trim();
+    const newDisc = (newItem.discovery_reason || '').trim();
+    if (newDisc && newDisc !== oldDisc) {
+      diffs.push({
+        field: 'discovery_reason',
+        label: '① 发现原因',
+        oldVal: oldDisc || '尚未分析',
+        newVal: newDisc
+      });
+    }
+
+    // 6. ② 理解：内容简介
+    const oldSummary = (existingItem.summary || '').trim();
+    const newSummary = (newItem.summary || '').trim();
+    if (newSummary && newSummary !== '待确认' && newSummary !== oldSummary) {
+      diffs.push({
+        field: 'summary',
+        label: '② 内容简介',
+        oldVal: oldSummary || '暂无内容简介',
+        newVal: newSummary
+      });
+    }
+
+    // 7. ③ 价值：对读者有什么帮助？
+    const oldValue = (existingItem.reader_value || '').trim();
+    const newValue = (newItem.reader_value || '').trim();
+    if (newValue && newValue !== oldValue) {
+      diffs.push({
+        field: 'reader_value',
+        label: '③ 读者价值',
+        oldVal: oldValue || '尚未分析',
+        newVal: newValue
+      });
+    }
+
+    // 8. 观众真实问题
+    const oldQuestions = Array.isArray(existingItem.audience_questions) ? existingItem.audience_questions : [];
+    const newQuestions = Array.isArray(newItem.audience_questions) ? newItem.audience_questions : [];
+    const qChanged = JSON.stringify(oldQuestions) !== JSON.stringify(newQuestions);
+    if (qChanged && (newQuestions.length > 0 || newItem.comments_checked)) {
+      diffs.push({
+        field: 'audience_questions',
+        label: '观众真实问题',
+        oldVal: oldQuestions.length > 0 ? oldQuestions.join(' ； ') : '暂无记录的问题',
+        newVal: newQuestions.length > 0 ? newQuestions.join(' ； ') : '暂无记录的问题'
+      });
+    }
+
+    return {
+      hasChanges: diffs.length > 0,
+      diffs
+    };
   }
 };

@@ -162,6 +162,7 @@
               <div class="ads-left">
                 <span class="ads-date-text" id="active-date-display">10月11日 · 周日</span>
                 <span class="ads-count-text" id="active-date-count">已收录5篇</span>
+                <div class="ads-coverage-pills" id="active-date-coverage"></div>
               </div>
               <div class="ads-right">
                 <span class="ads-read-text" id="active-date-read-status">0 / 5 已读</span>
@@ -403,6 +404,7 @@
               <span>识别 Agent：<strong id="preview-meta-agent">WorkBuddy</strong></span>
               <span>归档日期：<strong id="preview-meta-date">2026-10-10</strong></span>
               <span>条目总数：<strong id="preview-meta-count">5 篇</strong></span>
+              <span id="preview-meta-coverage-wrap" style="display:none;">平台覆盖：<strong id="preview-meta-coverage"></strong></span>
             </div>
 
             <div class="preview-prompt-assoc">
@@ -486,6 +488,11 @@
             <div class="form-group col-span-2">
               <label>读者价值 (对读者有什么帮助)</label>
               <input type="text" id="edit-item-reader-value" class="input-field" placeholder="简要说明对读者可能有什么帮助，无信息请留空">
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>个人备考笔记 (私人备考心得与想法，导入时绝对不会被覆盖)</label>
+              <textarea id="edit-item-note" class="input-field" rows="2" placeholder="记录你对该篇内容的个人体会、备考心得或后续应用启发..."></textarea>
             </div>
           </div>
         </div>

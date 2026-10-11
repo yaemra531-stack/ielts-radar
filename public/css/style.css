@@ -1961,3 +1961,245 @@ textarea.input-field {
     grid-column: span 1;
   }
 }
+
+/* --------------------------------------------------------------------------
+   11. WorkBuddy V1.4 升级适配：Coverage、Score、Diff Preview、Personal Note
+   -------------------------------------------------------------------------- */
+.ads-coverage-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.coverage-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.stat-score {
+  color: #ea580c;
+  font-weight: 500;
+}
+
+.stat-score .stat-icon {
+  stroke: #ea580c;
+}
+
+[data-theme="dark"] .stat-score {
+  color: #fb923c;
+}
+[data-theme="dark"] .stat-score .stat-icon {
+  stroke: #fb923c;
+}
+
+/* 导入预览差异卡片与状态徽章 */
+.preview-item-card.is-diff-update {
+  border-color: rgba(245, 158, 11, 0.4);
+  background-color: rgba(254, 243, 199, 0.12);
+}
+
+.preview-item-card.is-identical {
+  border-color: rgba(16, 185, 129, 0.3);
+  opacity: 0.92;
+}
+
+.preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-primary {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+[data-theme="dark"] .badge-warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .badge-success {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+[data-theme="dark"] .badge-primary {
+  background-color: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+}
+
+.preview-safe-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-xs);
+  background-color: rgba(79, 70, 229, 0.06);
+  border: 1px solid rgba(79, 70, 229, 0.12);
+  font-size: 12px;
+  color: var(--text-body);
+}
+
+.preview-safe-banner strong {
+  color: var(--accent);
+}
+
+.diff-summary-card {
+  background-color: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.diff-summary-title {
+  font-weight: 600;
+  color: var(--text-title);
+  margin-bottom: 6px;
+}
+
+.diff-fields-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.diff-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+.diff-field-row:last-child {
+  border-bottom: none;
+}
+
+.diff-field-name {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+}
+
+.diff-field-old, .diff-field-new {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.diff-tag {
+  display: inline-block;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.diff-tag.old-tag {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.diff-tag.new-tag {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+[data-theme="dark"] .diff-tag.old-tag {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .diff-tag.new-tag {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.diff-confirm-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+  padding: 4px 0;
+}
+
+.diff-confirm-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* 个人备考笔记展示与卡片 */
+.personal-note-section {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(79, 70, 229, 0.04);
+  border: 1px solid rgba(79, 70, 229, 0.12);
+}
+
+.personal-note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.personal-note-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.btn-note-edit {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.btn-note-edit:hover {
+  color: var(--accent);
+}
+
+.personal-note-body {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-title);
+  white-space: pre-wrap;
+}
+

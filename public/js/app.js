@@ -334,6 +334,28 @@ function renderTimeline() {
     }
   }
 
+  // 渲染平台覆盖分布 pills
+  const coverageContainer = document.getElementById('active-date-coverage');
+  if (coverageContainer) {
+    if (activeRecord && activeRecord.coverage) {
+      if (typeof activeRecord.coverage === 'object' && !Array.isArray(activeRecord.coverage)) {
+        coverageContainer.innerHTML = Object.entries(activeRecord.coverage).map(([plat, cnt]) => `
+          <span class="coverage-pill">${escapeHtml(plat)} ${cnt}</span>
+        `).join('');
+        coverageContainer.style.display = 'flex';
+      } else if (typeof activeRecord.coverage === 'string') {
+        coverageContainer.innerHTML = `<span class="coverage-pill">${escapeHtml(activeRecord.coverage)}</span>`;
+        coverageContainer.style.display = 'flex';
+      } else {
+        coverageContainer.style.display = 'none';
+        coverageContainer.innerHTML = '';
+      }
+    } else {
+      coverageContainer.style.display = 'none';
+      coverageContainer.innerHTML = '';
+    }
+  }
+
   const readDisplay = document.getElementById('active-date-read-status');
   if (readDisplay) {
     const filteredRead = filteredItems.filter(i => i.isRead).length;
@@ -369,17 +391,32 @@ function renderArticleItem(item, date) {
   const isRead = !!item.isRead;
   const isExpanded = state.expandedItemIds.has(item.id);
 
-  // 1. 顶部互动数据解析：支持 likes/favorites 或从 engagement 字符串解析
+  // 1. 顶部互动数据解析：支持 likes/favorites/score 或从 engagement 字符串解析
   let likes = item.likes;
   let favorites = item.favorites;
+  let score = item.score;
   if ((likes === undefined || likes === null) && item.engagement) {
     const matchLike = item.engagement.match(/赞\s*(\d+)/);
     const matchFav = item.engagement.match(/藏\s*(\d+)/);
     if (matchLike) likes = parseInt(matchLike[1], 10);
     if (matchFav) favorites = parseInt(matchFav[1], 10);
   }
+  if ((score === undefined || score === null) && item.engagement) {
+    const matchScore = item.engagement.match(/(?:得分|Score)\s*(\d+)/i);
+    if (matchScore) score = parseInt(matchScore[1], 10);
+  }
 
   let engagementHtml = '';
+  if (score !== undefined && score !== null) {
+    engagementHtml += `
+      <span class="meta-stat-pill stat-score" title="Reddit 得分 / Upvotes">
+        <svg class="stat-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+        <span>Score ${score}</span>
+      </span>
+    `;
+  }
   if (likes !== undefined && likes !== null) {
     engagementHtml += `
       <span class="meta-stat-pill" title="点赞数">
@@ -446,6 +483,20 @@ function renderArticleItem(item, date) {
     ? escapeHtml(item.reader_value)
     : '<span class="empty-note-text">尚未分析</span>';
 
+  // 个人备考笔记展示
+  let personalNoteHtml = '';
+  if (item.note && item.note.trim()) {
+    personalNoteHtml = `
+      <div class="personal-note-section">
+        <div class="personal-note-header">
+          <span class="personal-note-label">📝 我的备考笔记</span>
+          <button class="btn-note-edit" data-id="${item.id}" data-date="${date}" type="button">编辑笔记</button>
+        </div>
+        <div class="personal-note-body">${escapeHtml(item.note)}</div>
+      </div>
+    `;
+  }
+
   return `
     <article class="article-item ${isRead ? 'is-read' : ''} ${isExpanded ? 'is-expanded' : ''}" id="article-${item.id}">
       <!-- 顶部辅助信息：平台 · 日期 与 互动数据 -->
@@ -494,6 +545,9 @@ function renderArticleItem(item, date) {
 
         <!-- 观众真实问题 -->
         ${audienceQuestionsHtml}
+
+        <!-- 个人备考笔记（如有） -->
+        ${personalNoteHtml}
       </div>
 
       <div class="article-divider"></div>
@@ -521,6 +575,10 @@ function renderArticleItem(item, date) {
           <div class="dropdown-wrapper">
             <button class="btn-pill btn-pill-more" data-id="${item.id}" type="button" title="更多操作">···</button>
             <div class="dropdown-menu-card" id="menu-${item.id}">
+              <button class="dropdown-item-btn btn-item-note" data-id="${item.id}" data-date="${date}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                ${item.note ? '修改笔记' : '添加笔记'}
+              </button>
               <button class="dropdown-item-btn btn-item-edit" data-id="${item.id}" data-date="${date}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 编辑
@@ -649,6 +707,23 @@ function bindTimelineEvents() {
       const day = state.data.dailyRecords.find(d => d.date === date);
       const item = day?.items?.find(i => i.id === id);
       if (item) openItemEditModal(item, date);
+    };
+  });
+
+  // 个人备考笔记快捷入口
+  document.querySelectorAll('.btn-item-note, .btn-note-edit').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const date = btn.dataset.date;
+      const day = state.data.dailyRecords.find(d => d.date === date);
+      const item = day?.items?.find(i => i.id === id);
+      if (item) {
+        openItemEditModal(item, date);
+        setTimeout(() => {
+          document.getElementById('edit-item-note')?.focus();
+        }, 120);
+      }
     };
   });
 
@@ -942,35 +1017,51 @@ function handleParseImport() {
   }
 
   const selectedAgent = document.getElementById('import-agent-select').value;
-  const targetDate = document.getElementById('import-date-input').value || new Date().toISOString().split('T')[0];
+  const targetDateInput = document.getElementById('import-date-input').value;
 
-  const parsed = Parser.parse(rawText, selectedAgent, targetDate);
+  const parsed = Parser.parse(rawText, selectedAgent, targetDateInput);
   if (parsed.items.length === 0) {
     showToast('未能识别出有效文章条目，请检查格式', 'error');
     return;
   }
 
-  const existingDay = state.data.dailyRecords?.find(d => d.date === parsed.date);
-  const existingUrls = new Set((existingDay?.items || []).map(i => i.url).filter(Boolean));
+  // 归档日期：以 parsed.date 为准 (支持 report_date 自动归档)
+  const archiveDate = parsed.date;
+  const existingDay = state.data.dailyRecords?.find(d => d.date === archiveDate);
+  const existingItems = existingDay?.items || [];
 
-  parsed.items.forEach(item => {
-    if (item.url && existingUrls.has(item.url)) {
-      item.isDuplicate = true;
-      item.duplicateAction = 'skip';
+  parsed.items.forEach(newItem => {
+    newItem.stableId = newItem.stableId || Parser.extractStableContentId(newItem.platform, newItem.url, newItem.title);
+    const matched = Parser.matchExistingItem(newItem, existingItems);
+    if (matched) {
+      newItem.matchedExisting = matched;
+      newItem.isExisting = true;
+      const diffRes = Parser.computeItemDiff(matched, newItem);
+      newItem.hasDiff = diffRes.hasChanges;
+      newItem.diffs = diffRes.diffs;
+      // 发现差异默认勾选更新；完全相同则默认跳过
+      newItem.userAction = newItem.hasDiff ? 'update' : 'skip';
     } else {
-      item.isDuplicate = false;
-      item.duplicateAction = 'keep';
+      newItem.matchedExisting = null;
+      newItem.isExisting = false;
+      newItem.hasDiff = false;
+      newItem.diffs = [];
+      newItem.userAction = 'create';
     }
   });
 
   const agentKey = parsed.agent.toLowerCase() === 'muse' ? 'muse' : 'workbuddy';
   const promptList = state.data.promptRegistry[agentKey] || [];
-  const latestPrompt = promptList.length > 0 ? promptList[promptList.length - 1].version : 'V1.0';
+  let detectedPrompt = parsed.promptVersion;
+  if (!detectedPrompt) {
+    detectedPrompt = promptList.length > 0 ? promptList[promptList.length - 1].version : 'V1.0';
+  }
 
   state.importPreview = {
     ...parsed,
+    date: archiveDate,
     rawText,
-    promptVersion: latestPrompt
+    promptVersion: detectedPrompt
   };
 
   renderImportPreview();
@@ -981,42 +1072,181 @@ function renderImportPreview() {
   const previewSection = document.getElementById('import-preview-section');
   if (!container || !state.importPreview) return;
 
-  const { agent, date, items, promptVersion } = state.importPreview;
+  const { agent, date, items, promptVersion, coverage } = state.importPreview;
+
+  const newCount = items.filter(i => !i.isExisting).length;
+  const diffCount = items.filter(i => i.isExisting && i.hasDiff).length;
+  const identicalCount = items.filter(i => i.isExisting && !i.hasDiff).length;
 
   document.getElementById('preview-meta-agent').textContent = agent;
   document.getElementById('preview-meta-date').textContent = date;
-  document.getElementById('preview-meta-count').textContent = `${items.length} 篇`;
 
+  let countText = `${items.length} 篇`;
+  const statBadges = [];
+  if (newCount > 0) statBadges.push(`✨ 新增 ${newCount}`);
+  if (diffCount > 0) statBadges.push(`⚠️ 差异待确认 ${diffCount}`);
+  if (identicalCount > 0) statBadges.push(`✓ 已有无变化 ${identicalCount}`);
+  if (statBadges.length > 0) {
+    countText += ` (${statBadges.join(' · ')})`;
+  }
+  document.getElementById('preview-meta-count').textContent = countText;
+
+  // 顶层 Coverage 处理
+  const coverageWrap = document.getElementById('preview-meta-coverage-wrap');
+  const coverageEl = document.getElementById('preview-meta-coverage');
+  if (coverageWrap && coverageEl) {
+    if (coverage) {
+      if (typeof coverage === 'object' && !Array.isArray(coverage)) {
+        coverageEl.textContent = Object.entries(coverage).map(([k, v]) => `${k} ${v}`).join(' · ');
+      } else {
+        coverageEl.textContent = String(coverage);
+      }
+      coverageWrap.style.display = 'inline';
+    } else {
+      coverageWrap.style.display = 'none';
+    }
+  }
+
+  // 关联提示词下拉列表
   const promptSelect = document.getElementById('preview-prompt-version');
   const agentKey = agent.toLowerCase() === 'muse' ? 'muse' : 'workbuddy';
   const promptList = state.data.promptRegistry[agentKey] || [];
-  promptSelect.innerHTML = promptList.map(p => `
+  const existsInList = promptList.some(p => p.version === promptVersion);
+  let optionsHtml = promptList.map(p => `
     <option value="${p.version}" ${p.version === promptVersion ? 'selected' : ''}>
       ${p.version} (${p.reason || '无说明'})
     </option>
   `).join('');
+  if (!existsInList && promptVersion) {
+    optionsHtml = `<option value="${promptVersion}" selected>${promptVersion} (解析自JSON)</option>` + optionsHtml;
+  }
+  promptSelect.innerHTML = optionsHtml;
 
-  container.innerHTML = items.map((item, idx) => `
-    <div class="preview-item-card" data-index="${idx}">
-      <div class="preview-card-header">
-        <span style="font-weight:600; font-size:12.5px;">第 ${idx + 1} 篇</span>
-        <button type="button" class="btn-tool btn-remove-preview" data-index="${idx}">✕ 移除</button>
+  container.innerHTML = items.map((item, idx) => {
+    let cardClass = 'preview-item-card';
+    let badgeHtml = '';
+    let diffSummaryHtml = '';
+    let actionToggleHtml = '';
+    let safeBannerHtml = '';
+
+    if (item.isExisting) {
+      if (item.hasDiff) {
+        cardClass += ' is-diff-update';
+        badgeHtml = `<span class="preview-badge badge-warning">⚠️ 已收录 · 发现差异</span>`;
+        safeBannerHtml = `
+          <div class="preview-safe-banner">
+            <span class="safe-icon">🛡️</span>
+            <span>已开启安全保护：更新后<strong>保留已有阅读状态 [${item.matchedExisting.isRead ? '已读' : '未读'}]</strong> 与<strong>已有个人备考笔记</strong>，绝不重复新增。</span>
+          </div>
+        `;
+        actionToggleHtml = `
+          <label class="diff-confirm-toggle">
+            <input type="checkbox" class="preview-item-action-checkbox" data-index="${idx}" ${item.userAction === 'update' ? 'checked' : ''}>
+            <span><strong>确认更新此已有记录</strong>（将新指标与内容合入已有条目，保留阅读状态与笔记）</span>
+          </label>
+        `;
+
+        diffSummaryHtml = `
+          <div class="diff-summary-card">
+            <div class="diff-summary-title">发现以下字段变动（原有数据 vs 本次导入）：</div>
+            <div class="diff-fields-table">
+              ${item.diffs.map(d => `
+                <div class="diff-field-row">
+                  <div class="diff-field-name">${escapeHtml(d.label)}</div>
+                  <div class="diff-field-old"><span class="diff-tag old-tag">原记录</span> ${escapeHtml(String(d.oldVal))}</div>
+                  <div class="diff-field-new"><span class="diff-tag new-tag">新数据</span> ${escapeHtml(String(d.newVal))}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        cardClass += ' is-identical';
+        badgeHtml = `<span class="preview-badge badge-success">✓ 已收录 · 内容无变化</span>`;
+        safeBannerHtml = `
+          <div class="preview-safe-banner" style="background-color:rgba(16, 185, 129, 0.05); border-color:rgba(16, 185, 129, 0.15);">
+            <span>库中已有完全一致的记录，默认跳过，保留原有阅读状态与笔记。</span>
+          </div>
+        `;
+        actionToggleHtml = `
+          <label class="diff-confirm-toggle">
+            <input type="checkbox" class="preview-item-action-checkbox" data-index="${idx}" ${item.userAction === 'update' ? 'checked' : ''}>
+            <span>覆盖更新此条</span>
+          </label>
+        `;
+      }
+    } else {
+      badgeHtml = `<span class="preview-badge badge-primary">✨ 全新收录</span>`;
+    }
+
+    return `
+      <div class="${cardClass}" data-index="${idx}">
+        <div class="preview-card-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:600; font-size:13px;">第 ${idx + 1} 篇</span>
+            ${badgeHtml}
+            <span style="font-size:11px; color:var(--text-muted); font-family:var(--font-mono);">[ID: ${escapeHtml(item.stableId)}]</span>
+          </div>
+          <button type="button" class="btn-tool btn-remove-preview" data-index="${idx}">✕ 移除</button>
+        </div>
+
+        ${safeBannerHtml}
+        ${diffSummaryHtml}
+        ${actionToggleHtml}
+
+        <div class="preview-card-grid">
+          <input type="text" class="input-field preview-title" value="${escapeHtml(item.title)}" placeholder="标题" data-index="${idx}">
+          <input type="text" class="input-field preview-platform" value="${escapeHtml(item.platform)}" placeholder="平台" data-index="${idx}">
+          <input type="text" class="input-field preview-date" value="${escapeHtml(item.publishDate)}" placeholder="发布日期" data-index="${idx}">
+        </div>
+
+        <textarea class="input-field preview-summary" rows="2" placeholder="内容简介（② 理解）" data-index="${idx}">${escapeHtml(item.summary)}</textarea>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+          <input type="text" class="input-field preview-discovery" value="${escapeHtml(item.discovery_reason || '')}" placeholder="① 发现原因（为什么值得关注）" data-index="${idx}">
+          <input type="text" class="input-field preview-reader-value" value="${escapeHtml(item.reader_value || '')}" placeholder="③ 读者价值（对读者有什么帮助）" data-index="${idx}">
+        </div>
+
+        <input type="text" class="input-field preview-url" value="${escapeHtml(item.url)}" placeholder="原文链接" data-index="${idx}">
       </div>
-
-      <div class="preview-card-grid">
-        <input type="text" class="input-field preview-title" value="${escapeHtml(item.title)}" placeholder="标题">
-        <input type="text" class="input-field preview-platform" value="${escapeHtml(item.platform)}" placeholder="平台">
-        <input type="text" class="input-field preview-date" value="${escapeHtml(item.publishDate)}" placeholder="发布日期">
-      </div>
-
-      <textarea class="input-field preview-summary" rows="2" placeholder="简介">${escapeHtml(item.summary)}</textarea>
-      <input type="text" class="input-field preview-reader-value" value="${escapeHtml(item.reader_value || '')}" placeholder="读者价值">
-      <input type="text" class="input-field preview-url" value="${escapeHtml(item.url)}" placeholder="原文链接">
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   document.getElementById('import-step1').style.display = 'none';
   previewSection.style.display = 'block';
+
+  // 绑定用户确认复选框
+  container.querySelectorAll('.preview-item-action-checkbox').forEach(cb => {
+    cb.onchange = (e) => {
+      const idx = parseInt(cb.dataset.index, 10);
+      if (state.importPreview.items[idx]) {
+        state.importPreview.items[idx].userAction = e.target.checked ? 'update' : 'skip';
+      }
+    };
+  });
+
+  // 绑定字段就地修改
+  container.querySelectorAll('.preview-title').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].title = e.target.value; };
+  });
+  container.querySelectorAll('.preview-platform').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].platform = e.target.value; };
+  });
+  container.querySelectorAll('.preview-date').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].publishDate = e.target.value; };
+  });
+  container.querySelectorAll('.preview-summary').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].summary = e.target.value; };
+  });
+  container.querySelectorAll('.preview-discovery').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].discovery_reason = e.target.value; };
+  });
+  container.querySelectorAll('.preview-reader-value').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].reader_value = e.target.value; };
+  });
+  container.querySelectorAll('.preview-url').forEach(el => {
+    el.oninput = (e) => { state.importPreview.items[el.dataset.index].url = e.target.value; };
+  });
 
   // 移除单条
   container.querySelectorAll('.btn-remove-preview').forEach(btn => {
@@ -1034,7 +1264,7 @@ async function confirmImportAndSave() {
     return;
   }
 
-  const { agent, date, items, rawText } = state.importPreview;
+  const { agent, date, items, rawText, coverage } = state.importPreview;
   const promptVersion = document.getElementById('preview-prompt-version').value;
 
   let dayRecord = state.data.dailyRecords.find(d => d.date === date);
@@ -1043,18 +1273,69 @@ async function confirmImportAndSave() {
       date: date,
       promptVersionWorkBuddy: agent === 'WorkBuddy' ? promptVersion : null,
       promptVersionMuse: agent === 'Muse' ? promptVersion : null,
+      coverage: coverage || null,
       items: []
     };
     state.data.dailyRecords.unshift(dayRecord);
   } else {
     if (agent === 'WorkBuddy') dayRecord.promptVersionWorkBuddy = promptVersion;
     if (agent === 'Muse') dayRecord.promptVersionMuse = promptVersion;
+    if (coverage) dayRecord.coverage = coverage;
   }
 
   let addedCount = 0;
-  items.forEach(newItem => {
-    const existingIndex = dayRecord.items.findIndex(existing => existing.url && existing.url === newItem.url);
-    if (existingIndex < 0) {
+  let updatedCount = 0;
+  let skippedCount = 0;
+
+  items.forEach(item => {
+    if (item.isExisting && item.matchedExisting) {
+      if (item.userAction === 'update') {
+        const target = item.matchedExisting;
+        target.title = item.title;
+        target.platform = item.platform;
+        if (item.author !== undefined) target.author = item.author;
+        target.publishDate = item.publishDate;
+        target.likes = item.likes;
+        target.favorites = item.favorites;
+        target.score = item.score;
+        target.engagement = item.engagement;
+        target.discovery_reason = item.discovery_reason;
+        target.summary = item.summary;
+        target.reader_value = item.reader_value;
+        target.comments_checked = item.comments_checked;
+        target.audience_questions = item.audience_questions;
+        target.url = item.url;
+        target.stableId = item.stableId || target.stableId;
+        // 关键保护：绝不覆盖已有的 isRead 和 note！
+        // target.isRead 保持不变
+        // target.note 保持不变
+        updatedCount++;
+      } else {
+        skippedCount++;
+      }
+    } else {
+      // 全新条目
+      const newItem = {
+        id: item.id || `item_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        stableId: item.stableId,
+        agent: item.agent,
+        title: item.title,
+        author: item.author,
+        platform: item.platform,
+        publishDate: item.publishDate,
+        likes: item.likes,
+        favorites: item.favorites,
+        score: item.score,
+        engagement: item.engagement,
+        discovery_reason: item.discovery_reason,
+        summary: item.summary,
+        reader_value: item.reader_value,
+        comments_checked: item.comments_checked,
+        audience_questions: item.audience_questions,
+        url: item.url,
+        isRead: false,
+        note: ''
+      };
       dayRecord.items.push(newItem);
       addedCount++;
     }
@@ -1071,7 +1352,14 @@ async function confirmImportAndSave() {
   // 导入后自动将视图切换至当前归档日期
   state.selectedDate = date;
 
-  await persistData(`成功归档至 ${date}（新增 ${addedCount} 篇）`);
+  let toastMsg = `成功归档至 ${date}`;
+  const parts = [];
+  if (addedCount > 0) parts.push(`新增 ${addedCount} 篇`);
+  if (updatedCount > 0) parts.push(`更新 ${updatedCount} 篇`);
+  if (skippedCount > 0) parts.push(`跳过 ${skippedCount} 篇`);
+  if (parts.length > 0) toastMsg += `（${parts.join('，')}，已严格保留已有阅读状态及笔记）`;
+
+  await persistData(toastMsg);
   closeImportModal();
   renderTimeline();
 }
@@ -1097,6 +1385,8 @@ function openItemEditModal(item = null, defaultDate = '') {
   if (discoveryEl) discoveryEl.value = isEditing ? (item.discovery_reason || '') : '';
   document.getElementById('edit-item-summary').value = isEditing ? item.summary : '';
   document.getElementById('edit-item-reader-value').value = isEditing ? (item.reader_value || '') : '';
+  const noteEl = document.getElementById('edit-item-note');
+  if (noteEl) noteEl.value = isEditing ? (item.note || '') : '';
 
   modal.classList.add('active');
 }
@@ -1119,6 +1409,8 @@ function handleSaveItemEdit(e) {
   const discovery_reason = discoveryEl ? (discoveryEl.value.trim() || null) : null;
   const summary = document.getElementById('edit-item-summary').value.trim() || '待确认';
   const reader_value = document.getElementById('edit-item-reader-value').value.trim();
+  const noteEl = document.getElementById('edit-item-note');
+  const note = noteEl ? noteEl.value.trim() : '';
 
   let dayRecord = state.data.dailyRecords.find(d => d.date === date);
   if (!dayRecord) {
@@ -1138,6 +1430,7 @@ function handleSaveItemEdit(e) {
       item.discovery_reason = discovery_reason;
       item.summary = summary;
       item.reader_value = reader_value;
+      item.note = note;
     }
   } else {
     dayRecord.items.push({
@@ -1150,7 +1443,8 @@ function handleSaveItemEdit(e) {
       summary,
       reader_value,
       url,
-      isRead: false
+      isRead: false,
+      note: note
     });
   }
 
