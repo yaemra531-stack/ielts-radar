@@ -68,20 +68,42 @@ export const Parser = {
    * 解析 JSON 格式输入
    */
   parseJson(jsonObj, defaultAgent, defaultDate) {
+    const isTopObject = !Array.isArray(jsonObj) && typeof jsonObj === 'object' && jsonObj !== null;
+    const targetAgent = (isTopObject && jsonObj.agent) || defaultAgent;
+    const targetDate = (isTopObject && (jsonObj.report_date || jsonObj.date)) || defaultDate;
+    const promptVersion = (isTopObject && jsonObj.prompt_version) || null;
+
     let rawList = Array.isArray(jsonObj) ? jsonObj : (jsonObj.items || [jsonObj]);
     const items = [];
     const warnings = [];
 
     rawList.forEach((raw, idx) => {
+      // 计算互动数据
+      let engagement = raw.engagement || raw.stats || '';
+      if (!engagement && (raw.likes !== undefined || raw.favorites !== undefined)) {
+        const parts = [];
+        if (raw.likes !== undefined && raw.likes !== null) parts.push(`赞 ${raw.likes}`);
+        if (raw.favorites !== undefined && raw.favorites !== null) parts.push(`藏 ${raw.favorites}`);
+        engagement = parts.join(' · ');
+      }
+      if (!engagement) engagement = '待确认';
+
       const item = {
         id: `item_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 7)}`,
-        agent: raw.agent || defaultAgent,
+        agent: raw.agent || targetAgent,
         title: raw.title || '待确认',
-        platform: raw.platform || this.inferPlatform(raw.url || '', defaultAgent),
-        publishDate: raw.publishDate || raw.date || '待确认',
-        engagement: raw.engagement || raw.stats || raw.likes || '待确认',
+        author: raw.author !== undefined ? raw.author : null,
+        platform: raw.platform || this.inferPlatform(raw.url || '', targetAgent),
+        publishDate: raw.published_at || raw.publishDate || raw.date || '待确认',
+        likes: raw.likes !== undefined ? raw.likes : null,
+        favorites: raw.favorites !== undefined ? raw.favorites : null,
+        engagement: engagement,
+        discovery_reason: raw.discovery_reason !== undefined ? raw.discovery_reason : null,
         summary: raw.summary || raw.desc || raw.description || '待确认',
-        reader_value: raw.reader_value || raw.readerValue || raw.value || '',
+        reader_value: raw.reader_value !== undefined ? raw.reader_value : (raw.readerValue || raw.value || ''),
+        score: raw.score !== undefined ? raw.score : null,
+        comments_checked: raw.comments_checked !== undefined ? raw.comments_checked : false,
+        audience_questions: Array.isArray(raw.audience_questions) ? raw.audience_questions : [],
         url: raw.url || raw.link || '',
         isRead: false
       };
@@ -92,7 +114,7 @@ export const Parser = {
       items.push(item);
     });
 
-    return { agent: defaultAgent, date: defaultDate, items, warnings };
+    return { agent: targetAgent, date: targetDate, promptVersion, items, warnings };
   },
 
   /**

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IELTS Radar ｜ 我的 AI 雅思侦察日志</title>
+  <title>雅思见闻 ｜ IELTS Radar</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -18,11 +18,11 @@
           <circle cx="12" cy="12" r="2"/>
         </svg>
       </div>
-      <span>IELTS Radar</span>
+      <span>雅思见闻</span>
     </div>
     <div class="mobile-nav-tabs">
       <button class="nav-tab active" data-tab="timeline">今日</button>
-      <button class="nav-tab" data-tab="prompts">提示词</button>
+      <button class="nav-tab" data-tab="prompts">提示</button>
       <button class="nav-tab" data-tab="goals">想法</button>
     </div>
   </header>
@@ -33,7 +33,7 @@
     <!-- ================= 桌面端左侧导航栏 (宽度 220px) ================= -->
     <aside class="app-sidebar">
       <div class="sidebar-top">
-        <!-- 品牌标识 -->
+        <!-- 品牌标识：雅思见闻 (IELTS Radar) -->
         <div class="sidebar-brand">
           <div class="brand-radar-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -42,7 +42,14 @@
               <circle cx="12" cy="12" r="2"/>
             </svg>
           </div>
-          <span class="brand-title">IELTS Radar</span>
+          <div class="brand-info">
+            <span class="brand-title">雅思见闻</span>
+            <span class="brand-subtitle">IELTS Radar</span>
+          </div>
+        </div>
+
+        <div class="brand-slogan-wrap">
+          <span class="brand-slogan">每天10篇，了解雅思世界。</span>
         </div>
 
         <!-- 主导航（仅三大核心视图） -->
@@ -54,7 +61,7 @@
               <line x1="8" y1="2" x2="8" y2="6"/>
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <span>每日记录</span>
+            <span>每日侦察</span>
           </button>
 
           <button class="nav-tab" data-tab="prompts">
@@ -113,9 +120,8 @@
         </div>
 
         <!-- 底部轻量体现三核心研究目标 (安静克制) -->
-        <div class="sidebar-core-motto" title="三大核心研究目标 V2.0：① 发现 · ② 理解 · ③ 价值">
-          <span class="motto-text">发现 · 理解 · 价值</span>
-          <span class="visually-hidden">三大核心研究目标 V2.0 · ① 发现 · ② 理解 · ③ 价值</span>
+        <div class="sidebar-core-motto" title="三大核心研究目标 V2.0：发现 → 理解 → 价值">
+          <span class="motto-text">发现 → 理解 → 价值</span>
         </div>
       </div>
     </aside>
@@ -131,20 +137,35 @@
           <!-- 题头区域：日期、主标题、进度与右上角导入操作 -->
           <div class="timeline-header-block">
             <div class="th-top-row">
-              <span class="th-date-label" id="today-date-label">SATURDAY, OCT 10</span>
-              <button class="btn btn-primary btn-import" id="btn-open-import">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/>
-                  <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                <span>导入日报</span>
-              </button>
+              <div class="recon-brand-block">
+                <h1 class="th-main-title">每日侦察</h1>
+                <p class="th-subtitle">发现 · 理解 · 价值</p>
+              </div>
+              <div class="th-top-actions">
+                <button class="btn btn-primary btn-import" id="btn-open-import" title="导入日报">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>导入日报</span>
+                </button>
+              </div>
             </div>
 
-            <h1 class="th-main-title">今日侦察</h1>
+            <!-- 轻量日期导航药丸栏 (支持切换日期 & 日历选择) -->
+            <div class="date-navigation-bar" id="date-navigation-bar">
+              <!-- 由 app.js 动态渲染日期胶囊按钮与日历按钮 -->
+            </div>
 
-            <div class="th-stats-row">
-              <span class="th-stats-text" id="today-stats-text">10 篇内容 · 0 篇已读</span>
+            <!-- 当前选中日期的状态与概览栏 (精确对应设计稿: 10月11日 · 周日 | 已收录5篇 | 0 / 2 已读) -->
+            <div class="active-date-status-row" id="active-date-status-row">
+              <div class="ads-left">
+                <span class="ads-date-text" id="active-date-display">10月11日 · 周日</span>
+                <span class="ads-count-text" id="active-date-count">已收录5篇</span>
+              </div>
+              <div class="ads-right">
+                <span class="ads-read-text" id="active-date-read-status">0 / 5 已读</span>
+              </div>
             </div>
 
             <!-- 顶部筛选切换：全部 10 | WorkBuddy 5 | Muse 5 + 极简搜索 -->
@@ -450,6 +471,11 @@
             <div class="form-group">
               <label>原文链接</label>
               <input type="url" id="edit-item-url" class="input-field" placeholder="https://...">
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>发现原因 (为什么值得关注)</label>
+              <input type="text" id="edit-item-discovery-reason" class="input-field" placeholder="最近30天为什么受到关注，无信息请留空">
             </div>
 
             <div class="form-group col-span-2">

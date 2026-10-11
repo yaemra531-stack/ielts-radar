@@ -25,6 +25,8 @@ const state = {
     readStatus: 'all' // 'all' | 'unread' | 'read'
   },
   expandedDates: new Set(),
+  expandedItemIds: new Set(),
+  selectedDate: null,
   importPreview: null
 };
 
@@ -70,24 +72,42 @@ function showToast(message, type = 'info') {
   }, 2400);
 }
 
-// 格式化顶部大写日期 (如 SATURDAY, OCT 10)
-function formatTodayUppercase(dateStr) {
-  if (!dateStr) return 'TODAY';
-  const parts = dateStr.split('-');
-  if (parts.length !== 3) return dateStr.toUpperCase();
-  const d = new Date(parts[0], parts[1] - 1, parts[2]);
-  const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  return `${weekdays[d.getDay()]}, ${months[d.getMonth()]} ${parseInt(parts[2], 10)}`;
+// 获取当前本地系统日期 YYYY-MM-DD
+function getTodayDateString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
-// 格式化文章简明日期 (如 10月6日)
-function formatMetaDate(dateStr) {
-  if (!dateStr) return '近期';
+// 格式化日期与星期几 (如: 10月11日 · 周日)
+function formatDateWithWeekday(dateStr) {
+  if (!dateStr) return '今日';
   const parts = dateStr.split('-');
-  if (parts.length === 3) {
-    return `${parseInt(parts[1], 10)}月${parseInt(parts[2], 10)}日`;
-  }
+  if (parts.length !== 3) return dateStr;
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const day = parseInt(parts[2], 10);
+  const d = new Date(year, month - 1, day);
+  const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const weekday = weekdays[d.getDay()] || '';
+  return `${month}月${day}日 · ${weekday}`;
+}
+
+// 格式化药丸胶囊日期 (如: 10月11日)
+function formatPillDate(dateStr) {
+  if (!dateStr) return '今日';
+  const parts = dateStr.split('-');
+  if (parts.length !== 3) return dateStr;
+  return `${parseInt(parts[1], 10)}月${parseInt(parts[2], 10)}日`;
+}
+
+// 格式化文章简明发布日期 (如 2026-09-15 转换为 09-15，精确匹配设计稿)
+function formatMetaDate(dateStr) {
+  if (!dateStr || dateStr === '待确认') return '近期';
+  const m = String(dateStr).match(/^\d{4}-(\d{2}-\d{2})$/);
+  if (m) return m[1];
   return dateStr;
 }
 
@@ -211,7 +231,7 @@ function renderApp() {
 }
 
 // --------------------------------------------------------------------------
-// 模块 1：每日记录 (Timeline) - 单列纵向阅读流，阅读优先
+// 模块 1：每日侦察 (Timeline) - 单列纵向阅读流，轻量日期归档与切换
 // --------------------------------------------------------------------------
 function renderTimeline() {
   const container = document.getElementById('timeline-records');
@@ -232,41 +252,57 @@ function renderTimeline() {
 
   // 排序：日期倒序
   const sortedRecords = [...records].sort((a, b) => b.date.localeCompare(a.date));
-  const todayRecord = sortedRecords[0];
 
-  // 更新今日大标题区域
-  const dateLabel = document.getElementById('today-date-label');
-  if (dateLabel) {
-    dateLabel.textContent = formatTodayUppercase(todayRecord.date);
+  // 确定当前选中的日期：
+  // 规则：网站进入时优先展示当天记录；当天没有记录时展示最近一个有记录的日期，并清楚标注实际日期
+  if (!state.selectedDate || !records.some(r => r.date === state.selectedDate)) {
+    const todayStr = getTodayDateString();
+    const hasToday = records.some(r => r.date === todayStr);
+    state.selectedDate = hasToday ? todayStr : sortedRecords[0].date;
   }
 
-  // 统计数量
-  const todayItems = todayRecord.items || [];
-  const todayTotal = todayItems.length;
-  const todayRead = todayItems.filter(i => i.isRead).length;
-  const wbTotal = todayItems.filter(i => i.agent === 'WorkBuddy').length;
-  const museTotal = todayItems.filter(i => i.agent === 'Muse').length;
+  const activeRecord = records.find(r => r.date === state.selectedDate) || sortedRecords[0];
+  const activeDate = activeRecord.date;
 
-  const statsText = document.getElementById('today-stats-text');
-  if (statsText) {
-    statsText.textContent = `${todayTotal} 篇内容 · ${todayRead} 篇已读`;
+  // 1. 渲染日期导航药丸胶囊栏 ([ 10月11日 ] [ 10月10日 ] [ 🗓️ ])
+  const navContainer = document.getElementById('date-navigation-bar');
+  if (navContainer) {
+    const allDates = [...new Set(records.map(r => r.date).filter(Boolean))].sort((a, b) => b.localeCompare(a));
+    let navHtml = allDates.map(d => `
+      <button class="date-nav-pill ${d === activeDate ? 'active' : ''}" data-date="${d}" type="button">
+        ${formatPillDate(d)}
+      </button>
+    `).join('');
+
+    navHtml += `
+      <div class="date-picker-wrap">
+        <button class="date-picker-icon-btn" id="btn-date-picker-trigger" type="button" title="从日历选择日期">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </button>
+        <input type="date" id="calendar-date-input" class="date-picker-native-input" value="${activeDate}" />
+      </div>
+    `;
+    navContainer.innerHTML = navHtml;
   }
 
-  // 更新顶部 Agent 切换栏数字
-  const countAll = document.getElementById('count-all');
-  if (countAll) countAll.textContent = todayTotal;
-  const countWb = document.getElementById('count-wb');
-  if (countWb) countWb.textContent = wbTotal;
-  const countMuse = document.getElementById('count-muse');
-  if (countMuse) countMuse.textContent = museTotal;
+  // 2. 统计当前日期的数据
+  const activeItems = activeRecord.items || [];
+  const activeTotal = activeItems.length;
+  const wbTotal = activeItems.filter(i => i.agent === 'WorkBuddy').length;
+  const museTotal = activeItems.filter(i => i.agent === 'Muse').length;
 
-  // 过滤条件
+  // 3. 过滤条件
   const agentFilter = state.filters.agent;
   const kw = state.filters.keyword.trim().toLowerCase();
   const readFilter = state.filters.readStatus;
 
-  // 过滤今日文章
-  const filteredTodayItems = todayItems.filter(item => {
+  // 过滤活跃日期的文章
+  const filteredItems = activeItems.filter(item => {
     // 1. Agent 过滤
     if (agentFilter !== 'all' && item.agent !== agentFilter) return false;
     // 2. 搜索过滤
@@ -283,103 +319,282 @@ function renderTimeline() {
     return true;
   });
 
-  // 渲染今日纵向单列阅读流
+  // 4. 更新当前日期状态与数量指示 (如: 10月11日 · 周日 | 已收录5篇 · 以下展示2篇 | 0 / 2 已读)
+  const dateDisplay = document.getElementById('active-date-display');
+  if (dateDisplay) {
+    dateDisplay.textContent = formatDateWithWeekday(activeDate);
+  }
+
+  const countDisplay = document.getElementById('active-date-count');
+  if (countDisplay) {
+    if (filteredItems.length < activeTotal) {
+      countDisplay.textContent = `已收录${activeTotal}篇 · 以下展示${filteredItems.length}篇`;
+    } else {
+      countDisplay.textContent = `已收录${activeTotal}篇 · 以下展示${activeTotal}篇`;
+    }
+  }
+
+  const readDisplay = document.getElementById('active-date-read-status');
+  if (readDisplay) {
+    const filteredRead = filteredItems.filter(i => i.isRead).length;
+    readDisplay.textContent = `${filteredRead} / ${filteredItems.length} 已读`;
+  }
+
+  // 5. 更新顶部 Agent 切换栏数字
+  const countAll = document.getElementById('count-all');
+  if (countAll) countAll.textContent = activeTotal;
+  const countWb = document.getElementById('count-wb');
+  if (countWb) countWb.textContent = wbTotal;
+  const countMuse = document.getElementById('count-muse');
+  if (countMuse) countMuse.textContent = museTotal;
+
+  // 6. 渲染纵向单列阅读流
   let html = '';
-  if (filteredTodayItems.length === 0) {
+  if (filteredItems.length === 0) {
     html += `
       <div style="padding: 48px 0; text-align: center; color: var(--text-secondary);">
         <p>未找到符合筛选条件的内容</p>
       </div>
     `;
   } else {
-    html += filteredTodayItems.map(item => renderArticleItem(item, todayRecord.date)).join('');
-  }
-
-  // 历史日期归档区（若有往日记录，折叠在底部）
-  if (sortedRecords.length > 1) {
-    const pastRecords = sortedRecords.slice(1);
-    html += `
-      <div class="history-archive-section">
-        <details class="history-archive-collapse">
-          <summary class="history-archive-header">
-            <span>往日侦察归档 (${pastRecords.length} 天)</span>
-            <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">点击展开 ▾</span>
-          </summary>
-          <div style="margin-top: 16px;">
-            ${pastRecords.map(day => `
-              <div style="margin-bottom: 24px;">
-                <div style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid var(--border-subtle);">
-                  ${day.date} (${(day.items || []).length} 篇)
-                </div>
-                ${(day.items || []).map(item => renderArticleItem(item, day.date)).join('')}
-              </div>
-            `).join('')}
-          </div>
-        </details>
-      </div>
-    `;
+    html += filteredItems.map(item => renderArticleItem(item, activeDate)).join('');
   }
 
   container.innerHTML = html;
   bindTimelineEvents();
 }
 
-// 严格按照参考图五层架构渲染每篇文章
+// 渲染单篇侦察记录卡片（单列阅读流，折叠纯文本无编号，展开完整呈现三问与真实问题）
 function renderArticleItem(item, date) {
   const isRead = !!item.isRead;
-  const readerValue = item.reader_value ? item.reader_value.trim() : '';
+  const isExpanded = state.expandedItemIds.has(item.id);
+
+  // 1. 顶部互动数据解析：支持 likes/favorites 或从 engagement 字符串解析
+  let likes = item.likes;
+  let favorites = item.favorites;
+  if ((likes === undefined || likes === null) && item.engagement) {
+    const matchLike = item.engagement.match(/赞\s*(\d+)/);
+    const matchFav = item.engagement.match(/藏\s*(\d+)/);
+    if (matchLike) likes = parseInt(matchLike[1], 10);
+    if (matchFav) favorites = parseInt(matchFav[1], 10);
+  }
+
+  let engagementHtml = '';
+  if (likes !== undefined && likes !== null) {
+    engagementHtml += `
+      <span class="meta-stat-pill" title="点赞数">
+        <svg class="stat-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>${likes}</span>
+      </span>
+    `;
+  }
+  if (favorites !== undefined && favorites !== null) {
+    engagementHtml += `
+      <span class="meta-stat-pill" title="收藏数">
+        <svg class="stat-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        <span>${favorites}</span>
+      </span>
+    `;
+  }
+  if (!engagementHtml && item.engagement) {
+    engagementHtml = `<span class="meta-stat-text">${escapeHtml(item.engagement)}</span>`;
+  }
+
+  // 2. 观众问题渲染逻辑（未核实时清晰标识，有真实问题时以点列出）
+  let audienceQuestionsHtml = '';
+  if (item.comments_checked === false || item.comments_checked === undefined || item.comments_checked === null) {
+    audienceQuestionsHtml = `
+      <div class="audience-section-card">
+        <div class="audience-title">观众真实问题</div>
+        <div class="meta-note-text">未核实评论区问题</div>
+      </div>
+    `;
+  } else {
+    const questions = Array.isArray(item.audience_questions) ? item.audience_questions : [];
+    if (questions.length > 0) {
+      audienceQuestionsHtml = `
+        <div class="audience-section-card">
+          <div class="audience-title">观众真实问题</div>
+          <ul class="audience-questions-list">
+            ${questions.map(q => `<li><span class="question-bullet">•</span> <span>${escapeHtml(q)}</span></li>`).join('')}
+          </ul>
+        </div>
+      `;
+    } else {
+      audienceQuestionsHtml = `
+        <div class="audience-section-card">
+          <div class="audience-title">观众真实问题</div>
+          <div class="meta-note-text">暂无记录的问题</div>
+        </div>
+      `;
+    }
+  }
+
+  // 3. 完整分析三问严格固定顺序：
+  // ① 发现：为什么最近值得关注？ (无则显示“尚未分析”，不可擅自编造)
+  const discoveryContent = (item.discovery_reason && item.discovery_reason.trim())
+    ? escapeHtml(item.discovery_reason)
+    : '<span class="empty-note-text">尚未分析</span>';
+
+  // ② 理解：这篇内容究竟在讲什么？ (summary)
+  const summaryContent = (item.summary && item.summary.trim())
+    ? escapeHtml(item.summary)
+    : '<span class="empty-note-text">暂无内容简介</span>';
+
+  // ③ 价值：对读者到底有什么帮助？ (reader_value)
+  const valueContent = (item.reader_value && item.reader_value.trim())
+    ? escapeHtml(item.reader_value)
+    : '<span class="empty-note-text">尚未分析</span>';
 
   return `
-    <article class="article-item ${isRead ? 'is-read' : ''}" id="article-${item.id}">
-      <!-- 第一层：辅助信息 (平台 · 日期 · 互动) 12~13px -->
-      <div class="article-meta">
-        <span>${escapeHtml(item.platform || '社媒')}</span>
-        <span>·</span>
-        <span>${formatMetaDate(item.publishDate)}</span>
-        ${item.engagement ? `<span>·</span><span>${escapeHtml(item.engagement)}</span>` : ''}
+    <article class="article-item ${isRead ? 'is-read' : ''} ${isExpanded ? 'is-expanded' : ''}" id="article-${item.id}">
+      <!-- 顶部辅助信息：平台 · 日期 与 互动数据 -->
+      <div class="article-header-row">
+        <div class="article-meta-left">
+          <span>${escapeHtml(item.platform || '社媒')} · ${formatMetaDate(item.publishDate)}</span>
+        </div>
+        <div class="article-meta-right">
+          ${engagementHtml}
+        </div>
       </div>
 
-      <!-- 第二层：文章标题 17~18px 视觉重点 -->
+      <!-- 标题 -->
       <h2 class="article-title">
         <a href="${item.url || '#'}" target="_blank" rel="noopener noreferrer" class="article-title-link">
           ${escapeHtml(item.title)}
         </a>
       </h2>
 
-      <!-- 第三层：内容简介 14~15px 正文说明 -->
-      <div class="article-summary">
-        ${escapeHtml(item.summary || '暂无内容简介')}
+      <!-- 折叠状态纯净内容摘要 (严格不出现 ②理解 等编号) -->
+      <div class="article-collapsed-summary">
+        ${summaryContent}
       </div>
 
-      <!-- 第四层：读者价值 14~15px 蓝紫小标排版 -->
-      ${readerValue ? `
-        <div class="article-value">
-          <span class="value-label">读者价值</span>
-          <span class="value-text">${escapeHtml(readerValue)}</span>
+      <!-- 展开的完整分析与观众问题 (按 ①发现 → ②理解 → ③价值 固定顺序) -->
+      <div class="article-details-expanded" id="details-${item.id}">
+        <div class="article-divider"></div>
+
+        <!-- ① 发现：为什么最近值得关注？ -->
+        <div class="analysis-section">
+          <div class="section-label">① 发现 · 为什么值得关注？</div>
+          <div class="section-body">${discoveryContent}</div>
         </div>
-      ` : ''}
 
-      <!-- 第五层：操作栏 (原文链接 + 状态切换 + 工具) -->
-      <div class="article-actions">
-        ${item.url ? `
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="link-original">
-            查看原文 ↗
-          </a>
-        ` : '<span style="font-size:12px; color:var(--warning);">链接待确认</span>'}
+        <!-- ② 理解：这篇内容究竟在讲什么？ -->
+        <div class="analysis-section">
+          <div class="section-label">② 理解 · 内容讲什么？</div>
+          <div class="section-body">${summaryContent}</div>
+        </div>
 
-        <div class="article-tools">
-          <button class="btn-read-toggle ${isRead ? 'is-read' : ''}" data-id="${item.id}" data-date="${date}" title="切换阅读状态">
-            ${isRead ? '✓ 已读' : '○ 标为已读'}
+        <!-- ③ 价值：对读者到底有什么帮助？ -->
+        <div class="analysis-section">
+          <div class="section-label">③ 价值 · 对读者有什么帮助？</div>
+          <div class="section-body">${valueContent}</div>
+        </div>
+
+        <!-- 观众真实问题 -->
+        ${audienceQuestionsHtml}
+      </div>
+
+      <div class="article-divider"></div>
+
+      <!-- 底部操作栏 -->
+      <div class="article-footer-row">
+        <div class="footer-left">
+          <button class="btn-toggle-expand" data-id="${item.id}" type="button">
+            ${isExpanded ? '收起详情' : '展开完整分析'}
           </button>
-          <button class="btn-tool btn-edit-item" data-id="${item.id}" data-date="${date}" title="编辑条目">编辑</button>
-          <button class="btn-tool btn-delete-item" data-id="${item.id}" data-date="${date}" title="删除条目">删除</button>
+        </div>
+
+        <div class="footer-right">
+          <button class="btn-pill btn-pill-read ${isRead ? 'is-read' : ''}" data-id="${item.id}" data-date="${date}" type="button" title="切换阅读状态">
+            <span class="read-dot">${isRead ? '●' : '○'}</span>
+            <span>标为已读</span>
+          </button>
+
+          ${item.url ? `
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-pill btn-pill-link">
+              原文 <span class="arrow-icon">↗</span>
+            </a>
+          ` : '<span style="font-size:12px; color:var(--text-muted);">无链接</span>'}
+
+          <div class="dropdown-wrapper">
+            <button class="btn-pill btn-pill-more" data-id="${item.id}" type="button" title="更多操作">···</button>
+            <div class="dropdown-menu-card" id="menu-${item.id}">
+              <button class="dropdown-item-btn btn-item-edit" data-id="${item.id}" data-date="${date}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                编辑
+              </button>
+              <button class="dropdown-item-btn danger btn-item-delete" data-id="${item.id}" data-date="${date}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                删除
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </article>
   `;
 }
 
+function toggleArticleExpand(id) {
+  const articleEl = document.getElementById(`article-${id}`);
+  if (!articleEl) return;
+  const toggleBtn = articleEl.querySelector('.btn-toggle-expand');
+
+  if (state.expandedItemIds.has(id)) {
+    state.expandedItemIds.delete(id);
+    articleEl.classList.remove('is-expanded');
+    if (toggleBtn) {
+      toggleBtn.textContent = '展开完整分析';
+    }
+  } else {
+    state.expandedItemIds.add(id);
+    articleEl.classList.add('is-expanded');
+    if (toggleBtn) {
+      toggleBtn.textContent = '收起详情';
+    }
+  }
+}
+
 function bindTimelineEvents() {
+  // 日期药丸胶囊切换
+  document.querySelectorAll('.date-nav-pill').forEach(btn => {
+    btn.onclick = () => {
+      const targetDate = btn.dataset.date;
+      if (targetDate && state.selectedDate !== targetDate) {
+        state.selectedDate = targetDate;
+        renderTimeline();
+      }
+    };
+  });
+
+  // 日历图标触发日期选择
+  const datePickerBtn = document.getElementById('btn-date-picker-trigger');
+  const datePickerInput = document.getElementById('calendar-date-input');
+  if (datePickerBtn && datePickerInput) {
+    datePickerBtn.onclick = () => {
+      if (datePickerInput.showPicker) {
+        datePickerInput.showPicker();
+      } else {
+        datePickerInput.focus();
+        datePickerInput.click();
+      }
+    };
+
+    datePickerInput.onchange = (e) => {
+      const chosen = e.target.value;
+      if (!chosen) return;
+      const exists = state.data.dailyRecords.some(r => r.date === chosen);
+      if (exists) {
+        state.selectedDate = chosen;
+        renderTimeline();
+      } else {
+        showToast(`暂无 ${chosen} 的侦察记录，可通过右上角导入`, 'info');
+      }
+    };
+  }
+
   // Agent 筛选切换
   document.querySelectorAll('.agent-tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.agent === state.filters.agent);
@@ -389,8 +604,17 @@ function bindTimelineEvents() {
     };
   });
 
+  // 展开/收起详情交互
+  document.querySelectorAll('.btn-toggle-expand').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      toggleArticleExpand(id);
+    };
+  });
+
   // 标为已读/未读切换
-  document.querySelectorAll('.btn-read-toggle').forEach(btn => {
+  document.querySelectorAll('.btn-pill-read').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
       const id = btn.dataset.id;
@@ -399,8 +623,25 @@ function bindTimelineEvents() {
     };
   });
 
+  // 更多菜单下拉触发
+  document.querySelectorAll('.btn-pill-more').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const menu = document.getElementById(`menu-${id}`);
+      // 关闭其他已打开的菜单
+      document.querySelectorAll('.dropdown-menu-card.active').forEach(m => {
+        if (m !== menu) m.classList.remove('active');
+      });
+      if (menu) {
+        menu.classList.toggle('active');
+      }
+    };
+  });
+
   // 编辑单条
-  document.querySelectorAll('.btn-edit-item').forEach(btn => {
+  document.querySelectorAll('.btn-item-edit').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
       const id = btn.dataset.id;
@@ -412,7 +653,7 @@ function bindTimelineEvents() {
   });
 
   // 删除单条
-  document.querySelectorAll('.btn-delete-item').forEach(btn => {
+  document.querySelectorAll('.btn-item-delete').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
       const id = btn.dataset.id;
@@ -827,6 +1068,9 @@ async function confirmImportAndSave() {
     });
   } catch (_) {}
 
+  // 导入后自动将视图切换至当前归档日期
+  state.selectedDate = date;
+
   await persistData(`成功归档至 ${date}（新增 ${addedCount} 篇）`);
   closeImportModal();
   renderTimeline();
@@ -849,6 +1093,8 @@ function openItemEditModal(item = null, defaultDate = '') {
   document.getElementById('edit-item-publish-date').value = isEditing ? item.publishDate : new Date().toISOString().split('T')[0];
   document.getElementById('edit-item-engagement').value = isEditing ? item.engagement : '';
   document.getElementById('edit-item-url').value = isEditing ? item.url : '';
+  const discoveryEl = document.getElementById('edit-item-discovery-reason');
+  if (discoveryEl) discoveryEl.value = isEditing ? (item.discovery_reason || '') : '';
   document.getElementById('edit-item-summary').value = isEditing ? item.summary : '';
   document.getElementById('edit-item-reader-value').value = isEditing ? (item.reader_value || '') : '';
 
@@ -869,6 +1115,8 @@ function handleSaveItemEdit(e) {
   const publishDate = document.getElementById('edit-item-publish-date').value.trim() || '待确认';
   const engagement = document.getElementById('edit-item-engagement').value.trim() || '待确认';
   const url = document.getElementById('edit-item-url').value.trim();
+  const discoveryEl = document.getElementById('edit-item-discovery-reason');
+  const discovery_reason = discoveryEl ? (discoveryEl.value.trim() || null) : null;
   const summary = document.getElementById('edit-item-summary').value.trim() || '待确认';
   const reader_value = document.getElementById('edit-item-reader-value').value.trim();
 
@@ -887,6 +1135,7 @@ function handleSaveItemEdit(e) {
       item.publishDate = publishDate;
       item.engagement = engagement;
       item.url = url;
+      item.discovery_reason = discovery_reason;
       item.summary = summary;
       item.reader_value = reader_value;
     }
@@ -1223,6 +1472,13 @@ window.addEventListener('DOMContentLoaded', () => {
   initTheme();
   document.getElementById('btn-theme-toggle')?.addEventListener('click', toggleTheme);
 
-  // 9. 载入数据
+  // 9. 点击外部关闭卡片更多操作下拉菜单
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown-wrapper')) {
+      document.querySelectorAll('.dropdown-menu-card.active').forEach(m => m.classList.remove('active'));
+    }
+  });
+
+  // 10. 载入数据
   loadData();
 });

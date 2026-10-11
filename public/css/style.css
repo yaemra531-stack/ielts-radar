@@ -168,7 +168,7 @@ button, input, select, textarea {
   gap: 20px;
 }
 
-/* 品牌标识 */
+/* 品牌标识：雅思见闻 (IELTS Radar) */
 .sidebar-brand {
   display: flex;
   align-items: center;
@@ -177,8 +177,8 @@ button, input, select, textarea {
 }
 
 .brand-radar-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-sm);
   background-color: var(--accent);
   color: #ffffff;
@@ -188,11 +188,35 @@ button, input, select, textarea {
   flex-shrink: 0;
 }
 
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
 .brand-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-title);
   letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.brand-slogan-wrap {
+  padding: 0 8px;
+  margin-top: -8px;
+}
+
+.brand-slogan {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
 }
 
 /* 侧边导航选项卡 */
@@ -482,20 +506,40 @@ button, input, select, textarea {
   margin-bottom: 8px;
 }
 
-/* 第一行：日期 + 右上角导入按钮 */
+/* 第一行：标题 + 右上角导入按钮 */
 .th-top-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 16px;
 }
 
-.th-date-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+.recon-brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 主标题：26px */
+.th-main-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-title);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.th-subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.th-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-import {
@@ -505,23 +549,119 @@ button, input, select, textarea {
   font-weight: 500;
 }
 
-/* 主标题：28~32px */
-.th-main-title {
-  font-size: 30px;
+/* 轻量日期导航药丸栏 (精确对应设计稿: [ 10月11日 ] [ 10月10日 ] [ 🗓️ ]) */
+.date-navigation-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.date-nav-pill {
+  flex: 1;
+  min-width: 120px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  font-size: 14.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-title);
+  white-space: nowrap;
+}
+
+.date-nav-pill:hover {
+  border-color: var(--text-secondary);
+}
+
+.date-nav-pill.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .date-nav-pill.active {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #f3f4f6;
+}
+
+.date-picker-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.date-picker-icon-btn {
+  width: 48px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-title);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.date-picker-icon-btn:hover {
+  border-color: var(--text-secondary);
+  background: var(--bg-subtle);
+}
+
+.date-picker-native-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* 当前选中日期的状态栏 (精确对应设计稿: 10月11日 · 周日 | 已收录5篇 | 0 / 2 已读) */
+.active-date-status-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ads-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ads-date-text {
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-title);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
-/* 统计与进度：14px 辅助字 */
-.th-stats-row {
-  margin-bottom: 16px;
+.ads-count-text {
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
-.th-stats-text {
-  font-size: 14px;
+.ads-right {
+  display: flex;
+  align-items: center;
+}
+
+.ads-read-text {
+  font-size: 13.5px;
   color: var(--text-secondary);
 }
 
@@ -630,49 +770,82 @@ button, input, select, textarea {
 .reading-stream {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  padding: 16px 0 32px;
 }
 
 .article-item {
-  padding: 24px 0;
-  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: opacity var(--transition);
-}
-
-.article-item:last-child {
-  border-bottom: none;
+  transition: all var(--transition);
 }
 
 /* 已读状态微弱褪色，保持高易读性 */
 .article-item.is-read {
-  opacity: 0.72;
+  opacity: 0.85;
 }
 
 .article-item.is-read:hover {
   opacity: 1;
 }
 
-/* 第一层：辅助信息 (平台 · 日期 · 互动) 12~13px */
-.article-meta {
-  font-size: 12.5px;
+/* 顶部辅助信息 (平台 · 日期 与 互动数据) */
+.article-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.4;
-  margin-bottom: 1px;
 }
 
-/* 第二层：文章标题 17~18px 视觉重点 */
+.article-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.article-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.meta-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.meta-stat-pill .stat-icon {
+  stroke: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.meta-stat-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* 文章标题 18~19px 视觉重点 */
 .article-title {
-  font-size: 17.5px;
-  font-weight: 600;
+  font-size: 18.5px;
+  font-weight: 700;
   color: var(--text-title);
-  line-height: 1.42;
+  line-height: 1.4;
   letter-spacing: -0.01em;
+  margin: 12px 0 14px;
 }
 
 .article-title-link {
   color: inherit;
+  text-decoration: none;
   transition: color var(--transition);
 }
 
@@ -680,85 +853,254 @@ button, input, select, textarea {
   color: var(--accent);
 }
 
-/* 第三层：内容简介 14~15px 正文说明 */
-.article-summary {
+/* 折叠状态的 2~3 行纯净内容摘要 (严格不出现任何 ②理解 等编号) */
+.article-collapsed-summary {
   font-size: 14.5px;
-  line-height: 1.68;
+  line-height: 1.65;
   color: var(--text-body);
-  margin-top: 3px;
+  margin: 0 0 12px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* 第四层：读者价值 14~15px 蓝紫小标排版，无厚重彩色大底框 */
-.article-value {
+/* 展开时自动隐藏折叠摘要，避免重复渲染 */
+.article-item.is-expanded .article-collapsed-summary {
+  display: none;
+}
+
+/* 展开区域：三问与真实问题 */
+.article-details-expanded {
+  display: none;
+}
+
+.article-item.is-expanded .article-details-expanded {
+  display: block;
+}
+
+/* 三问通用标签与正文 */
+.analysis-section {
+  margin-bottom: 16px;
+}
+
+.analysis-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 5px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .section-label {
+  color: #60a5fa;
+}
+
+.section-body {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+.empty-note-text {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* 观众真实问题专用模块 (精致浅灰底色卡片) */
+.audience-section-card {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+[data-theme="dark"] .audience-section-card {
+  background: #1e293b;
+}
+
+.audience-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-title);
+  margin-bottom: 8px;
+}
+
+.audience-questions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
+}
+
+.audience-questions-list li {
   font-size: 14px;
   line-height: 1.6;
-  margin-top: 4px;
-}
-
-.article-value .value-label {
-  color: var(--accent);
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.article-value .value-text {
   color: var(--text-body);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
-/* 第五层：操作栏 (原文链接 + 阅读状态 + 快捷工具) */
-.article-actions {
+.question-bullet {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.meta-note-text {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* 卡片内部细分割线 */
+.article-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+  height: 0;
+}
+
+/* 底部操作栏 */
+.article-footer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 6px;
-  padding-top: 4px;
+  gap: 12px;
 }
 
-.link-original {
-  color: var(--accent);
-  font-size: 13.5px;
-  font-weight: 500;
+.btn-toggle-expand {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  transition: opacity var(--transition);
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-title);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color var(--transition);
 }
 
-.link-original:hover {
-  opacity: 0.85;
-  text-decoration: underline;
+.btn-toggle-expand:hover {
+  color: #2563eb;
 }
 
-.article-tools {
+.btn-toggle-expand .chevron {
+  font-size: 12px;
+  display: inline-block;
+  transition: transform var(--transition);
+}
+
+.footer-right {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.btn-read-toggle {
-  padding: 3px 10px;
-  font-size: 12px;
-  border-radius: var(--radius-sm);
-  background-color: transparent;
-  color: var(--text-secondary);
+/* 药丸操作按钮 */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-title);
+  background: var(--bg-surface);
   border: 1px solid var(--border);
+  border-radius: 9999px;
   cursor: pointer;
+  text-decoration: none;
   transition: all var(--transition);
+  line-height: 1.2;
 }
 
-.btn-read-toggle:hover {
-  background-color: var(--bg-subtle);
+.btn-pill:hover {
+  background: var(--bg-subtle);
+  border-color: #cbd5e1;
   color: var(--text-title);
 }
 
-.btn-read-toggle.is-read {
-  background-color: var(--success-subtle);
-  color: var(--success-text);
-  border-color: rgba(16, 185, 129, 0.25);
-  font-weight: 500;
+.btn-pill-read.is-read {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.btn-pill-read .read-dot {
+  font-size: 10px;
+}
+
+.btn-pill-read.is-read .read-dot {
+  color: var(--text-title);
+}
+
+.btn-pill-more {
+  padding: 6px 10px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+/* 下拉菜单 */
+.dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu-card {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  min-width: 104px;
+  z-index: 50;
+  padding: 4px;
+}
+
+.dropdown-menu-card.active {
+  display: block;
+}
+
+.dropdown-item-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-title);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.dropdown-item-btn:hover {
+  background: var(--bg-subtle);
+}
+
+.dropdown-item-btn.danger {
+  color: var(--danger, #ef4444);
+}
+
+.dropdown-item-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .btn-tool {
@@ -1519,6 +1861,7 @@ textarea.input-field {
     padding: 4px 10px;
     font-size: 12.5px;
     border-radius: var(--radius-xs);
+    white-space: nowrap;
   }
 
   .app-main {
