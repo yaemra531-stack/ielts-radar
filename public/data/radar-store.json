@@ -2,14 +2,14 @@
   "systemInfo": {
     "title": "雅思见闻 ｜ IELTS Radar",
     "createdAt": "2026-10-10T12:00:00.000Z",
-    "updatedAt": "2026-10-11T04:45:43.678Z",
+    "updatedAt": "2026-10-11T05:04:28.643Z",
     "version": "1.0.0"
   },
   "goalsAndThoughts": {
     "why": "我是一名正在备考雅思的 AI 内容创作者。\n我已经部署了两个 AI Agent：WorkBuddy 负责筛选小红书与抖音，Muse 负责筛选 YouTube、Reddit 与 X。\n系统的根本目的，是通过每天了解 10 篇雅思相关内容，逐渐认识这个领域正在发生什么，以及读者正在关注什么、需要什么。不是单纯收集爆款，也不是立即模仿创作。",
     "coreGoals": "【三大核心研究目标 V2.0】\n\n① 发现：最近有什么值得关注？\n- 最近 30 天，雅思领域出现了哪些受到关注的内容？通过社媒指标与互动筛选真实热点。\n\n② 理解：这些内容究竟在讲什么？\n- 作者讨论了什么问题？提供了什么观点、信息或方法？客观记录，还原真实语境。\n\n③ 价值：对读者有什么帮助？\n- 解决了读者什么问题？满足了什么需求？读者看完能获得什么？根据实际信息判断，不编造。\n\n根本目的：通过每天了解 10 篇，逐渐认识这个领域正在发生什么，以及读者正在关注什么、需要什么。",
     "strategyPrinciples": "1. 【每天10篇】每天了解10篇，是目前最重要的事情。克制总量，重在理解与认知积累。\n2. 【职责边界】Agent 负责发现、阅读和整理；网站负责展示、阅读、记录和归档；用户自己决定哪些内容值得深入研究。\n3. 【实事求是】不强制生成爆款分析、创作建议或复杂趋势报告；对读者的帮助代表可能提供的价值，没有足够信息就留空，绝不编造。\n4. 【严格去重】根据原文链接严格查重；无法确认的元数据标记「待确认」；旧数据完全向后兼容。",
-    "newThoughts": "- 确立「发现·理解·价值」三问导向后，阅读焦点从「看它怎么火的」彻底转变为「它真正解决了考生的什么问题」，认知杂音大幅降低。\n- 发现海外 Reddit 更聚焦评分标准与心态，小红书更聚焦速记法与题型，两条线正好互补。\n- 读者价值字段为后续内容创作提供了最坚实的问题清单（Problem-Solution Repository）。\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！",
+    "newThoughts": "- 确立「发现·理解·价值」三问导向后，阅读焦点从「看它怎么火的」彻底转变为「它真正解决了考生的什么问题」，认知杂音大幅降低。\n- 发现海外 Reddit 更聚焦评分标准与心态，小红书更聚焦速记法与题型，两条线正好互补。\n- 读者价值字段为后续内容创作提供了最坚实的问题清单（Problem-Solution Repository）。\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！",
     "history": [
       {
         "id": "init_goal_20261010",
@@ -105,6 +105,11 @@
         "id": "snapshot_1791680589038",
         "savedAt": "2026-10-11T01:03:09.038Z",
         "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791694825797",
+        "savedAt": "2026-10-11T05:00:25.797Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
       }
     ]
   },
@@ -137,6 +142,13 @@
         "reason": "围绕三大核心研究目标 V2.0，规范小红书5篇结构化字段与读者问题采集",
         "changeLog": "严格围绕三问（发现·理解·价值）筛选，新增读者价值与读者真实问题，统一输出规范化JSON",
         "promptContent": "# WorkBuddy｜雅思内容侦察员 V1.3（对话拟定版）\n\n> 注意：以下为我们在对话中拟定的 V1.3 提示词。请先与 WorkBuddy 实际运行时使用的完整提示词核对，只有一致时才将其标注为当日实际使用版本。\n\n## 一、任务目标\n\n请立即使用浏览器访问小红书，搜索并精选今天值得阅读的5篇雅思相关内容。\n\n执行日期：2026年10月11日。\n\n我的根本目的，是每天了解雅思领域正在发生什么、读者在关注什么，以及不同内容正在满足什么需求。\n\n不是为了立即模仿爆款，也不是为了直接生成自媒体选题。\n\n请始终围绕三大核心研究目标（三个核心问题）：\n\n1. **发现：最近有什么值得关注？**\n2. **理解：这些内容究竟在讲什么？**\n3. **价值：对读者有什么帮助？**\n\n## 二、搜索与筛选\n\n只搜索小红书，最终精选最多5篇。\n\n必须满足：\n\n1. 发布时间在2026年9月11日至10月11日之间。\n2. 点赞数或收藏数严格超过100。\n3. 与雅思 IELTS 高度相关。\n4. 能打开原始笔记，并核实内容、发布日期和用于筛选的互动指标。\n5. 尽量避免重复作者、重复主题，尤其避免重复收录历史内容。\n\n允许收录：\n- 雅思听力、阅读、写作、口语\n- 雅思备考经验、考生真实经历\n- 学习资源、工具推荐、AI辅助雅思\n- 考试技巧、常见困难、备考问题\n\n排除：\n- 只是在标题中提及雅思的泛英语内容\n- 普通英剧、娱乐、英语学习推荐，但没有明确雅思备考价值的内容\n- 无法确认发布时间或互动门槛的内容\n- 广告堆砌、与标题明显不符的内容\n\n不要强制平均分配内容类型。\n\n请优先排除昨天已经收录的以下三篇：\n- 雅思机考刷题网站从夯到拉\n- 雅思口语现场观察第1052期：8.5分现场\n- 二本，六级437，雅思8.0\n\n如果能访问 IELTS Radar 的历史数据，也请根据原始链接进一步去重。\n\n## 三、每篇究竟需要抓取什么？\n\n### A. 基础信息\n\n- 平台\n- 原始标题\n- 作者（可获得时）\n- 发布日期\n- 点赞数\n- 收藏数\n- 原始笔记直接链接\n\n所有数字必须使用真实数据。看不到的非必要数据填写 null，不能编造。\n\n### B. 内容理解（summary）\n\n用80～120字中文客观介绍：\n- 作者主要讨论什么问题？\n- 提供了什么信息、方法、观点或者真实经历？\n- 内容具体讲了什么？\n\n必须基于实际阅读的图文或视频内容。\n禁止仅根据标题猜测正文。\n不要使用“内容非常精彩”“值得所有考生收藏”之类空泛评价。\n\n### C. 读者价值（reader_value）\n\n用30～60字回答：\n**这篇内容对哪类读者有什么具体帮助？**\n\n例如：“帮助刚开始准备雅思机考的考生比较不同刷题网站，减少选择学习工具的时间成本。”\n请写具体的受众、问题和可能获得的帮助。\n读者价值是基于内容的合理判断，不代表已证明实际学习效果。\n禁止写空泛结论，如“对雅思考生很有帮助”。\n\n### D. 观众真实问题（可选）\n\n如果能正常查看评论区，可以记录最多3个有代表性的真实读者问题。\n没有看到或无法查看时，留空。\n不能将推测当作真实评论。\n\n## 四、统一输出 JSON\n\n请最终只返回合法 JSON，能够直接导入我的 IELTS Radar 网站。\n\n顶层字段：\n- report_date：当天日期，YYYY-MM-DD\n- agent：\"WorkBuddy\"\n- prompt_version：\"V1.3\"\n- items：本次筛选的内容数组\n\n每篇 item 严格包含以下字段：\n- platform：固定为\"小红书\"\n- title：字符串\n- author：字符串或 null\n- published_at：YYYY-MM-DD\n- likes：整数或 null\n- favorites：整数或 null\n- score：固定 null\n- url：完整原文链接\n- summary：80～120字\n- reader_value：30～60字\n- comments_checked：布尔值\n- audience_questions：字符串数组，最多3条\n\n确保字段类型正确，JSON可以正常解析。\n不要额外输出 HTML 报告、Markdown 表格、代码围栏或者分析文章。\n\n## 五、执行质量要求\n\n请先广泛寻找候选内容，再挑选符合要求的5篇。\n每篇都要核实后才能收录。\n如果符合条件的内容不足5篇，请返回实际找到的数量，不要为了凑数编造数据。\n遵守小红书的访问与数据使用规则，不绕过平台限制。\n\n## 六、特别注意\n\n不要增加：\n- 爆款原因分析\n- 自媒体创作建议\n- 内容质量评分\n- 趋势预测\n- 冗长的研究报告\n\n现在最重要的是让我能够每天真正了解5篇内容：\n\n**最近什么受到关注？内容具体讲了什么？对读者有什么帮助？**\n\n请立即开始执行。\n"
+      },
+      {
+        "version": "V1.2",
+        "createdAt": "2026-10-11T05:00:25.785Z",
+        "reason": "强化论点论据因果链校验",
+        "changeLog": "增加论证逻辑链规则：必须包含因果推导展开",
+        "promptContent": "你是一名雅思情报搜集助手 WorkBuddy（V1.2 增强版）...\n【新规则】严格筛选因果链推导范文。"
       }
     ],
     "muse": [
@@ -163,7 +175,7 @@
       "promptVersionMuse": null,
       "items": [
         {
-          "id": "item_20261011_0_wb_oyrdn",
+          "id": "item_20261011_wb_1",
           "agent": "WorkBuddy",
           "title": "耗时300h 首考雅思8.0（中国人，不卖课）",
           "author": "缠绕我脸上悲伤应该如何卸妆",
@@ -172,20 +184,20 @@
           "likes": 5466,
           "favorites": 6284,
           "engagement": "赞 5466 · 藏 6284",
-          "score": null,
-          "url": "https://www.xiaohongshu.com/explore/6aa969a20000000028034e71?xsec_token=ABpt-hYdLrMxfy2LsKYEuTCNjvwLpNiC7eJjW1YqJqkKk=&xsec_source=",
-          "discovery_reason": null,
+          "discovery_reason": "9月15日发布，收藏6284高于点赞5466，读者倾向存为方法清单；评论区追问所用老师，属近期偏实用的分科方法复盘。",
           "summary": "作者晒出首考8.0成绩（听8.0/读8.5/写7.5/口7.0）并复盘：双非一本、四级524，每天约5小时。听力靠王陆语料库挑错章节反复刷；阅读按看标题、辨题型、划关键词定位三步走，先做填空判断、后做乱序题，限时18–20分钟一篇。",
           "reader_value": "帮备考初期、想自学的考生拿到一份分科的听力与阅读方法和每天5小时的时间安排，减少自己摸索资料和节奏的成本。",
+          "score": null,
           "comments_checked": true,
           "audience_questions": [
             "可以推荐一下你用的老师吗？（原话：阔不阔以球球你的劳斯啊）",
             "从零开始学、打算12月考试，来得及吗？"
           ],
+          "url": "https://www.xiaohongshu.com/explore/6aa969a20000000028034e71?xsec_token=ABpt-hYdLrMxfy2LsKYEuTCNjvwLpNiC7eJjW1YqJqkKk=&xsec_source=",
           "isRead": false
         },
         {
-          "id": "item_20261011_1_wb_6uc3t",
+          "id": "item_20261011_wb_2",
           "agent": "WorkBuddy",
           "title": "每天2hAI暴力自学雅思速通7分完全指南",
           "author": "yan（ai自学雅思版）",
@@ -194,19 +206,19 @@
           "likes": 1084,
           "favorites": 1590,
           "engagement": "赞 1084 · 藏 1590",
-          "score": null,
-          "url": "https://www.xiaohongshu.com/explore/6ab36e25000000001500ffeb?xsec_token=ABLmRnRp0IWaCtceMyHyut1xlX625oQ4WPtlPhwlVLCIA=&xsec_source=",
-          "discovery_reason": null,
+          "discovery_reason": "9月23日发布，收藏1590高于点赞1084；评论区追问WorkBuddy能否同样自学，AI辅助自学正被具体讨论。",
           "summary": "作者用白板讲解自己两个月、每天2小时，借助AI（Claude Code、Codex）自学雅思从6分提到7.5分的规划。视频按时间轴分章节：第一步做什么、第一个月与第二个月各做什么、如何每天只学2小时快速提分，以及怎样用AI加速辅助学习。",
           "reader_value": "适合想用AI辅助自学、时间有限（每天约2小时）的考生，参考一份从6到7.5的两个月规划与AI使用方式。",
+          "score": null,
           "comments_checked": true,
           "audience_questions": [
             "WorkBuddy 可以用来这样自学雅思吗？（原话：workbuddy可以嘛）"
           ],
+          "url": "https://www.xiaohongshu.com/explore/6ab36e25000000001500ffeb?xsec_token=ABLmRnRp0IWaCtceMyHyut1xlX625oQ4WPtlPhwlVLCIA=&xsec_source=",
           "isRead": false
         },
         {
-          "id": "item_20261011_2_wb_i50gq",
+          "id": "item_20261011_wb_3",
           "agent": "WorkBuddy",
           "title": "雅思大作文8.5分范文：是否应该重理轻文",
           "author": "等她说yes",
@@ -215,20 +227,20 @@
           "likes": 1463,
           "favorites": 1116,
           "engagement": "赞 1463 · 藏 1116",
-          "score": null,
-          "url": "https://www.xiaohongshu.com/explore/6aa7648e000000001001d7f9?xsec_token=ABuEifCsX-0En_OsUz3hGl4Kg8o2hK4H3zJFrLvAJqsNw=&xsec_source=",
-          "discovery_reason": null,
+          "discovery_reason": "9月14日发布，赞藏均破千，评论有人问如何练出这种结构并追问范文出处，显示高分范文加结构拆解是写作备考的刚需内容。",
           "summary": "分享一篇8.5分雅思大作文范文（题目：政府是否应给理科投入更多教育资金），附439词英文全文与逐段中文翻译。正文给出结构思路：引言表明立场、让步段承认人文学科价值、反驳段强调理科对国家发展的直接作用、结论折中收束。",
           "reader_value": "适合备考写作的考生，对照8.5分范文与段落结构学习大作文如何立意、让步与反驳，并积累可套用的句式。",
+          "score": null,
           "comments_checked": true,
           "audience_questions": [
             "怎么锻炼这种（大作文）结构？先用中文想结构也想不到这么多。",
             "请问这篇范文的出处是哪里，是作文教材吗？"
           ],
+          "url": "https://www.xiaohongshu.com/explore/6aa7648e000000001001d7f9?xsec_token=ABuEifCsX-0En_OsUz3hGl4Kg8o2hK4H3zJFrLvAJqsNw=&xsec_source=",
           "isRead": false
         },
         {
-          "id": "item_20261011_3_wb_23fv8",
+          "id": "item_20261011_wb_4",
           "agent": "WorkBuddy",
           "title": "31岁大龄在职，靠雅思7.5重启人生的真实感受",
           "author": "早到的u",
@@ -237,20 +249,20 @@
           "likes": 500,
           "favorites": 745,
           "engagement": "赞 500 · 藏 745",
-          "score": null,
-          "url": "https://www.xiaohongshu.com/explore/6ac514ad000000001803a81c?xsec_token=ABGXH_-qy3-aQ2HAQJGaLUwmI7PfXH3xEJICLrZklzORE=&xsec_source=",
-          "discovery_reason": null,
+          "discovery_reason": "10月6日发布，收藏745高于点赞500，评论集中问是否自学、如何重启人生，反映在职大龄考生的真实处境与信息需求。",
           "summary": "一位31岁在职考生记录考出雅思7.5的全过程，写成5256字。她自述双非二本、工作不顺、家里催婚，想靠雅思出国找机会；文中给出资料清单（剑桥真题10–20、雅思王听力语料库、跟Simon学写作、雅思词汇真经），并复盘在职备考的弯路。",
           "reader_value": "给在职、大龄、想通过雅思出国的考生一份真实经历和资料清单，帮助判断在职备考的节奏与心态。",
+          "score": null,
           "comments_checked": true,
           "audience_questions": [
             "考过雅思后是怎样重启人生的？",
             "你是自学还是报班？我也要留学，想照着这个帖子准备。"
           ],
+          "url": "https://www.xiaohongshu.com/explore/6ac514ad000000001803a81c?xsec_token=ABGXH_-qy3-aQ2HAQJGaLUwmI7PfXH3xEJICLrZklzORE=&xsec_source=",
           "isRead": false
         },
         {
-          "id": "item_20261011_4_wb_r0vd4",
+          "id": "item_20261011_wb_5",
           "agent": "WorkBuddy",
           "title": "Simon雅思小作文模板合集",
           "author": "是茗桔吖.",
@@ -259,16 +271,16 @@
           "likes": 441,
           "favorites": 477,
           "engagement": "赞 441 · 藏 477",
-          "score": null,
-          "url": "https://www.xiaohongshu.com/explore/6ab28f85000000003403488f?xsec_token=AB7xMy5wxYOb1vMglruM6tPMGK4nqjB10NYxfSx_gmlrU=&xsec_source=",
-          "discovery_reason": null,
+          "discovery_reason": "9月22日发布，收藏477略高于点赞441，评论多求分享PDF并指正句式错误，是可复用的Task 1模板资源。",
           "summary": "整理Simon雅思小作文的速成模板，按图表类型分栏：柱状图、饼状图（后续还有更多类型），每类给出开头、主体、结尾的英文句式框架，并把变量、百分比等位置留成可替换的占位符，方便直接套用。",
           "reader_value": "帮助准备Task 1小作文的考生快速套用柱状图、饼状图的开头/主体/结尾句式，缩短自己组织模板的时间。",
+          "score": null,
           "comments_checked": true,
           "audience_questions": [
             "求分享这份模板的PDF。",
             "（指出）segments不是segment，is in contrast不能直接接句子，得用by contrast。"
           ],
+          "url": "https://www.xiaohongshu.com/explore/6ab28f85000000003403488f?xsec_token=AB7xMy5wxYOb1vMglruM6tPMGK4nqjB10NYxfSx_gmlrU=&xsec_source=",
           "isRead": false
         }
       ]
@@ -279,7 +291,7 @@
       "promptVersionMuse": "V1.0",
       "items": [
         {
-          "id": "item_1791680589019_0_fnx9b",
+          "id": "item_1791694825773_0_julih",
           "agent": "WorkBuddy",
           "title": "雅思听力8.5分：王陆语料库三遍精听法则与错词本提分逻辑",
           "platform": "小红书",
@@ -291,7 +303,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589020_1_jbjxh",
+          "id": "item_1791694825774_1_jsmg2",
           "agent": "WorkBuddy",
           "title": "前雅思考官实录：90%中国考生在口语Part 2踩坑的3个逻辑断层",
           "platform": "抖音",
@@ -303,7 +315,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589020_2_es84v",
+          "id": "item_1791694825774_2_h60ng",
           "agent": "WorkBuddy",
           "title": "大作文Band 7+必看：考官真正想要的主题句拓展深度（含对比范文）",
           "platform": "小红书",
@@ -315,7 +327,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589020_3_rzdvr",
+          "id": "item_1791694825774_3_t3m3k",
           "agent": "WorkBuddy",
           "title": "二战雅思7.5（自学45天）：上班族每天2小时的高效时间块分配",
           "platform": "小红书",
@@ -327,7 +339,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589020_4_sfv9w",
+          "id": "item_1791694825774_4_z1tlp",
           "agent": "WorkBuddy",
           "title": "雅思阅读平行阅读法精髓：如何在55分钟内稳拿38题？",
           "platform": "抖音",
@@ -339,7 +351,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589025_0_x0mi8",
+          "id": "item_1791694825778_0_itorj",
           "agent": "Muse",
           "title": "IELTS Speaking Band 9 Mock Test Breakdown: What Real Fluency Sounds Like",
           "platform": "YouTube",
@@ -351,7 +363,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589025_1_ps4r7",
+          "id": "item_1791694825778_1_a7800",
           "agent": "Muse",
           "title": "r/IELTS: Why your Task 2 essay gets stuck at 6.5 (The \"Over-complication\" trap explained by a tutor)",
           "platform": "Reddit",
@@ -363,7 +375,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589025_2_unsb5",
+          "id": "item_1791694825778_2_snocu",
           "agent": "Muse",
           "title": "Simon Corcoran on IELTS: 3 Golden Rules for Academic Writing Task 1 Data Selection",
           "platform": "X",
@@ -375,7 +387,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589025_3_31zgn",
+          "id": "item_1791694825778_3_4qfhu",
           "agent": "Muse",
           "title": "r/IELTS: Computer-delivered vs Paper-based in late 2026: My side-by-side experience and why I switched",
           "platform": "Reddit",
@@ -387,7 +399,7 @@
           "isRead": false
         },
         {
-          "id": "item_1791680589026_4_hi5mn",
+          "id": "item_1791694825779_4_jmrsz",
           "agent": "Muse",
           "title": "IELTS Listening Section 4: Academic Lectures Vocabulary & Note-taking Strategy",
           "platform": "YouTube",
