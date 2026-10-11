@@ -362,20 +362,27 @@ function renderTimeline() {
     readDisplay.textContent = `${filteredRead} / ${filteredItems.length} 已读`;
   }
 
-  // 更新每日认知进度条与达成反馈组件 (Daily 10 Progress)
-  const totalDayItems = activeRecord ? (activeRecord.items || []).length : 0;
+  // 更新右上角 1-10 刻度条状认知看板 (Daily 10 Segment Meter)
+  const totalDayItems = activeRecord ? (activeRecord.items || []).length : 10;
   const readDayItems = activeRecord ? (activeRecord.items || []).filter(i => i.isRead).length : 0;
-  const progressPct = totalDayItems > 0 ? Math.round((readDayItems / totalDayItems) * 100) : 0;
-  const remaining = totalDayItems - readDayItems;
-
-  const dpFill = document.getElementById('dp-progress-fill');
-  if (dpFill) {
-    dpFill.style.width = `${progressPct}%`;
-  }
+  const remaining = Math.max(0, totalDayItems - readDayItems);
 
   const dpStats = document.getElementById('dp-progress-stats');
   if (dpStats) {
-    dpStats.textContent = `${readDayItems} / ${totalDayItems} 篇 (${progressPct}%)`;
+    dpStats.textContent = `${readDayItems} / ${totalDayItems}`;
+  }
+
+  // 点亮 1 到 10 刻度块
+  const segBar = document.getElementById('dp-segment-bar');
+  if (segBar) {
+    const segs = segBar.querySelectorAll('.seg-item');
+    segs.forEach((seg, idx) => {
+      if (idx < readDayItems) {
+        seg.classList.add('active');
+      } else {
+        seg.classList.remove('active');
+      }
+    });
   }
 
   const dpRemaining = document.getElementById('dp-progress-remaining');
@@ -386,7 +393,7 @@ function renderTimeline() {
   } else {
     if (dpRemaining) {
       dpRemaining.style.display = 'inline';
-      dpRemaining.textContent = remaining > 0 ? `剩余 ${remaining} 篇待阅读` : '全部已读';
+      dpRemaining.textContent = remaining > 0 ? `剩余 ${remaining} 篇` : '已读完';
     }
     if (dpMilestone) dpMilestone.style.display = 'none';
   }

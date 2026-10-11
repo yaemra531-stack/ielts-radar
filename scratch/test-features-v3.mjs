@@ -77,17 +77,18 @@ await new Promise(r => setTimeout(r, 1000));
 console.log('--- 1. 验证进度组件展示 ---');
 const progressInfo = await evalInPage(`
   (() => {
-    const fill = document.getElementById('dp-progress-fill');
     const stats = document.getElementById('dp-progress-stats');
-    const milestone = document.getElementById('dp-milestone-banner');
+    const segBar = document.getElementById('dp-segment-bar');
+    const activeSegs = segBar ? segBar.querySelectorAll('.seg-item.active').length : 0;
+    const remaining = document.getElementById('dp-progress-remaining');
     return {
-      fillWidth: fill ? fill.style.width : null,
       statsText: stats ? stats.textContent : null,
-      milestoneDisplay: milestone ? milestone.style.display : null
+      activeSegments: activeSegs,
+      remainingText: remaining ? remaining.textContent : null
     };
   })()
 `);
-console.log('Progress Info:', progressInfo);
+console.log('Segment Meter Info:', progressInfo);
 
 console.log('--- 2. 截取带有每日认知进度条的首页视图 ---');
 const ss1 = await send('Page.captureScreenshot', { format: 'png' });

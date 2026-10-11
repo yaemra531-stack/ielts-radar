@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>雅思见闻 ｜ IELTS Radar</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+  <link rel="stylesheet" href="./css/style.css?v=1.5">
 </head>
 <body>
 
@@ -154,21 +155,31 @@
                 <p class="th-subtitle">发现 · 理解 · 价值</p>
               </div>
 
-              <!-- 右上角：极简环境式每日认知进度 (替代原来的厚重操作按钮) -->
-              <div class="th-cognitive-header-widget" id="daily-progress-widget">
-                <div class="th-cp-top">
-                  <div class="th-cp-label-wrap">
+              <!-- 右上角：极简 1-10 刻度条状认知看板 -->
+              <div class="th-cognitive-header-widget" id="daily-progress-widget" title="每日 10 篇认知进度">
+                <div class="th-meter-top">
+                  <div class="th-meter-label-wrap">
                     <span class="dp-dot"></span>
-                    <span class="th-cp-label">今日认知</span>
+                    <span class="th-meter-title">今日认知</span>
                   </div>
-                  <span class="th-cp-stats" id="dp-progress-stats">0 / 10 篇 (0%)</span>
+                  <span class="th-meter-stats" id="dp-progress-stats">0 / 10</span>
                 </div>
-                <div class="th-cp-track">
-                  <div class="th-cp-fill" id="dp-progress-fill" style="width: 0%;"></div>
+                <!-- 1 到 10 刻度条 -->
+                <div class="th-segments-bar" id="dp-segment-bar">
+                  <span class="seg-item" data-idx="1"></span>
+                  <span class="seg-item" data-idx="2"></span>
+                  <span class="seg-item" data-idx="3"></span>
+                  <span class="seg-item" data-idx="4"></span>
+                  <span class="seg-item" data-idx="5"></span>
+                  <span class="seg-item" data-idx="6"></span>
+                  <span class="seg-item" data-idx="7"></span>
+                  <span class="seg-item" data-idx="8"></span>
+                  <span class="seg-item" data-idx="9"></span>
+                  <span class="seg-item" data-idx="10"></span>
                 </div>
-                <div class="th-cp-sub-row">
-                  <span class="th-cp-remaining" id="dp-progress-remaining">剩余 10 篇待阅读</span>
-                  <span class="th-cp-milestone" id="dp-milestone-banner" style="display: none;">🎉 已达成！保持克制</span>
+                <div class="th-meter-footer">
+                  <span class="th-meter-hint" id="dp-progress-remaining">剩余 10 篇待阅读</span>
+                  <span class="th-meter-milestone" id="dp-milestone-banner" style="display: none;">🎉 今日达成！克制收官</span>
                 </div>
               </div>
             </div>
