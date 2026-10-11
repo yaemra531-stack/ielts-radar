@@ -98,6 +98,9 @@
               <span>导出数据 ▾</span>
             </button>
             <div class="dropdown-menu">
+              <button class="dropdown-item" id="btn-export-ai-dropdown">
+                <span>🤖</span> 一键导出 AI 选题讨论
+              </button>
               <button class="dropdown-item" id="btn-export-markdown">
                 <span>📄</span> 导出复盘 Markdown
               </button>
@@ -142,6 +145,12 @@
                 <p class="th-subtitle">发现 · 理解 · 价值</p>
               </div>
               <div class="th-top-actions">
+                <button class="btn btn-secondary btn-export-ai" id="btn-open-ai-export" title="一键导出今日 10 篇选题与创作研讨 Dossier (配合 AI 讨论)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  <span>🤖 导出 AI 讨论</span>
+                </button>
                 <button class="btn btn-primary btn-import" id="btn-open-import" title="导入日报">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/>
@@ -157,15 +166,33 @@
               <!-- 由 app.js 动态渲染日期胶囊按钮与日历按钮 -->
             </div>
 
-            <!-- 当前选中日期的状态与概览栏 (精确对应设计稿: 10月11日 · 周日 | 已收录5篇 | 0 / 2 已读) -->
+            <!-- 当前选中日期的状态与概览栏 (精确对应设计稿: 10月11日 · 周日 | 已收录10篇 | 0 / 10 已读) -->
             <div class="active-date-status-row" id="active-date-status-row">
               <div class="ads-left">
                 <span class="ads-date-text" id="active-date-display">10月11日 · 周日</span>
-                <span class="ads-count-text" id="active-date-count">已收录5篇</span>
+                <span class="ads-count-text" id="active-date-count">已收录10篇</span>
                 <div class="ads-coverage-pills" id="active-date-coverage"></div>
               </div>
               <div class="ads-right">
-                <span class="ads-read-text" id="active-date-read-status">0 / 5 已读</span>
+                <span class="ads-read-text" id="active-date-read-status">0 / 10 已读</span>
+              </div>
+            </div>
+
+            <!-- 每日认知进度条与达成反馈 -->
+            <div class="daily-progress-widget" id="daily-progress-widget">
+              <div class="dp-header-row">
+                <div class="dp-label-group">
+                  <span class="dp-dot"></span>
+                  <span class="dp-title">今日认知进度</span>
+                </div>
+                <span class="dp-stats" id="dp-progress-stats">0 / 10 篇 (0%) · 剩余 10 篇待阅读</span>
+              </div>
+              <div class="dp-track">
+                <div class="dp-fill" id="dp-progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="dp-milestone-banner" id="dp-milestone-banner" style="display: none;">
+                <span class="milestone-icon">🎉</span>
+                <span class="milestone-text">今日 10 篇认知已达成！保持克制，重在思考，明天继续。</span>
               </div>
             </div>
 
@@ -538,6 +565,36 @@
           <button type="submit" class="btn btn-primary">发布版本</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ================= 模态框 4：一键导出 AI 选题研讨 Dossier ================= -->
+  <div id="modal-ai-export" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 780px;">
+      <div class="modal-header">
+        <div>
+          <h3>🤖 今日 AI 选题与创作决策研讨</h3>
+          <p class="modal-subtitle">已自动汇总今日收录情报、三问研究、观众真实痛点与个人笔记，并附带针对 AI 的专业选题决策指令。</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-ai-export">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="ai-export-toolbar">
+          <span class="ai-export-tip">💡 点击右侧一键复制，直接粘贴给 ChatGPT、Claude 或 Gemini 开启研讨：</span>
+          <div class="ai-export-btn-group">
+            <button type="button" class="btn btn-primary btn-sm" id="btn-copy-ai-dossier">
+              <span id="btn-copy-ai-icon">📋</span> <span id="btn-copy-ai-text">一键复制全文</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-download-ai-dossier">
+              <span>📥 下载 Markdown</span>
+            </button>
+          </div>
+        </div>
+        <textarea id="ai-export-preview" class="ai-export-textarea" readonly></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-ai-export').classList.remove('active')">关闭</button>
+      </div>
     </div>
   </div>
 
