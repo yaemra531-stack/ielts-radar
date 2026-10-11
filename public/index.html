@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS Radar ｜ 我的 AI 雅思侦察日志</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <!-- ================= 移动端紧凑顶部导航 (<768px) ================= -->
+  <header class="mobile-top-bar">
+    <div class="mobile-brand">
+      <div class="brand-radar-icon-sm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="6"/>
+          <circle cx="12" cy="12" r="2"/>
+        </svg>
+      </div>
+      <span>IELTS Radar</span>
+    </div>
+    <div class="mobile-nav-tabs">
+      <button class="nav-tab active" data-tab="timeline">今日</button>
+      <button class="nav-tab" data-tab="prompts">提示词</button>
+      <button class="nav-tab" data-tab="goals">想法</button>
+    </div>
+  </header>
+
+  <!-- 全局应用容器 (左右布局) -->
+  <div class="app-layout">
+
+    <!-- ================= 桌面端左侧导航栏 (宽度 220px) ================= -->
+    <aside class="app-sidebar">
+      <div class="sidebar-top">
+        <!-- 品牌标识 -->
+        <div class="sidebar-brand">
+          <div class="brand-radar-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
+          <span class="brand-title">IELTS Radar</span>
+        </div>
+
+        <!-- 主导航（仅三大核心视图） -->
+        <nav class="sidebar-nav">
+          <button class="nav-tab active" data-tab="timeline">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>每日记录</span>
+          </button>
+
+          <button class="nav-tab" data-tab="prompts">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span>提示词版本</span>
+          </button>
+
+          <button class="nav-tab" data-tab="goals">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+            </svg>
+            <span>目标与想法</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- 侧边栏底部低频操作与轻量标语 -->
+      <div class="sidebar-footer">
+        <div class="sidebar-actions-row">
+          <!-- 导出菜单 (次级位置) -->
+          <div class="dropdown-wrap">
+            <button class="sidebar-action-btn" id="btn-export-dropdown" title="导出数据">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>导出数据 ▾</span>
+            </button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" id="btn-export-markdown">
+                <span>📄</span> 导出复盘 Markdown
+              </button>
+              <button class="dropdown-item" id="btn-export-json">
+                <span>📦</span> 导出备份 JSON
+              </button>
+            </div>
+          </div>
+
+          <!-- 主题切换 -->
+          <button class="sidebar-icon-btn" id="btn-theme-toggle" title="切换浅色/深色主题">
+            <span id="theme-icon">🌙</span>
+          </button>
+        </div>
+
+        <div class="sidebar-sync-row">
+          <span id="sync-indicator" class="status-badge online">
+            <span class="dot-live"></span> 已持久化
+          </span>
+        </div>
+
+        <!-- 底部轻量体现三核心研究目标 (安静克制) -->
+        <div class="sidebar-core-motto" title="三大核心研究目标 V2.0：① 发现 · ② 理解 · ③ 价值">
+          <span class="motto-text">发现 · 理解 · 价值</span>
+          <span class="visually-hidden">三大核心研究目标 V2.0 · ① 发现 · ② 理解 · ③ 价值</span>
+        </div>
+      </div>
+    </aside>
+
+
+
+    <!-- ================= 右侧主内容区域 ================= -->
+    <main class="app-main">
+      <div class="main-content-card">
+
+        <!-- ================= 视图 1：每日记录 (Timeline) - 最高优先级 ================= -->
+        <section id="view-timeline" class="view-section active">
+          <!-- 题头区域：日期、主标题、进度与右上角导入操作 -->
+          <div class="timeline-header-block">
+            <div class="th-top-row">
+              <span class="th-date-label" id="today-date-label">SATURDAY, OCT 10</span>
+              <button class="btn btn-primary btn-import" id="btn-open-import">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>导入日报</span>
+              </button>
+            </div>
+
+            <h1 class="th-main-title">今日侦察</h1>
+
+            <div class="th-stats-row">
+              <span class="th-stats-text" id="today-stats-text">10 篇内容 · 0 篇已读</span>
+            </div>
+
+            <!-- 顶部筛选切换：全部 10 | WorkBuddy 5 | Muse 5 + 极简搜索 -->
+            <div class="th-filter-toolbar">
+              <div class="agent-filter-tabs" id="agent-filter-tabs">
+                <button class="agent-tab-btn active" data-agent="all">
+                  全部 <span class="agent-count-pill" id="count-all">10</span>
+                </button>
+                <button class="agent-tab-btn" data-agent="WorkBuddy">
+                  WorkBuddy <span class="agent-count-pill" id="count-wb">5</span>
+                </button>
+                <button class="agent-tab-btn" data-agent="Muse">
+                  Muse <span class="agent-count-pill" id="count-muse">5</span>
+                </button>
+              </div>
+
+              <div class="th-search-actions">
+                <div class="search-input-wrap">
+                  <svg class="search-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" id="search-input" placeholder="搜索关键词..." class="minimal-search-input">
+                </div>
+
+                <select id="filter-read-status" class="minimal-select">
+                  <option value="all">状态：全部</option>
+                  <option value="unread">未读</option>
+                  <option value="read">已读</option>
+                </select>
+
+                <!-- 隐藏的兼容选项供 JS 筛选 -->
+                <select id="filter-platform" style="display:none;">
+                  <option value="all">全部平台</option>
+                </select>
+                <button id="btn-expand-all" style="display:none;">展开</button>
+                <button id="btn-collapse-all" style="display:none;">收起</button>
+              </div>
+            </div>
+
+            <!-- 细分割线 -->
+            <div class="th-divider"></div>
+          </div>
+
+          <!-- 纵向单列阅读流 -->
+          <div id="timeline-records" class="reading-stream">
+            <!-- 由 app.js 动态渲染单列流 -->
+          </div>
+        </section>
+
+
+        <!-- ================= 视图 2：提示词版本 (Prompts) - 轻量版本管理器 ================= -->
+        <section id="view-prompts" class="view-section">
+          <div id="prompts-container">
+            <!-- 由 app.js 动态渲染轻量版本管理器 -->
+          </div>
+        </section>
+
+
+        <!-- ================= 视图 3：目标与想法 (Goals & Thoughts) - 文档阅读优先 ================= -->
+        <section id="view-goals" class="view-section">
+          <!-- 默认状态：高品质排版阅读文档 -->
+          <div id="goals-doc-view" class="goals-doc-layout">
+            <div class="goals-doc-header">
+              <div>
+                <h1 class="goals-doc-title">我的目标、初衷与侦察心法</h1>
+                <p class="goals-doc-sub">以阅读为中心，通过每天了解 10 篇真实社媒内容积累对雅思领域的真实认知。</p>
+              </div>
+              <div class="goals-header-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-edit-goals-doc">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  <span>编辑文档</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 文档主体段落 -->
+            <article class="goals-doc-article">
+              <!-- 初衷 -->
+              <div class="doc-block">
+                <h3 class="doc-block-title">🌟 建立系统的初衷</h3>
+                <div class="doc-prose" id="doc-display-why"></div>
+              </div>
+
+              <!-- 长期指导原则 · 三个核心研究目标 V2.0 -->
+              <div class="doc-block">
+                <h3 class="doc-block-title">📌 长期指导原则 · 三个核心研究目标 V2.0</h3>
+                <p class="doc-prose-sub">根本目的：通过每天了解 10 篇雅思内容，逐渐认识这个领域正在发生什么，以及读者正在关注什么、需要什么（非收集爆款，非立即模仿创作）。</p>
+                <div class="gfc-grid-minimal">
+                  <div class="gfc-item">
+                    <div class="gfc-step-num">① 发现</div>
+                    <div class="gfc-step-q">最近有什么受到关注？</div>
+                    <div class="gfc-step-desc">最近 30 天，雅思领域出现了哪些受到关注的内容？通过社媒指标筛选真实讨论。</div>
+                  </div>
+                  <div class="gfc-item">
+                    <div class="gfc-step-num">② 理解</div>
+                    <div class="gfc-step-q">这些内容究竟在讲什么？</div>
+                    <div class="gfc-step-desc">作者讨论了什么问题？提供了什么观点、信息或方法？客观呈现真实语境。</div>
+                  </div>
+                  <div class="gfc-item">
+                    <div class="gfc-step-num">③ 价值</div>
+                    <div class="gfc-step-q">对读者有什么帮助？</div>
+                    <div class="gfc-step-desc">解决了读者什么问题？满足了什么需求？读者看完能获得什么？根据实际信息判断，不编造。</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 执行原则 -->
+              <div class="doc-block">
+                <h3 class="doc-block-title">🧭 侦察策略与执行原则</h3>
+                <div class="doc-prose" id="doc-display-strategy"></div>
+              </div>
+
+              <!-- 新想法与观察 -->
+              <div class="doc-block">
+                <h3 class="doc-block-title">💡 过程中产生的新想法与观察</h3>
+                <div class="doc-prose" id="doc-display-thoughts"></div>
+              </div>
+            </article>
+
+            <!-- 折叠的历史认知快照区域 (不默认占据主页面宽度) -->
+            <details class="goals-history-collapse" id="goals-history-collapse">
+              <summary class="goals-history-summary">
+                <span class="gh-summary-title">📜 认知演化历史快照</span>
+                <span class="gh-summary-hint" id="gh-summary-count">查看以往保存记录 ▾</span>
+              </summary>
+              <div class="goals-history-drawer-content" id="goals-history-list">
+                <!-- 动态渲染历史快照 -->
+              </div>
+            </details>
+          </div>
+
+          <!-- 编辑状态：表单编辑界面 (点击编辑文档后切换显示) -->
+          <div id="goals-edit-view" class="goals-edit-layout" style="display:none;">
+            <div class="goals-edit-header">
+              <div>
+                <h2>编辑目标与想法</h2>
+                <p class="goals-doc-sub">保存后将自动归档一份历史认知快照。</p>
+              </div>
+              <div class="goals-header-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-cancel-edit-goals">取消</button>
+                <button class="btn btn-primary btn-sm" id="btn-save-goals">保存修改</button>
+              </div>
+            </div>
+
+            <div class="goals-form-fields">
+              <div class="form-group">
+                <label for="goal-input-why">🌟 我为什么建立这套系统</label>
+                <textarea id="goal-input-why" class="input-field" rows="4"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-input-core">🎯 核心研究目标设定与执行进展</label>
+                <textarea id="goal-input-core" class="input-field" rows="4"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-input-strategy">🧭 侦察策略与执行原则</label>
+                <textarea id="goal-input-strategy" class="input-field" rows="4"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-input-thoughts">💡 过程中产生的新想法与观察</label>
+                <textarea id="goal-input-thoughts" class="input-field" rows="5"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+
+  <!-- ================= 模态框 1：导入日报 (Import Modal) ================= -->
+  <div id="modal-import" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>导入 AI Agent 雅思侦察日报</h3>
+        <button class="btn-close-modal" id="btn-close-import">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 步骤 1：录入与配置 -->
+        <div id="import-step1">
+          <div class="preview-form-grid" style="margin-bottom: 14px;">
+            <div class="form-group">
+              <label>来源 Agent</label>
+              <select id="import-agent-select" class="input-field">
+                <option value="auto">自动识别来源</option>
+                <option value="WorkBuddy">WorkBuddy (小红书 / 抖音)</option>
+                <option value="Muse">Muse (YouTube / Reddit / X)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>归档日期</label>
+              <input type="date" id="import-date-input" class="input-field">
+            </div>
+          </div>
+
+          <!-- 快速测试样例导入栏 -->
+          <div class="sample-bar">
+            <span>快速测试：</span>
+            <button type="button" class="sample-link-btn" id="btn-load-wb-sample">载入 WorkBuddy 样例 (5篇)</button>
+            <button type="button" class="sample-link-btn" id="btn-load-muse-sample">载入 Muse 样例 (5篇)</button>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label>粘贴原始文本 或 上传文件 (Markdown / TXT / JSON)</label>
+              <div class="file-upload-wrap">
+                <label for="import-file-upload" class="sample-link-btn" style="cursor:pointer;">上传文件...</label>
+                <input type="file" id="import-file-upload" style="display:none;" accept=".md,.txt,.json">
+              </div>
+            </div>
+            <textarea id="import-raw-input" class="input-field" rows="8" placeholder="在此粘贴 WorkBuddy 或 Muse 输出的原始侦察内容..."></textarea>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; margin-top: 12px;">
+            <button type="button" class="btn btn-primary" id="btn-parse-import">
+              解析并预览
+            </button>
+          </div>
+        </div>
+
+        <!-- 步骤 2：结构化解析预览与编辑修改 -->
+        <div id="import-preview-section" class="import-preview-section" style="display:none;">
+          <div class="preview-status-header">
+            <div class="preview-meta-tags">
+              <span>识别 Agent：<strong id="preview-meta-agent">WorkBuddy</strong></span>
+              <span>归档日期：<strong id="preview-meta-date">2026-10-10</strong></span>
+              <span>条目总数：<strong id="preview-meta-count">5 篇</strong></span>
+            </div>
+
+            <div class="preview-prompt-assoc">
+              <label>关联提示词版本：</label>
+              <select id="preview-prompt-version" class="input-field input-sm"></select>
+            </div>
+          </div>
+
+          <div id="import-preview-list" class="preview-cards-list">
+            <!-- 动态渲染可编辑卡片 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('modal-import').classList.remove('active')">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-import">确认归档保存</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= 模态框 2：手动添加/修改单篇条目 ================= -->
+  <div id="modal-edit-item" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="edit-modal-title">编辑侦察记录</h3>
+        <button class="btn-close-modal" id="btn-close-edit-item">✕</button>
+      </div>
+      <form id="form-edit-item">
+        <div class="modal-body">
+          <input type="hidden" id="edit-item-id">
+          <div class="preview-form-grid">
+            <div class="form-group">
+              <label>归档日期</label>
+              <input type="date" id="edit-item-date" class="input-field" required>
+            </div>
+            <div class="form-group">
+              <label>归属 Agent</label>
+              <select id="edit-item-agent" class="input-field">
+                <option value="WorkBuddy">WorkBuddy (小红书/抖音)</option>
+                <option value="Muse">Muse (YouTube/Reddit/X)</option>
+              </select>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>文章标题</label>
+              <input type="text" id="edit-item-title" class="input-field" required>
+            </div>
+
+            <div class="form-group">
+              <label>发布平台</label>
+              <input type="text" id="edit-item-platform" class="input-field" placeholder="小红书 / 抖音 / YouTube 等">
+            </div>
+
+            <div class="form-group">
+              <label>发布日期</label>
+              <input type="text" id="edit-item-publish-date" class="input-field" placeholder="YYYY-MM-DD">
+            </div>
+
+            <div class="form-group">
+              <label>互动数据 (赞/藏/评)</label>
+              <input type="text" id="edit-item-engagement" class="input-field" placeholder="如：赞 1840 · 藏 2300">
+            </div>
+
+            <div class="form-group">
+              <label>原文链接</label>
+              <input type="url" id="edit-item-url" class="input-field" placeholder="https://...">
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>内容简介 (作者讲了什么)</label>
+              <textarea id="edit-item-summary" class="input-field" rows="3" placeholder="作者讨论了什么问题？提供了什么观点、信息或方法？"></textarea>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>读者价值 (对读者有什么帮助)</label>
+              <input type="text" id="edit-item-reader-value" class="input-field" placeholder="简要说明对读者可能有什么帮助，无信息请留空">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-edit-item').classList.remove('active')">取消</button>
+          <button type="submit" class="btn btn-primary">保存修改</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ================= 模态框 3：发布提示词新版本 ================= -->
+  <div id="modal-create-prompt" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3>发布新版本提示词 (<span id="prompt-modal-agent">WorkBuddy</span>)</h3>
+        <button class="btn-close-modal" id="btn-close-prompt-modal">✕</button>
+      </div>
+      <form id="form-create-prompt">
+        <div class="modal-body">
+          <div class="preview-form-grid">
+            <div class="form-group">
+              <label>新版本号</label>
+              <input type="text" id="new-prompt-version" class="input-field" placeholder="例如 V1.4" required>
+            </div>
+            <div class="form-group">
+              <label>本次更新原因</label>
+              <input type="text" id="new-prompt-reason" class="input-field" placeholder="例如：提高干货提炼纯度" required>
+            </div>
+            <div class="form-group col-span-2">
+              <label>主要规则变化</label>
+              <input type="text" id="new-prompt-changelog" class="input-field" placeholder="说明具体增删规则">
+            </div>
+            <div class="form-group col-span-2">
+              <label>完整提示词内容</label>
+              <textarea id="new-prompt-content" class="input-field" rows="10" required></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-create-prompt').classList.remove('active')">取消</button>
+          <button type="submit" class="btn btn-primary">发布版本</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 全局 Toast 容器 -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- 引入模块化 JS -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

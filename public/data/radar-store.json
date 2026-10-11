@@ -1,0 +1,256 @@
+{
+  "systemInfo": {
+    "title": "IELTS Radar｜我的 AI 雅思侦察日志",
+    "createdAt": "2026-10-10T12:00:00.000Z",
+    "updatedAt": "2026-10-10T14:34:21.461Z",
+    "version": "1.0.0"
+  },
+  "goalsAndThoughts": {
+    "why": "我是一名正在备考雅思的 AI 内容创作者。\n我已经部署了两个 AI Agent：WorkBuddy 负责筛选小红书与抖音，Muse 负责筛选 YouTube、Reddit 与 X。\n系统的根本目的，是通过每天了解 10 篇雅思相关内容，逐渐认识这个领域正在发生什么，以及读者正在关注什么、需要什么。不是单纯收集爆款，也不是立即模仿创作。",
+    "coreGoals": "【三大核心研究目标 V2.0】\n\n① 发现：最近有什么值得关注？\n- 最近 30 天，雅思领域出现了哪些受到关注的内容？通过社媒指标与互动筛选真实热点。\n\n② 理解：这些内容究竟在讲什么？\n- 作者讨论了什么问题？提供了什么观点、信息或方法？客观记录，还原真实语境。\n\n③ 价值：对读者有什么帮助？\n- 解决了读者什么问题？满足了什么需求？读者看完能获得什么？根据实际信息判断，不编造。\n\n根本目的：通过每天了解 10 篇，逐渐认识这个领域正在发生什么，以及读者正在关注什么、需要什么。",
+    "strategyPrinciples": "1. 【每天10篇】每天了解10篇，是目前最重要的事情。克制总量，重在理解与认知积累。\n2. 【职责边界】Agent 负责发现、阅读和整理；网站负责展示、阅读、记录和归档；用户自己决定哪些内容值得深入研究。\n3. 【实事求是】不强制生成爆款分析、创作建议或复杂趋势报告；对读者的帮助代表可能提供的价值，没有足够信息就留空，绝不编造。\n4. 【严格去重】根据原文链接严格查重；无法确认的元数据标记「待确认」；旧数据完全向后兼容。",
+    "newThoughts": "- 确立「发现·理解·价值」三问导向后，阅读焦点从「看它怎么火的」彻底转变为「它真正解决了考生的什么问题」，认知杂音大幅降低。\n- 发现海外 Reddit 更聚焦评分标准与心态，小红书更聚焦速记法与题型，两条线正好互补。\n- 读者价值字段为后续内容创作提供了最坚实的问题清单（Problem-Solution Repository）。\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！\n- 【测试观察】今天读完了10篇，发现口语Part 2的PEEL结构与写作Task 2的主题句拓展高度同构！",
+    "history": [
+      {
+        "id": "init_goal_20261010",
+        "savedAt": "2026-10-10T12:00:00.000Z",
+        "summary": "初始化系统初衷、核心目标、四大执行原则与首期观察"
+      },
+      {
+        "id": "snapshot_1791639446984",
+        "savedAt": "2026-10-10T13:37:26.984Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791639506613",
+        "savedAt": "2026-10-10T13:38:26.613Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791639577351",
+        "savedAt": "2026-10-10T13:39:37.351Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "goals_v2_1791640305600",
+        "savedAt": "2026-10-10T13:51:45.600Z",
+        "summary": "确立三大核心研究目标 V2.0（①发现 · ②理解 · ③价值）为长期指导原则"
+      },
+      {
+        "id": "snapshot_1791640413021",
+        "savedAt": "2026-10-10T13:53:33.021Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791640997529",
+        "savedAt": "2026-10-10T14:03:17.529Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791641167043",
+        "savedAt": "2026-10-10T14:06:07.043Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791641345871",
+        "savedAt": "2026-10-10T14:09:05.871Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791642205950",
+        "savedAt": "2026-10-10T14:23:25.950Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      },
+      {
+        "id": "snapshot_1791642861459",
+        "savedAt": "2026-10-10T14:34:21.459Z",
+        "summary": "测试观察：口语与写作结构同构性认知沉淀"
+      }
+    ]
+  },
+  "promptRegistry": {
+    "workbuddy": [
+      {
+        "version": "V1.0",
+        "createdAt": "2026-10-01T09:00:00.000Z",
+        "reason": "初始版本：基础筛选规则建立",
+        "changeLog": "建立每日小红书与抖音各筛选雅思相关内容规则，要求30天内且点赞收藏>100。",
+        "promptContent": "你是一名雅思情报搜集助手 WorkBuddy。\n请在【小红书】和【抖音】筛选 5 篇雅思相关内容：\n1. 发布时间在最近 30 天内；\n2. 互动指标（点赞+收藏）超过 100；\n3. 必须与雅思备考高度相关；\n4. 提供标题、平台、发布日期、互动数据、简短介绍和原文链接；\n5. 输出格式清晰排版。"
+      },
+      {
+        "version": "V1.1",
+        "createdAt": "2026-10-08T10:30:00.000Z",
+        "reason": "排除机构营销广告与纯打卡无营养内容，提升干货密度",
+        "changeLog": "增加负向过滤规则：剔除纯卖课营销号、打卡接龙帖；要求简短介绍提炼真实痛点；固定Markdown输出模板。",
+        "promptContent": "你是一名雅思情报搜集助手 WorkBuddy（V1.1 精英版）。\n请在【小红书】和【抖音】精选 5 篇高质量雅思备考内容：\n1. 发布时间在最近 30 天内；\n2. 点赞或收藏互动指标超过 100；\n3. 高度相关且干货满满：优先真实高分考生经验复盘、考场真实避坑指南、具体题型拆解；\n4. 严格过滤：剔除纯机构课程广告、无实质内容的打卡接龙、纯搬运合集；\n5. 每篇必须结构化输出：\n   - 标题\n   - 平台（小红书 / 抖音）\n   - 发布日期（YYYY-MM-DD）\n   - 互动数据（赞/藏具体数值）\n   - 核心亮点与痛点介绍（80字以内）\n   - 原文链接\n6. 保持格式纯粹，便于系统解析。"
+      },
+      {
+        "version": "V1.2",
+        "createdAt": "2026-10-10T13:37:26.976Z",
+        "reason": "强化论点论据因果链校验",
+        "changeLog": "增加论证逻辑链规则：必须包含因果推导展开",
+        "promptContent": "你是一名雅思情报搜集助手 WorkBuddy（V1.2 增强版）...\n【新规则】严格筛选因果链推导范文。"
+      },
+      {
+        "version": "V1.3",
+        "createdAt": "2026-10-10T13:51:45.601Z",
+        "reason": "确立三大核心研究目标 V2.0，要求在输出中客观总结内容并提炼读者价值",
+        "changeLog": "围绕「①发现·②理解·③价值」组织输出，增加「读者价值」字段（若无足够信息则留空，不编造），强化痛点针对性",
+        "promptContent": "你是一名雅思情报侦察助手 WorkBuddy（V1.3 三问核心导向版）。\n请在【小红书】和【抖音】精选 5 篇高质量雅思备考内容，围绕三大核心研究目标进行梳理：\n\n【核心研究目标】\n① 发现：最近30天有什么值得关注？（发布时间在30天内，点赞或收藏互动>100，雅思备考高相关）\n② 理解：这些内容究竟在讲什么？（作者讨论了什么问题？提供了什么观点、信息或方法？客观总结，不吹捧）\n③ 价值：对读者有什么帮助？（解决了读者什么问题？满足了什么需求？读者看完能获得什么？根据实际信息判断，无足够信息则留空，绝不编造）\n\n【输出格式要求（每篇结构化输出）】\n- 标题\n- 平台（小红书 / 抖音）\n- 发布日期（YYYY-MM-DD）\n- 互动数据（赞/藏具体数值）\n- 简介（80-120字客观内容简介：讨论了什么问题、提供了什么方法）\n- 读者价值（一句话简明说明可能带给读者的启发或解决的痛点，若信息不明确则留空）\n- 链接（原文完整直达链接）\n\n【过滤红线】\n严格剔除纯卖课营销广告、无实质经验的打卡接龙帖、纯生僻词无逻辑堆砌。"
+      },
+      {
+        "version": "V1.2",
+        "createdAt": "2026-10-10T14:34:21.447Z",
+        "reason": "强化论点论据因果链校验",
+        "changeLog": "增加论证逻辑链规则：必须包含因果推导展开",
+        "promptContent": "你是一名雅思情报搜集助手 WorkBuddy（V1.2 增强版）...\n【新规则】严格筛选因果链推导范文。"
+      }
+    ],
+    "muse": [
+      {
+        "version": "V1.0",
+        "createdAt": "2026-10-01T09:00:00.000Z",
+        "reason": "初始版本：设定 YouTube、Reddit、X 雅思内容筛选规则",
+        "changeLog": "建立海外平台雅思情报收集，限制30天内发布、Upvotes/Likes > 100，输出中文简述与直接链接。",
+        "promptContent": "You are Muse, an IELTS radar agent.\nSearch YouTube, Reddit (e.g. r/IELTS), and X for 5 insightful IELTS discussions or videos:\n1. Published within the last 30 days;\n2. Engagement metric (Likes / Upvotes / Retweets) > 100;\n3. Highly relevant to IELTS preparation, examiner criteria, or candidate pain points;\n4. For each item provide: Title, Platform, Date, Engagement stats, Brief summary (in Chinese), and Direct URL;\n5. Return concise, structured markdown."
+      },
+      {
+        "version": "V1.1",
+        "createdAt": "2026-10-10T13:51:45.601Z",
+        "reason": "融入三大核心研究目标 V2.0，增加读者价值（Reader Value）提炼",
+        "changeLog": "要求在输出中增加「读者价值」字段，明确指出内容可能提供的实际备考帮助，信息不明显则如实留空",
+        "promptContent": "You are Muse, an IELTS radar intelligence agent (V1.1 Three Core Research Questions Edition).\nSearch YouTube, Reddit (r/IELTS), and X for 5 insightful IELTS discussions or videos published within the last 30 days with engagement > 100.\n\nFocus on the Three Core Research Questions:\n1. Discover: What has gained traction in the IELTS community recently?\n2. Understand: What problem is being discussed? What perspective, advice, or technique is provided?\n3. Value: How does this help test takers? (What practical takeaway, mindset shift, or solution is offered? If unclear, leave blank. Do NOT fabricate).\n\nFor each item provide:\n- Title\n- Platform (YouTube / Reddit / X)\n- Date (YYYY-MM-DD)\n- Engagement stats (Likes / Upvotes / Retweets)\n- Summary (Concise overview of what the author discusses and proposes)\n- Reader Value (In Chinese, a single clear sentence on the practical value for learners; leave blank if insufficient information)\n- Direct URL"
+      }
+    ]
+  },
+  "dailyRecords": [
+    {
+      "date": "2026-10-10",
+      "promptVersionWorkBuddy": "V1.1",
+      "promptVersionMuse": "V1.0",
+      "items": [
+        {
+          "id": "item_1791642861432_0_hi8nh",
+          "agent": "WorkBuddy",
+          "title": "雅思听力8.5分：王陆语料库三遍精听法则与错词本提分逻辑",
+          "platform": "小红书",
+          "publishDate": "2026-10-06",
+          "engagement": "赞 1842 · 藏 2310",
+          "summary": "作者分享如何用语料库进行S3/S4语速适应，重点强调听写后对连读和吞音的分类标注，适合卡在6.5分瓶颈的备考者建立自动化听觉反应。",
+          "reader_value": "提供了听写连读与吞音的具体标注符号表，帮考生解决听懂单音节却抓不住句意连贯的瞬时遗忘痛点。",
+          "url": "https://www.xiaohongshu.com/discovery/item/66f81a2b000000001f01abc1",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861432_1_ff589",
+          "agent": "WorkBuddy",
+          "title": "前雅思考官实录：90%中国考生在口语Part 2踩坑的3个逻辑断层",
+          "platform": "抖音",
+          "publishDate": "2026-10-04",
+          "engagement": "赞 3520 · 藏 1420",
+          "summary": "考官视角拆解常见模板硬套问题，示范如何用PEEL结构（观点-解释-例子-关联）自然衔接，避免背诵痕迹导致Fluency扣分。",
+          "reader_value": "给出PEEL回答框架与自然语气过渡句，帮考生摆脱机械背诵感，降低考官因流利度不自然而给口语压分的风险。",
+          "url": "https://www.douyin.com/video/7421890321849123841",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861432_2_kxj85",
+          "agent": "WorkBuddy",
+          "title": "大作文Band 7+必看：考官真正想要的主题句拓展深度（含对比范文）",
+          "platform": "小红书",
+          "publishDate": "2026-10-07",
+          "engagement": "赞 980 · 藏 1560",
+          "summary": "针对科技类与教育类题目，分析TR（任务完成度）为何总停留在6分；给出因果链推导的3步进阶句式，拒绝假大空套话。",
+          "reader_value": "示范了TR因果逻辑链深度展开的3步句式，帮卡在写作6分的考生建立论证闭环，避免结论突兀跳跃。",
+          "url": "https://www.xiaohongshu.com/discovery/item/66f942bc000000002002def2",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861432_3_0y8bf",
+          "agent": "WorkBuddy",
+          "title": "二战雅思7.5（自学45天）：上班族每天2小时的高效时间块分配",
+          "platform": "小红书",
+          "publishDate": "2026-10-08",
+          "engagement": "赞 620 · 藏 890",
+          "summary": "在职考生的真实日程表：早晨半小时背核心学术词汇与搭配，晚上1.5小时模考与逐题复盘，强调复盘时间必须大于做题时间。",
+          "reader_value": "提供了在职备考的精力分配节奏与错题复盘比率，帮时间紧张的考生解决碎片化低效刷题的焦虑。",
+          "url": "https://www.xiaohongshu.com/discovery/item/66fa78dc000000002103ef45",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861432_4_fb0gt",
+          "agent": "WorkBuddy",
+          "title": "雅思阅读平行阅读法精髓：如何在55分钟内稳拿38题？",
+          "platform": "抖音",
+          "publishDate": "2026-10-05",
+          "engagement": "赞 2100 · 藏 1890",
+          "summary": "主讲定位词与同义替换预判，拆解Heading题与配对题同步解题顺序，减少反复翻看文章的无效耗时。",
+          "reader_value": "梳理了乱序配对题与顺序填空题的并行做题标记法，帮阅读超时考生节省至少5分钟反复回读文章的时间。",
+          "url": "https://www.douyin.com/video/7422987412301982734",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861438_0_cu3ia",
+          "agent": "Muse",
+          "title": "IELTS Speaking Band 9 Mock Test Breakdown: What Real Fluency Sounds Like",
+          "platform": "YouTube",
+          "publishDate": "2026-10-03",
+          "engagement": "Likes 4,820 · Comments 512",
+          "summary": "前资深雅思考官逐句点评一位母语非英语考生的口语实测，重点解析自然停顿与语气词的正确使用方式，强调自然交流感远胜于生硬背诵偏门难词。",
+          "reader_value": "明确了考官对口语自然停顿的容忍界限，帮考生掌握如何用自然语气词化解紧张，避免因死记偏门难词而导致Fluency扣分。",
+          "url": "https://www.youtube.com/watch?v=v8Xk91pL8zq",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861438_1_cnsbi",
+          "agent": "Muse",
+          "title": "r/IELTS: Why your Task 2 essay gets stuck at 6.5 (The \"Over-complication\" trap explained by a tutor)",
+          "platform": "Reddit",
+          "publishDate": "2026-10-07",
+          "engagement": "Upvotes 385 · Comments 89",
+          "summary": "资深雅思导师指出多数6.5分考生的致命通病：过度堆砌生僻词汇导致语法失真、论点模糊。强调清晰论证逻辑（Clarity & Cohesion）永远优先于繁复难词。",
+          "reader_value": "破除了考生盲目堆砌GRE生僻难词的误区，指出卡在6.5分的根源在论证连贯性，为写作复习确立了清晰的逻辑优先级。",
+          "url": "https://www.reddit.com/r/IELTS/comments/1fv892a/why_your_task_2_essay_gets_stuck_at_65/",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861438_2_5w9r4",
+          "agent": "Muse",
+          "title": "Simon Corcoran on IELTS: 3 Golden Rules for Academic Writing Task 1 Data Selection",
+          "platform": "X",
+          "publishDate": "2026-10-08",
+          "engagement": "Likes 740 · Retweets 195",
+          "summary": "雅思写作名师 Simon 分享小作文图表数据挑选秘诀：切忌罗列每一个数字，必须抓住最高点、最低点和关键趋势交叉点做对比概括。",
+          "reader_value": "提供了小作文数据取舍的3条黄金准则，帮考生摆脱机械罗列冗杂数据的低分陷阱，提升概括与对比能力。",
+          "url": "https://x.com/ielts_simon/status/1843621983021982734",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861438_3_b4gsm",
+          "agent": "Muse",
+          "title": "r/IELTS: Computer-delivered vs Paper-based in late 2026: My side-by-side experience and why I switched",
+          "platform": "Reddit",
+          "publishDate": "2026-10-05",
+          "engagement": "Upvotes 240 · Comments 64",
+          "summary": "考生对比机考与纸笔考试的真实体验：机考写作支持复制剪切能节省至少8分钟构思修正时间，但需注意屏幕阅读眼部疲劳，建议盲打速度>40wpm的考生果断选机考。",
+          "reader_value": "深度对比了机考与纸考在写作编辑、听力输入上的具体差异，为考生选择更适配自身习惯的考试形式提供了第一手实测依据。",
+          "url": "https://www.reddit.com/r/IELTS/comments/1fu910c/cd_vs_pb_my_experience_and_why_i_switched/",
+          "isRead": false
+        },
+        {
+          "id": "item_1791642861438_4_abn8o",
+          "agent": "Muse",
+          "title": "IELTS Listening Section 4: Academic Lectures Vocabulary & Note-taking Strategy",
+          "platform": "YouTube",
+          "publishDate": "2026-10-06",
+          "engagement": "Likes 1,350 · Comments 128",
+          "summary": "针对Section 4无停顿独白讲座的速记缩写符号系统，讲解如何根据信号词（Signposting language）预判紧随其后的核心答案。",
+          "reader_value": "提供了学术讲座信号转折词的预判系统与速记符号规范，帮考生在Section 4语速快、无停顿的重难点场景下稳妥捕捉答案。",
+          "url": "https://www.youtube.com/watch?v=a7Y9mN32xK0",
+          "isRead": false
+        }
+      ]
+    }
+  ],
+  "rawReports": []
+}

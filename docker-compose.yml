@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  ielts-radar:
+    build: .
+    container_name: ielts-radar-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    volumes:
+      # 持久化挂载宿主机数据目录，保障数据安全与自动备份
+      - ./data:/app/data

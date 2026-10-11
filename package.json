@@ -1,0 +1,21 @@
+{
+  "name": "ielts-radar",
+  "version": "1.0.0",
+  "description": "IELTS Radar｜我的 AI 雅思侦察日志 - 个人内容侦察与阅读复盘系统",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "ielts",
+    "radar",
+    "ai-agent",
+    "content-curation",
+    "workbuddy",
+    "muse"
+  ],
+  "author": "curry",
+  "license": "MIT"
+}

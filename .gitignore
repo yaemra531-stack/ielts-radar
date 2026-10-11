@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+data/server.pid
+data/server.log
+data/backups/
+data/raw-reports/
