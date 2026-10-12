@@ -136,7 +136,7 @@ function generateMarkdownExport(store) {
       if (wbItems.length > 0) {
         md += `#### 🔴 WorkBuddy（小红书 / 抖音）\n\n`;
         wbItems.forEach((item, idx) => {
-          md += `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
+          md += `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isCandidate ? '⭐ **【今日候选】** ' : ''}${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
           md += `- **发布日期**: ${item.publishDate || '待确认'}\n`;
           md += `- **互动数据**: ${item.engagement || '待确认'}\n`;
           md += `- **核心简介**: ${item.summary || '无'}\n`;
@@ -150,7 +150,7 @@ function generateMarkdownExport(store) {
       if (museItems.length > 0) {
         md += `#### 🔵 Muse（YouTube / Reddit / X）\n\n`;
         museItems.forEach((item, idx) => {
-          md += `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
+          md += `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isCandidate ? '⭐ **【今日候选】** ' : ''}${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
           md += `- **发布日期**: ${item.publishDate || '待确认'}\n`;
           md += `- **互动数据**: ${item.engagement || '待确认'}\n`;
           md += `- **核心简介**: ${item.summary || '无'}\n`;

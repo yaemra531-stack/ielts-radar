@@ -197,6 +197,7 @@
                 <div class="ads-coverage-pills" id="active-date-coverage"></div>
               </div>
               <div class="ads-right">
+                <div id="active-date-candidate-indicator" style="display:none;"></div>
                 <span class="ads-read-text" id="active-date-read-status">0 / 10 已读</span>
               </div>
             </div>
@@ -230,6 +231,7 @@
                   <option value="all">状态：全部</option>
                   <option value="unread">未读</option>
                   <option value="read">已读</option>
+                  <option value="candidate">⭐ 仅看候选</option>
                 </select>
 
                 <!-- 隐藏的兼容选项供 JS 筛选 -->
@@ -527,6 +529,13 @@
             <div class="form-group col-span-2">
               <label>个人备考笔记 (私人备考心得与想法，导入时绝对不会被覆盖)</label>
               <textarea id="edit-item-note" class="input-field" rows="2" placeholder="记录你对该篇内容的个人体会、备考心得或后续应用启发..."></textarea>
+            </div>
+
+            <div class="form-group col-span-2" style="margin-top: 4px;">
+              <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-size:13.5px; font-weight:500; color:var(--text-title); user-select:none;">
+                <input type="checkbox" id="edit-item-is-candidate" style="accent-color: #f59e0b; width:16px; height:16px; cursor:pointer;">
+                <span>⭐ 设为今日重点候选（用于后续深入选题与创作成稿）</span>
+              </label>
             </div>
           </div>
         </div>

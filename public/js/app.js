@@ -22,7 +22,7 @@ const state = {
     agent: 'all', // 'all' | 'WorkBuddy' | 'Muse'
     keyword: '',
     platform: 'all',
-    readStatus: 'all' // 'all' | 'unread' | 'read'
+    readStatus: 'all' // 'all' | 'unread' | 'read' | 'candidate'
   },
   expandedDates: new Set(),
   expandedItemIds: new Set(),
@@ -313,9 +313,10 @@ function renderTimeline() {
       const inPlat = (item.platform || '').toLowerCase().includes(kw);
       if (!inTitle && !inSummary && !inVal && !inPlat) return false;
     }
-    // 3. 阅读状态过滤
+    // 3. 阅读与候选状态过滤
     if (readFilter === 'unread' && item.isRead) return false;
     if (readFilter === 'read' && !item.isRead) return false;
+    if (readFilter === 'candidate' && !item.isCandidate) return false;
     return true;
   });
 
@@ -353,6 +354,27 @@ function renderTimeline() {
     } else {
       coverageContainer.style.display = 'none';
       coverageContainer.innerHTML = '';
+    }
+  }
+
+  // 渲染今日候选选题数量与快速筛选胶囊
+  const candidateCount = activeItems.filter(i => i.isCandidate).length;
+  const candidateIndicator = document.getElementById('active-date-candidate-indicator');
+  if (candidateIndicator) {
+    if (candidateCount > 0) {
+      const isFilteringCandidate = state.filters.readStatus === 'candidate';
+      candidateIndicator.innerHTML = `
+        <button class="candidate-summary-pill ${isFilteringCandidate ? 'active' : ''}" id="btn-quick-filter-candidate" type="button" title="${isFilteringCandidate ? '点击查看全部条目' : '点击只看今日候选条目'}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>候选 ${candidateCount} 篇</span>
+        </button>
+      `;
+      candidateIndicator.style.display = 'inline-flex';
+    } else {
+      candidateIndicator.style.display = 'none';
+      candidateIndicator.innerHTML = '';
     }
   }
 
@@ -422,9 +444,10 @@ function renderTimeline() {
   bindTimelineEvents();
 }
 
-// 渲染单篇侦察记录卡片（单列阅读流，折叠纯文本无编号，展开完整呈现三问与真实问题）
+// 渲染单篇侦察记录卡片（单列阅读流，默认折叠纯净摘要，支持候选高亮与按需展开完整三问）
 function renderArticleItem(item, date) {
   const isRead = !!item.isRead;
+  const isCandidate = !!item.isCandidate;
   const isExpanded = state.expandedItemIds.has(item.id);
 
   // 1. 顶部互动数据解析：支持 likes/favorites/score 或从 engagement 字符串解析
@@ -534,11 +557,19 @@ function renderArticleItem(item, date) {
   }
 
   return `
-    <article class="article-item ${isRead ? 'is-read' : ''} ${isExpanded ? 'is-expanded' : ''}" id="article-${item.id}">
-      <!-- 顶部辅助信息：平台 · 日期 与 互动数据 -->
+    <article class="article-item ${isRead ? 'is-read' : ''} ${isCandidate ? 'is-candidate' : ''} ${isExpanded ? 'is-expanded' : ''}" id="article-${item.id}">
+      <!-- 顶部辅助信息：平台 · 日期 与 候选微标 与 互动数据 -->
       <div class="article-header-row">
         <div class="article-meta-left">
           <span>${escapeHtml(item.platform || '社媒')} · ${formatMetaDate(item.publishDate)}</span>
+          ${isCandidate ? `
+            <span class="candidate-tag-badge" title="当前已选为今日重点候选选题">
+              <svg class="candidate-star-svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>今日候选</span>
+            </span>
+          ` : ''}
         </div>
         <div class="article-meta-right">
           ${engagementHtml}
@@ -597,9 +628,18 @@ function renderArticleItem(item, date) {
         </div>
 
         <div class="footer-right">
+          <!-- 候选按钮 -->
+          <button class="btn-pill btn-pill-candidate ${isCandidate ? 'is-candidate' : ''}" data-id="${item.id}" data-date="${date}" type="button" title="${isCandidate ? '点击取消候选状态' : '设为今日重点候选选题'}">
+            <svg class="btn-star-icon" width="13" height="13" viewBox="0 0 24 24" fill="${isCandidate ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>候选</span>
+          </button>
+
+          <!-- 标为已读/未读切换按钮 -->
           <button class="btn-pill btn-pill-read ${isRead ? 'is-read' : ''}" data-id="${item.id}" data-date="${date}" type="button" title="切换阅读状态">
             <span class="read-dot">${isRead ? '●' : '○'}</span>
-            <span>标为已读</span>
+            <span>${isRead ? '已读' : '标为已读'}</span>
           </button>
 
           ${item.url ? `
@@ -611,6 +651,10 @@ function renderArticleItem(item, date) {
           <div class="dropdown-wrapper">
             <button class="btn-pill btn-pill-more" data-id="${item.id}" type="button" title="更多操作">···</button>
             <div class="dropdown-menu-card" id="menu-${item.id}">
+              <button class="dropdown-item-btn btn-item-toggle-candidate" data-id="${item.id}" data-date="${date}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="${isCandidate ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                ${isCandidate ? '取消候选' : '标记为候选'}
+              </button>
               <button class="dropdown-item-btn btn-item-note" data-id="${item.id}" data-date="${date}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 ${item.note ? '修改笔记' : '添加笔记'}
@@ -717,6 +761,39 @@ function bindTimelineEvents() {
     };
   });
 
+  // 设为/取消候选切换
+  document.querySelectorAll('.btn-pill-candidate').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const date = btn.dataset.date;
+      toggleItemCandidate(id, date);
+    };
+  });
+
+  // 更多菜单中的候选切换
+  document.querySelectorAll('.btn-item-toggle-candidate').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const date = btn.dataset.date;
+      toggleItemCandidate(id, date);
+    };
+  });
+
+  // 顶部候选快速筛选胶囊
+  const quickCandidateBtn = document.getElementById('btn-quick-filter-candidate');
+  if (quickCandidateBtn) {
+    quickCandidateBtn.onclick = (e) => {
+      e.preventDefault();
+      const nextFilter = state.filters.readStatus === 'candidate' ? 'all' : 'candidate';
+      state.filters.readStatus = nextFilter;
+      const selectEl = document.getElementById('filter-read-status');
+      if (selectEl) selectEl.value = nextFilter;
+      renderTimeline();
+    };
+  }
+
   // 更多菜单下拉触发
   document.querySelectorAll('.btn-pill-more').forEach(btn => {
     btn.onclick = (e) => {
@@ -782,6 +859,17 @@ function toggleItemRead(id, date) {
   if (item) {
     item.isRead = !item.isRead;
     persistData(null);
+    renderTimeline();
+  }
+}
+
+function toggleItemCandidate(id, date) {
+  const day = state.data.dailyRecords.find(d => d.date === date);
+  const item = day?.items?.find(i => i.id === id);
+  if (item) {
+    item.isCandidate = !item.isCandidate;
+    persistData(null);
+    showToast(item.isCandidate ? '⭐ 已标为候选' : '已取消候选', item.isCandidate ? 'success' : 'info');
     renderTimeline();
   }
 }
@@ -1423,6 +1511,8 @@ function openItemEditModal(item = null, defaultDate = '') {
   document.getElementById('edit-item-reader-value').value = isEditing ? (item.reader_value || '') : '';
   const noteEl = document.getElementById('edit-item-note');
   if (noteEl) noteEl.value = isEditing ? (item.note || '') : '';
+  const candidateEl = document.getElementById('edit-item-is-candidate');
+  if (candidateEl) candidateEl.checked = !!(isEditing && item.isCandidate);
 
   modal.classList.add('active');
 }
@@ -1447,6 +1537,7 @@ function handleSaveItemEdit(e) {
   const reader_value = document.getElementById('edit-item-reader-value').value.trim();
   const noteEl = document.getElementById('edit-item-note');
   const note = noteEl ? noteEl.value.trim() : '';
+  const isCandidate = document.getElementById('edit-item-is-candidate')?.checked || false;
 
   let dayRecord = state.data.dailyRecords.find(d => d.date === date);
   if (!dayRecord) {
@@ -1467,6 +1558,7 @@ function handleSaveItemEdit(e) {
       item.summary = summary;
       item.reader_value = reader_value;
       item.note = note;
+      item.isCandidate = isCandidate;
     }
   } else {
     dayRecord.items.push({
@@ -1480,6 +1572,7 @@ function handleSaveItemEdit(e) {
       reader_value,
       url,
       isRead: false,
+      isCandidate: isCandidate,
       note: note
     });
   }
@@ -1587,7 +1680,7 @@ function escapeHtml(str) {
 
 // 格式化单条侦察条目为富文本 Markdown（包含核心三问、真实问题与个人笔记）
 function formatItemForMarkdown(item, idx) {
-  let text = `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
+  let text = `**${idx + 1}. [${item.platform || '未知平台'}] ${item.title}** ${item.isCandidate ? '⭐ **【今日候选】** ' : ''}${item.isRead ? '✅ *(已读)*' : '⏳ *(待读)*'}\n`;
   text += `- **作者**: ${item.author || '未标注'} | **发布日期**: ${item.publishDate || '待确认'} | **数据**: ${item.engagement || (item.score !== null && item.score !== undefined ? `得分 ${item.score}` : '待确认')}\n`;
   if (item.discovery_reason) {
     text += `- **① 发现原因**: ${item.discovery_reason}\n`;
@@ -1725,7 +1818,7 @@ function generateAiTopicDiscussionPrompt(targetDate) {
     text += `*（当前日期暂无收录内容）*\n`;
   } else {
     items.forEach((item, index) => {
-      text += `### ${index + 1}. 【${item.platform || '未知平台'}】${item.title}\n`;
+      text += `### ${index + 1}. 【${item.platform || '未知平台'}】${item.title}${item.isCandidate ? ' ⭐【我锁定的今日重点候选】' : ''}\n`;
       text += `- **作者**: ${item.author || '未标注'} | **发布日期**: ${item.publishDate || '待确认'} | **数据**: ${item.engagement || (item.score !== null && item.score !== undefined ? `得分 ${item.score}` : '无')}\n`;
       text += `- **① 发现（为何关注）**: ${item.discovery_reason || '尚未分析'}\n`;
       text += `- **② 理解（内容概述）**: ${item.summary || '无'}\n`;

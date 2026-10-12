@@ -115,7 +115,8 @@ export const Parser = {
         comments_checked: raw.comments_checked !== undefined ? raw.comments_checked : false,
         audience_questions: Array.isArray(raw.audience_questions) ? raw.audience_questions : [],
         url: url,
-        isRead: false
+        isRead: !!raw.isRead,
+        isCandidate: !!raw.isCandidate
       };
 
       if (!item.url) {
@@ -330,7 +331,8 @@ export const Parser = {
       summary: summary || '待确认',
       reader_value: reader_value || '',
       url: url || '',
-      isRead: false
+      isRead: false,
+      isCandidate: false
     };
   },
 

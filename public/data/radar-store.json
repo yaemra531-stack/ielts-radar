@@ -2,7 +2,7 @@
   "systemInfo": {
     "title": "雅思见闻 ｜ IELTS Radar",
     "createdAt": "2026-10-10T12:00:00.000Z",
-    "updatedAt": "2026-10-11T08:03:22.817Z",
+    "updatedAt": "2026-10-12T00:44:50.155Z",
     "version": "1.0.0"
   },
   "goalsAndThoughts": {
@@ -116,7 +116,8 @@
           ],
           "url": "https://www.xiaohongshu.com/explore/6aaa332b000000002700800e?xsec_token=ABpfeQod3bqv3A2Qb33jtjZLrdPcgUZ6H9fqYLPDQfbgo=&xsec_source=",
           "isRead": true,
-          "note": "💡 重点记忆：图表小作文开头句改写模板结构可以直接沉淀到 Anki 卡片里复习。"
+          "note": "💡 重点记忆：图表小作文开头句改写模板结构可以直接沉淀到 Anki 卡片里复习。",
+          "isCandidate": false
         },
         {
           "id": "item_20261011_wb_2",
@@ -425,7 +426,7 @@
           "platform": "X",
           "publishDate": "2026-10-08",
           "engagement": "Likes 740 · Retweets 195",
-          "summary": "雅思写作名师 Simon 分享小作文图表数据挑选秘诀：切忌罗列每一个数字，必须抓住最高点、最低点和关键趋势交叉点做对比概括。",
+          "summary": "雅思写作名师 Simon 分享小作文图表数据挑选秘诀：切忌罗列每一个数字，必须抓住最高点、最低点和关键趋���交叉点做对比概括。",
           "reader_value": "提供了小作文数据取舍的3条黄金准则，帮考生摆脱机械罗列冗杂数据的低分陷阱，提升概括与对比能力。",
           "url": "https://x.com/ielts_simon/status/1843621983021982734",
           "isRead": false

@@ -658,11 +658,49 @@ button, input, select, textarea {
 .ads-right {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .ads-read-text {
   font-size: 13.5px;
   color: var(--text-secondary);
+}
+
+/* 顶部候选快速筛选药丸 */
+.candidate-summary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+  line-height: 1.4;
+}
+
+.candidate-summary-pill:hover,
+.candidate-summary-pill.active {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #d97706;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .candidate-summary-pill {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .candidate-summary-pill:hover,
+[data-theme="dark"] .candidate-summary-pill.active {
+  background: #f59e0b;
+  color: #111827;
 }
 
 /* 顶部筛选工具栏：全部 10 | WorkBuddy 5 | Muse 5 */
@@ -793,6 +831,25 @@ button, input, select, textarea {
   opacity: 1;
 }
 
+/* 候选选题高亮样式 - 突出今日精选候选 */
+.article-item.is-candidate {
+  border-color: #f59e0b;
+  border-left: 5px solid #f59e0b;
+  background: linear-gradient(180deg, #fffdf5 0%, var(--bg-surface) 100%);
+  box-shadow: 0 4px 18px -2px rgba(245, 158, 11, 0.16), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .article-item.is-candidate {
+  border-color: rgba(245, 158, 11, 0.6);
+  border-left: 5px solid #f59e0b;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.09) 0%, var(--bg-surface) 100%);
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.22);
+}
+
+.article-item.is-candidate.is-read {
+  opacity: 0.96;
+}
+
 /* 顶部辅助信息 (平台 · 日期 与 互动数据) */
 .article-header-row {
   display: flex;
@@ -806,7 +863,35 @@ button, input, select, textarea {
 .article-meta-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+
+/* 卡片顶部候选微标 */
+.candidate-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 1.5px 8px;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.1);
+}
+
+[data-theme="dark"] .candidate-tag-badge {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.candidate-star-svg {
+  color: #f59e0b;
+  flex-shrink: 0;
 }
 
 .article-meta-right {
@@ -877,6 +962,18 @@ button, input, select, textarea {
 
 .article-item.is-expanded .article-details-expanded {
   display: block;
+  animation: detailsFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes detailsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 三问通用标签与正文 */
@@ -1030,6 +1127,44 @@ button, input, select, textarea {
   background: var(--bg-subtle);
   border-color: #cbd5e1;
   color: var(--text-title);
+}
+
+/* 设为候选按钮 */
+.btn-pill-candidate {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-pill-candidate:hover {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #d97706;
+}
+
+[data-theme="dark"] .btn-pill-candidate:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+}
+
+.btn-pill-candidate.is-candidate {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.15);
+}
+
+[data-theme="dark"] .btn-pill-candidate.is-candidate {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.btn-star-icon {
+  flex-shrink: 0;
+  color: #f59e0b;
 }
 
 .btn-pill-read.is-read {
