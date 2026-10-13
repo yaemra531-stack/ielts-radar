@@ -340,9 +340,23 @@ function renderTimeline() {
   if (coverageContainer) {
     if (activeRecord && activeRecord.coverage) {
       if (typeof activeRecord.coverage === 'object' && !Array.isArray(activeRecord.coverage)) {
-        coverageContainer.innerHTML = Object.entries(activeRecord.coverage).map(([plat, cnt]) => `
-          <span class="coverage-pill">${escapeHtml(plat)} ${cnt}</span>
-        `).join('');
+        coverageContainer.innerHTML = Object.entries(activeRecord.coverage).map(([plat, cnt]) => {
+          let label = '';
+          let titleAttr = '';
+          if (typeof cnt === 'object' && cnt !== null) {
+            const target = cnt.target;
+            const collected = cnt.collected ?? target;
+            const isShort = target !== undefined && collected !== undefined && collected < target;
+            label = isShort ? `${collected}/${target}` : `${collected}`;
+            if (cnt.reason) {
+              titleAttr = ` title="${escapeHtml(cnt.reason)}"`;
+              if (isShort) label += ' ℹ️';
+            }
+          } else {
+            label = escapeHtml(String(cnt));
+          }
+          return `<span class="coverage-pill"${titleAttr}>${escapeHtml(plat)} ${label}</span>`;
+        }).join('');
         coverageContainer.style.display = 'flex';
       } else if (typeof activeRecord.coverage === 'string') {
         coverageContainer.innerHTML = `<span class="coverage-pill">${escapeHtml(activeRecord.coverage)}</span>`;
@@ -394,15 +408,20 @@ function renderTimeline() {
     dpStats.textContent = `${readDayItems} / ${totalDayItems}`;
   }
 
-  // 点亮 1 到 10 刻度块
+  // 点亮 1 到 10 刻度块（按实际篇数自适应）
   const segBar = document.getElementById('dp-segment-bar');
   if (segBar) {
     const segs = segBar.querySelectorAll('.seg-item');
     segs.forEach((seg, idx) => {
-      if (idx < readDayItems) {
-        seg.classList.add('active');
+      if (idx < totalDayItems) {
+        seg.style.display = '';
+        if (idx < readDayItems) {
+          seg.classList.add('active');
+        } else {
+          seg.classList.remove('active');
+        }
       } else {
-        seg.classList.remove('active');
+        seg.style.display = 'none';
       }
     });
   }
@@ -1221,7 +1240,17 @@ function renderImportPreview() {
   if (coverageWrap && coverageEl) {
     if (coverage) {
       if (typeof coverage === 'object' && !Array.isArray(coverage)) {
-        coverageEl.textContent = Object.entries(coverage).map(([k, v]) => `${k} ${v}`).join(' · ');
+        coverageEl.innerHTML = Object.entries(coverage).map(([k, v]) => {
+          if (typeof v === 'object' && v !== null) {
+            const target = v.target;
+            const collected = v.collected ?? target;
+            const isShort = target !== undefined && collected !== undefined && collected < target;
+            const text = isShort ? `${collected}/${target}` : `${collected}`;
+            const title = v.reason ? ` title="${escapeHtml(v.reason)}"` : '';
+            return `<span${title}>${escapeHtml(k)} ${text}${v.reason ? ' ℹ️' : ''}</span>`;
+          }
+          return `${escapeHtml(k)} ${escapeHtml(String(v))}`;
+        }).join(' · ');
       } else {
         coverageEl.textContent = String(coverage);
       }
@@ -1796,7 +1825,18 @@ function generateAiTopicDiscussionPrompt(targetDate) {
 
   let coverageText = '全平台';
   if (record && record.coverage) {
-    coverageText = Object.entries(record.coverage).map(([k, v]) => `${k} ${v}篇`).join(' · ');
+    if (typeof record.coverage === 'object' && !Array.isArray(record.coverage)) {
+      coverageText = Object.entries(record.coverage).map(([k, v]) => {
+        if (typeof v === 'object' && v !== null) {
+          const col = v.collected ?? v.target;
+          const note = (v.target && col !== v.target) ? `（目标${v.target}篇${v.reason ? `，因${v.reason}` : ''}）` : '篇';
+          return `${k} ${col}${note.startsWith('篇') ? note : `篇${note}`}`;
+        }
+        return `${k} ${v}篇`;
+      }).join(' · ');
+    } else {
+      coverageText = String(record.coverage);
+    }
   }
 
   let text = `# 雅思见闻｜今日 10 篇侦察情报与选题决策讨论\n\n`;

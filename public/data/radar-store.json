@@ -2,7 +2,7 @@
   "systemInfo": {
     "title": "雅思见闻 ｜ IELTS Radar",
     "createdAt": "2026-10-10T12:00:00.000Z",
-    "updatedAt": "2026-10-12T00:44:50.155Z",
+    "updatedAt": "2026-10-13T04:47:01.343Z",
     "version": "1.0.0"
   },
   "goalsAndThoughts": {
@@ -89,6 +89,251 @@
     ]
   },
   "dailyRecords": [
+    {
+      "date": "2026-10-13",
+      "promptVersionWorkBuddy": "V1.4",
+      "promptVersionMuse": null,
+      "coverage": {
+        "小红书": {
+          "target": 3,
+          "collected": 3,
+          "reason": null
+        },
+        "抖音": {
+          "target": 2,
+          "collected": 2,
+          "reason": null
+        },
+        "X": {
+          "target": 3,
+          "collected": 2,
+          "reason": "近30天内同时满足互动门槛且主题不重复的推文仅2条；其余为同一停考话题的重复帖、资源包导流帖、无正文纯媒体帖"
+        },
+        "Reddit": {
+          "target": 2,
+          "collected": 2,
+          "reason": null
+        }
+      },
+      "items": [
+        {
+          "id": "item_20261013_wb_1",
+          "stableId": "xhs_6abcf00e000000001b01cc6f",
+          "agent": "WorkBuddy",
+          "title": "给不懂雅思新机考的人一点作弊tips",
+          "author": ".22",
+          "platform": "小红书",
+          "publishDate": "2026-09-30",
+          "likes": 1392,
+          "favorites": 1127,
+          "score": null,
+          "engagement": "赞 1392 · 藏 1127",
+          "discovery_reason": "9月30日发布，收藏1127接近点赞1392；新机考流程变化大，这篇把试音、分屏、高亮细节写全，评论区仍在追问口语形式。",
+          "summary": "作者以英专生、已过雅思的身份分享新机考细节：听力试音改为考前看视频调音量、按 continue 后约 2 秒开始读题；阅读为左右分屏、可选中文字高亮；全程仅一张草稿纸；写作可用复制粘贴等快捷键提效。标题写作弊tips，实为机考流程经验。",
+          "reader_value": "帮第一次参加雅思机考的考生提前熟悉界面与流程，减少因不熟悉操作而影响发挥。",
+          "comments_checked": true,
+          "audience_questions": [
+            "老师请问口语是和真人连线考吗？",
+            "机考是怎么练的，是自学还是报班？"
+          ],
+          "url": "https://www.xiaohongshu.com/explore/6abcf00e000000001b01cc6f?xsec_token=ABpFU8l2ZuVfPbzLPEzBj7iLHMdqULsBnx56YTfKpHoKM=&xsec_source=",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_2",
+          "stableId": "xhs_6aa8c3c7000000000b003dab",
+          "agent": "WorkBuddy",
+          "title": "普通家庭想考雅思的，可以参考我的开智顺序",
+          "author": "荼靡(ᇂ_ᇂ|||)",
+          "platform": "小红书",
+          "publishDate": "2026-09-15",
+          "likes": 1774,
+          "favorites": 2063,
+          "score": null,
+          "engagement": "赞 1774 · 藏 2063",
+          "discovery_reason": "9月15日发布，收藏2063高于点赞1774，评论多；面向考一次就要1990元的人群，评论区在追问怎么学、要不要报班。",
+          "summary": "作者自称普通家庭出身、边上班用约两个月拿下7.0，写给考一次1990元、没有反复考资本的人群，按阶段整理了一份备考顺序，面向基础一般、总分要求不高的人；高赞评论把要点归纳为备考2至3个月为宜、先花一周入门熟悉题型、听力抓信号词加五步精听法。",
+          "reader_value": "给预算有限、只能考一两次的在职考生一份分阶段顺序参考，避免盲目拉长战线。",
+          "comments_checked": true,
+          "audience_questions": [
+            "大家都是怎么学的？降价了也还是这么贵，不敢乱来",
+            "路然第二遍是和第一遍复习模式一样吗？",
+            "有人跟我一样不喜欢机考吗？"
+          ],
+          "url": "https://www.xiaohongshu.com/explore/6aa8c3c7000000000b003dab?xsec_token=ABYhxieMJKYnPFFlQQSZ2n2uq8F-l8x96w97ScXlHfsD4=&xsec_source=",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_3",
+          "stableId": "xhs_6aba339400000000180139f1",
+          "agent": "WorkBuddy",
+          "title": "雅思口语：你认为竞争对年轻人是好是坏？",
+          "author": "Anya的英语手记",
+          "platform": "小红书",
+          "publishDate": "2026-09-28",
+          "likes": 169,
+          "favorites": 104,
+          "score": null,
+          "engagement": "赞 169 · 藏 104",
+          "discovery_reason": "9月28日发布，点赞169、收藏104，刚过门槛；按题更新高频口语题并附范文与追问，属可持续追更的素材型账号。",
+          "summary": "整理一道雅思口语高频题：你认为竞争对年轻人是好是坏？提供原生范文、配套的 Part 3 深度追问，以及可替换的高分表达拓展，并邀请读者在评论区跟读打卡。属按题更新的口语素材帖，聚焦 P3 观点类问题的答题组织。",
+          "reader_value": "给正在准备口语 P3 观点类题目的考生一篇可跟读的范文与追问清单，直接照题练。",
+          "comments_checked": true,
+          "audience_questions": [],
+          "url": "https://www.xiaohongshu.com/explore/6aba339400000000180139f1?xsec_token=ABBBCvTH-J_4qNRAVF7nma5H7U9Gzl8aDqD1XpoWyckXA=&xsec_source=",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_4",
+          "stableId": "douyin_7695676554780626176",
+          "agent": "WorkBuddy",
+          "title": "教育部教育考试院回应雅思取消：系主办方英国文化教育协会单方面取消",
+          "author": "荆楚网",
+          "platform": "抖音",
+          "publishDate": "2026-10-12",
+          "likes": 33000,
+          "favorites": 2869,
+          "score": null,
+          "engagement": "赞 33000 · 藏 2869",
+          "discovery_reason": "10月12日发布，点赞3.3万、评论2659；是对10月10日全国停考的官方口径回应，直接影响近期考生的考试安排。",
+          "summary": "据中国新闻周刊报道，教育部教育考试院接线人员就10月10日雅思停考回应：停考主要是主办方英国文化教育协会出现技术问题导致，这次是对方单方面取消、考试院是被告知的，具体细节不了解，正就后续事宜沟通协商。",
+          "reader_value": "让受停考影响的考生看到官方口径的回应内容，便于判断后续安排该向谁咨询。",
+          "comments_checked": true,
+          "audience_questions": [
+            "那英国应该解释为什么取消，国外的同胞有知道的吗？",
+            "是因为泄题了才取消的吗？"
+          ],
+          "url": "https://www.douyin.com/video/7695676554780626176",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_5",
+          "stableId": "douyin_7695363650361993382",
+          "agent": "WorkBuddy",
+          "title": "雅思口语 15 天从 5 到 7：Part 3 如何准备？用万能逻辑",
+          "author": "雅思Rico",
+          "platform": "抖音",
+          "publishDate": "2026-10-11",
+          "likes": 1422,
+          "favorites": 1098,
+          "score": null,
+          "engagement": "赞 1422 · 藏 1098",
+          "discovery_reason": "10月11日发布，点赞1422、收藏1098，收藏接近点赞；评论区有人在催更备考，属近期持续更新的口语方法论内容。",
+          "summary": "讲 Part 3 中如何做成一件难事这类问题的答题思路：先用中文把思路捋顺，发现循序渐进是合理主线，再展开成英文回答并 keep talking，用通用逻辑快速生成观点，减轻临场组织语言的负担。",
+          "reader_value": "给 Part 3 卡壳、临场想不出观点的考生一个可复用的万能逻辑，先中文定思路再转英文。",
+          "comments_checked": true,
+          "audience_questions": [],
+          "url": "https://www.douyin.com/video/7695363650361993382",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_6",
+          "stableId": "x_2102391145284378778",
+          "agent": "WorkBuddy",
+          "title": "雅思听力 5→7.5：推荐一套英文播客学习方法",
+          "author": "Roland.W @rwayne",
+          "platform": "X",
+          "publishDate": "2026-09-22",
+          "likes": 782,
+          "favorites": null,
+          "score": null,
+          "engagement": "赞 782",
+          "discovery_reason": "9月22日发布，点赞782、转推202、评论60；以自身5到7.5的经历背书一套播客听力方法，评论区对其是否对口有质疑。",
+          "summary": "作者称自己雅思听力从5分到7.5的方法与一篇文章几乎一致，强烈推荐文中那套顶级英文播客学习方法，称严格执行后听力和英文水平会有质的提升；推文本身不含方法细节，需点进原文章查看。评论区有人质疑文中讲的更像翻译和阅读练习而非听力。",
+          "reader_value": "给听力卡在5至6分、想用播客磨耳朵的考生一条方法路径，但需自行点开原文章核对细节。",
+          "comments_checked": true,
+          "audience_questions": [
+            "这里讲的是翻译和阅读吧，哪有听力的学习方法？"
+          ],
+          "url": "https://x.com/rwayne/status/2102391145284378778",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_7",
+          "stableId": "x_2108331338873155600",
+          "agent": "WorkBuddy",
+          "title": "全球IELTS考生约400万，对比日本英检450万",
+          "author": "嶋津 幸樹 / Koki Shimazu @Koki_Shimazu",
+          "platform": "X",
+          "publishDate": "2026-10-08",
+          "likes": 116,
+          "favorites": null,
+          "score": null,
+          "engagement": "赞 116",
+          "discovery_reason": "10月8日发布，点赞116刚过门槛；从日本视角对比IELTS与英检体量并给出中国考生占比，属考试背景数据类内容。",
+          "summary": "作者对比考试规模：全球IELTS考生约400万人，日本英检约450万人，并在回复里补充约五分之一的雅思考生来自中国；另有留学生留言称中国学生考IELTS接近强制性，日本学生则更依赖英检成绩申请海外大学。属考试体量与中日考生差异的讨论。",
+          "reader_value": "提供雅思考试规模与中国考生占比的参考数据，帮助理解这一考试在全球的体量与地位。",
+          "comments_checked": true,
+          "audience_questions": [],
+          "url": "https://x.com/Koki_Shimazu/status/2108331338873155600",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_8",
+          "stableId": "reddit_1whna85",
+          "agent": "WorkBuddy",
+          "title": "IELTS 8.0 Overall — My Tips & Strategies for Students Preparing for IELTS",
+          "author": "u/AdamsAppleTrees",
+          "platform": "Reddit",
+          "publishDate": "2026-09-16",
+          "likes": null,
+          "favorites": null,
+          "score": 163,
+          "engagement": "得分 163",
+          "discovery_reason": "9月16日发布，score 163、评论42条；把固定模板与AI批改结合，评论区追问适用类型与难点，属常被收藏的方法帖。",
+          "summary": "作者总分8.0，分享固定写作模板：Task 2 引言改写题目并表态，主体段按论点、解释、例子、结果展开，并自述用AI批改作文辅助练习。评论区有人问是否适用于General类，也有人表示写作和Matching heading仍是难点。",
+          "reader_value": "给写作卡在6.5左右的考生一个可复制的Task 2段落结构，并用AI批改做日常反馈。",
+          "comments_checked": true,
+          "audience_questions": [
+            "Is this IELTS General?",
+            "我写作一直有困难，怎么办？"
+          ],
+          "url": "https://www.reddit.com/r/IELTS/comments/1whna85/ielts_80_overall_my_tips_strategies_for_students/",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        },
+        {
+          "id": "item_20261013_wb_9",
+          "stableId": "reddit_1wrmmuz",
+          "agent": "WorkBuddy",
+          "title": "a miracle. I was asked to speak about brain-rot. no im not kidding.",
+          "author": "u/m1dn4st",
+          "platform": "Reddit",
+          "publishDate": "2026-09-27",
+          "likes": null,
+          "favorites": null,
+          "score": 207,
+          "engagement": "得分 207",
+          "discovery_reason": "9月27日发布，score 207、评论28条；口语满分案例但题目冷门，评论区在追问9分的分项细节，属少见的高分实况帖。",
+          "summary": "考生自述口语考场抽到brain-rot话题，临场聊到支持的曼城、做了哈兰德庆祝动作，还扯到AI会接管等，最终口语拿到9分，自认靠的是词汇与临场表达。评论区认为能流畅聊这些话题本身就说明英语很好，也有人想看9分对应的分项说明。",
+          "reader_value": "给担心口语抽到冷门题的考生一个真实案例：话题熟悉度与自然表达比背模板更管用。",
+          "comments_checked": true,
+          "audience_questions": [
+            "能不能点开9分旁边的箭头，看一下那个band具体写了什么？",
+            "Part 3 问得特别深是我的噩梦，怎么应对？"
+          ],
+          "url": "https://www.reddit.com/r/IELTS/comments/1wrmmuz/a_miracle_i_was_asked_to_speak_about_brainrot_no/",
+          "isRead": false,
+          "note": "",
+          "isCandidate": false
+        }
+      ]
+    },
     {
       "date": "2026-10-11",
       "promptVersionWorkBuddy": "V1.4",
@@ -458,5 +703,14 @@
       ]
     }
   ],
-  "rawReports": []
+  "rawReports": [
+    {
+      "id": "WorkBuddy_2026-10-13_1791866821343",
+      "agent": "WorkBuddy",
+      "date": "2026-10-13",
+      "filename": "WorkBuddy_2026-10-13_1791866821343.txt",
+      "createdAt": "2026-10-13T04:47:01.343Z",
+      "preview": "{\n  \"report_date\": \"2026-10-13\",\n  \"agent\": \"WorkBuddy\",\n  \"prompt_version\": \"V1.4\",\n  \"coverage\": {\n    \"小红书\": {\n      "
+    }
+  ]
 }
