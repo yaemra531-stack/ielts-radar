@@ -44,6 +44,7 @@ start() {
   echo "🚀 正在后台启动 IELTS Radar 服务..."
   nohup node "$DIR/server.js" >> "$LOG_FILE" 2>&1 &
   PID=$!
+  disown $PID 2>/dev/null || true
   echo $PID > "$PID_FILE"
   sleep 1
 
