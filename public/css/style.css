@@ -2613,6 +2613,8 @@ textarea.input-field {
   --flow-sub: #727c8e;
   --flow-brand: #4e5c85;
   --flow-hover: #f7f8fb;
+  --flow-number-bg: #f3f5f8;
+  --flow-number-active: #eef2f9;
   max-width: 1060px;
   margin: 0 auto;
   padding: 20px 8px 32px;
@@ -2628,6 +2630,8 @@ textarea.input-field {
   --flow-sub: #9ca6b8;
   --flow-brand: #a5b4dd;
   --flow-hover: #22262e;
+  --flow-number-bg: #252b35;
+  --flow-number-active: #2b3648;
 }
 
 /* 写作页沿用主区域的居中布局，保留放大后的阅读宽度。 */
@@ -2712,7 +2716,7 @@ textarea.input-field {
 .writing-flow-wrap .step-heading {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   margin: 0;
   font-size: inherit;
   font-weight: inherit;
@@ -2720,11 +2724,22 @@ textarea.input-field {
 
 .writing-flow-wrap .num {
   flex: none;
-  width: 24px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--flow-line);
+  border-radius: 7px;
+  background: var(--flow-number-bg);
   color: var(--flow-sub);
   font-size: 14px;
   font-weight: 400;
   font-variant-numeric: tabular-nums;
+}
+
+.writing-flow-wrap .step[open] > .head .num {
+  background: var(--flow-number-active);
+  color: var(--flow-brand);
 }
 
 .writing-flow-wrap .title {
@@ -2773,7 +2788,7 @@ textarea.input-field {
 }
 
 .writing-flow-wrap .content {
-  padding: 0 0 25px 37px;
+  padding: 0 0 25px 44px;
 }
 
 .writing-flow-wrap .flow-columns {
@@ -2783,8 +2798,18 @@ textarea.input-field {
 }
 
 .writing-flow-wrap .flow-support {
+  position: relative;
   padding-left: 20px;
-  border-left: 1px solid var(--flow-line);
+}
+
+.writing-flow-wrap .flow-support::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dashed var(--flow-line);
+  opacity: 0.85;
 }
 
 .writing-flow-wrap .block + .block {
@@ -2942,9 +2967,13 @@ textarea.input-field {
     gap: 20px;
   }
   .writing-flow-wrap .flow-support {
-    border-left: 0;
-    border-top: 1px solid var(--flow-line);
     padding: 16px 0 0;
+  }
+  .writing-flow-wrap .flow-support::before {
+    right: 0;
+    bottom: auto;
+    border-left: 0;
+    border-top: 1px dashed var(--flow-line);
   }
 }
 
@@ -2959,10 +2988,11 @@ textarea.input-field {
     padding: 0 18px;
   }
   .writing-flow-wrap .step-heading {
-    gap: 9px;
+    gap: 8px;
   }
   .writing-flow-wrap .num {
-    width: 20px;
+    width: 30px;
+    height: 30px;
   }
   .writing-flow-wrap .who {
     display: none;
