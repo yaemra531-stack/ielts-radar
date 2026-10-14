@@ -97,31 +97,15 @@
             <span>导入</span>
           </button>
 
-          <!-- 导出菜单 (包含 AI 选题讨论、复盘 Markdown、备份 JSON) -->
-          <div class="dropdown-wrap">
-            <button class="sidebar-action-btn" id="btn-export-dropdown" title="导出数据">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              <span>导出 ▾</span>
-            </button>
-            <div class="dropdown-menu">
-              <button class="dropdown-item" id="btn-export-candidates-dropdown" style="color: var(--accent); font-weight: 600;">
-                <span>⭐</span> 导出精选候选 (定制)
-              </button>
-              <button class="dropdown-item" id="btn-export-ai-dropdown">
-                <span>🤖</span> 导出 AI 选题讨论
-              </button>
-              <button class="dropdown-item" id="btn-export-markdown">
-                <span>📄</span> 导出复盘 Markdown
-              </button>
-              <button class="dropdown-item" id="btn-export-json">
-                <span>📦</span> 导出全量备份 JSON
-              </button>
-            </div>
-          </div>
+          <!-- 导出候选 (直接打开AI分析导出工作台，无浮动菜单，稳固不消失) -->
+          <button class="sidebar-action-btn" id="btn-export-candidates" title="导出候选给AI分析">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>导出候选</span>
+          </button>
 
           <!-- 主题切换 -->
           <button class="sidebar-icon-btn" id="btn-theme-toggle" title="切换浅色/深色主题">
@@ -592,8 +576,8 @@
     <div class="modal-window" style="max-width: 820px;">
       <div class="modal-header">
         <div>
-          <h3>📤 导出与选题分发工作台</h3>
-          <p class="modal-subtitle">自由筛选指定日期与候选条目，一键导出为纯净标准 JSON、AI 选题讨论 Prompt 或复盘 Markdown。</p>
+          <h3>📤 导出候选（AI 分析专用）</h3>
+          <p class="modal-subtitle">专为大模型（AI）分析设计，仅保留核心要素（平台、标题、作者、日期、赞藏、链接、一句话摘要与写文角度），去除一切冗余数据。</p>
         </div>
         <button class="btn-close-modal" id="btn-close-ai-export">✕</button>
       </div>
@@ -622,13 +606,13 @@
               <label class="export-label">导出格式：</label>
               <div class="export-pill-group" id="export-format-group">
                 <button type="button" class="btn-pill-choice active" data-format="json">
-                  📦 标准 JSON (下游 Agent / 备份)
+                  ✨ 精简 JSON (标准英文字段)
+                </button>
+                <button type="button" class="btn-pill-choice" data-format="cn_json">
+                  🇨🇳 极简中文 (平台/标题/赞藏/摘要)
                 </button>
                 <button type="button" class="btn-pill-choice" data-format="ai">
-                  🤖 AI 选题讨论 (带提示词)
-                </button>
-                <button type="button" class="btn-pill-choice" data-format="md">
-                  📄 复盘 Markdown (文档)
+                  🤖 AI 选题讨论 Prompt
                 </button>
               </div>
             </div>

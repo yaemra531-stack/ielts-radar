@@ -1878,40 +1878,46 @@ const customExportState = {
   format: 'json'      // 'json' | 'ai' | 'md'
 };
 
-// 1. 生成定制 JSON（针对候选或全部，支持日期筛选）
-function generateCustomJsonExport(targetDate, onlyCandidates = true) {
+// 1. 生成定制精简 JSON（专为 AI 分析设计，剔除一切多余元数据与系统字段）
+function generateCustomJsonExport(targetDate, onlyCandidates = true, isChineseKey = false) {
   const store = state.data;
   const day = (store.dailyRecords || []).find(r => r.date === targetDate);
   const dayItems = day ? (day.items || []) : [];
   const exportItems = onlyCandidates ? dayItems.filter(i => i.isCandidate) : dayItems;
 
-  const result = {
-    report_date: targetDate,
-    agent: day?.promptVersionWorkBuddy ? "WorkBuddy" : "WorkBuddy",
-    prompt_version: day?.promptVersionWorkBuddy || "V1.4",
-    coverage: day?.coverage || null,
-    export_filter: onlyCandidates ? "candidates_only" : "all_items",
-    total_count: exportItems.length,
-    exported_at: new Date().toISOString(),
-    items: exportItems.map(item => ({
+  const result = exportItems.map(item => {
+    if (isChineseKey) {
+      const obj = {
+        平台: item.platform || "未知",
+        标题: item.title || "",
+        作者: item.author || "未知作者",
+        日期: item.publishDate || "待确认",
+        赞: item.likes ?? 0,
+        收藏: item.favorites ?? 0,
+        链接: item.url || "",
+        一句话摘要: item.summary || ""
+      };
+      if (item.note) {
+        obj["写文角度"] = item.note;
+      }
+      return obj;
+    }
+
+    const obj = {
       platform: item.platform,
       title: item.title,
       author: item.author || null,
       published_at: item.publishDate || "待确认",
       likes: item.likes !== undefined ? item.likes : null,
       favorites: item.favorites !== undefined ? item.favorites : null,
-      score: item.score !== undefined ? item.score : null,
       url: item.url,
-      content_id: item.stableId ? item.stableId.replace(/^[a-z]+_/, '') : null,
-      discovery_reason: item.discovery_reason || "",
-      summary: item.summary || "",
-      reader_value: item.reader_value || "",
-      comments_checked: item.comments_checked !== undefined ? item.comments_checked : true,
-      audience_questions: Array.isArray(item.audience_questions) ? item.audience_questions : [],
-      is_candidate: !!item.isCandidate,
-      note: item.note || ""
-    }))
-  };
+      summary: item.summary || ""
+    };
+    if (item.note) {
+      obj.note = item.note;
+    }
+    return obj;
+  });
 
   return JSON.stringify(result, null, 2);
 }
@@ -2088,14 +2094,17 @@ function updateExportPreview() {
   // 根据当前选择格式生成文本
   let content = '';
   if (format === 'json') {
-    content = generateCustomJsonExport(date, onlyCandidates);
-    if (btnDownloadText) btnDownloadText.textContent = '下载 .JSON';
+    content = generateCustomJsonExport(date, onlyCandidates, false);
+    if (btnDownloadText) btnDownloadText.textContent = '下载精简 JSON';
+  } else if (format === 'cn_json') {
+    content = generateCustomJsonExport(date, onlyCandidates, true);
+    if (btnDownloadText) btnDownloadText.textContent = '下载极简中文 JSON';
   } else if (format === 'ai') {
     content = generateAiTopicDiscussionPrompt(date, onlyCandidates);
-    if (btnDownloadText) btnDownloadText.textContent = '下载 .MD (AI)';
+    if (btnDownloadText) btnDownloadText.textContent = '下载讨论 Prompt';
   } else {
     content = generateCustomMarkdownExport(date, onlyCandidates);
-    if (btnDownloadText) btnDownloadText.textContent = '下载 .MD (复盘)';
+    if (btnDownloadText) btnDownloadText.textContent = '下载复盘 .MD';
   }
 
   if (preview) preview.value = content;
@@ -2211,7 +2220,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 7.1 定制导出与选题分发工作台事件绑定
+  // 7.1 定制导出工作台事件绑定（独立按钮，点击直接稳定打开）
+  document.getElementById('btn-export-candidates')?.addEventListener('click', () => openCustomExportModal('json', 'candidate'));
   document.getElementById('btn-export-candidates-dropdown')?.addEventListener('click', () => openCustomExportModal('json', 'candidate'));
   document.getElementById('btn-export-ai-dropdown')?.addEventListener('click', () => openCustomExportModal('ai', 'candidate'));
   document.getElementById('btn-export-markdown')?.addEventListener('click', () => openCustomExportModal('md', 'candidate'));
@@ -2256,7 +2266,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!preview) return;
     const textToCopy = preview.value;
     const fmt = customExportState.format;
-    const fmtLabel = fmt === 'json' ? '标准 JSON' : (fmt === 'ai' ? 'AI 选题讨论' : '复盘 Markdown');
+    const fmtLabel = fmt === 'json' ? '精简 JSON' : (fmt === 'cn_json' ? '极简中文 JSON' : (fmt === 'ai' ? 'AI 讨论 Prompt' : '复盘 Markdown'));
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(textToCopy).then(() => {
@@ -2264,7 +2274,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const iconSpan = document.getElementById('btn-copy-ai-icon');
         if (textSpan) textSpan.textContent = '已复制！';
         if (iconSpan) iconSpan.textContent = '✓';
-        showToast(`已复制 ${fmtLabel}！可直接粘贴使用`, 'success');
+        showToast(`已复制 ${fmtLabel}！可直接粘贴给 AI 分析`, 'success');
         setTimeout(() => {
           if (textSpan) textSpan.textContent = '一键复制全文';
           if (iconSpan) iconSpan.textContent = '📋';
@@ -2272,12 +2282,12 @@ window.addEventListener('DOMContentLoaded', () => {
       }).catch(() => {
         preview.select();
         document.execCommand('copy');
-        showToast(`已复制 ${fmtLabel}！`, 'success');
+        showToast(`已复制 ${fmtLabel}！可直接粘贴给 AI 分析`, 'success');
       });
     } else {
       preview.select();
       document.execCommand('copy');
-      showToast(`已复制 ${fmtLabel}！`, 'success');
+      showToast(`已复制 ${fmtLabel}！可直接粘贴给 AI 分析`, 'success');
     }
   });
 
@@ -2290,10 +2300,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const scope = customExportState.scope;
     const scopeTag = scope === 'candidate' ? 'candidates' : 'all';
 
-    let filename = `ielts-radar-${date}-${scopeTag}.json`;
+    let filename = `ielts-radar-${date}-${scopeTag}-clean.json`;
     let mimeType = 'application/json; charset=utf-8';
 
-    if (fmt === 'ai') {
+    if (fmt === 'cn_json') {
+      filename = `ielts-radar-${date}-${scopeTag}-zh.json`;
+      mimeType = 'application/json; charset=utf-8';
+    } else if (fmt === 'ai') {
       filename = `ielts-radar-ai-topics-${date}-${scopeTag}.md`;
       mimeType = 'text/markdown; charset=utf-8';
     } else if (fmt === 'md') {
