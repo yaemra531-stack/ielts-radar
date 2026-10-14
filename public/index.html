@@ -23,6 +23,7 @@
     </div>
     <div class="mobile-nav-tabs">
       <button class="nav-tab active" data-tab="timeline">今日</button>
+      <button class="nav-tab" data-tab="writing">写作</button>
       <button class="nav-tab" data-tab="prompts">提示</button>
       <button class="nav-tab" data-tab="goals">想法</button>
     </div>
@@ -53,7 +54,7 @@
           <span class="brand-slogan">每天10篇，了解雅思世界。</span>
         </div>
 
-        <!-- 主导航（仅三大核心视图） -->
+        <!-- 主导航（含写作进度） -->
         <nav class="sidebar-nav">
           <button class="nav-tab active" data-tab="timeline">
             <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -63,6 +64,14 @@
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
             <span>每日侦察</span>
+          </button>
+
+          <button class="nav-tab" data-tab="writing">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <span>写作进度</span>
           </button>
 
           <button class="nav-tab" data-tab="prompts">
@@ -241,7 +250,112 @@
         </section>
 
 
-        <!-- ================= 视图 2：提示词版本 (Prompts) - 轻量版本管理器 ================= -->
+        <!-- ================= 视图 2：写作进度 (Writing Pipeline) - 选题10步可视化看板 ================= -->
+        <section id="view-writing" class="view-section">
+          <div class="writing-pipeline-page">
+            <!-- 顶部统计栏与操作栏 -->
+            <div class="wp-top-header">
+              <!-- 一排数字：候选 ｜ 拆解中 ｜ 写作中 ｜ 已完成 ｜ 暂缓 -->
+              <div class="wp-stats-bar" id="wp-stats-bar">
+                <div class="wp-stat-item" data-status="candidate">
+                  <span class="wp-stat-label">候选</span>
+                  <span class="wp-stat-num" id="wp-count-candidate">0</span>
+                </div>
+                <div class="wp-stat-divider"></div>
+                <div class="wp-stat-item" data-status="deconstructing">
+                  <span class="wp-stat-label">拆解中</span>
+                  <span class="wp-stat-num" id="wp-count-deconstructing">0</span>
+                </div>
+                <div class="wp-stat-divider"></div>
+                <div class="wp-stat-item" data-status="writing">
+                  <span class="wp-stat-label">写作中</span>
+                  <span class="wp-stat-num" id="wp-count-writing">0</span>
+                </div>
+                <div class="wp-stat-divider"></div>
+                <div class="wp-stat-item" data-status="completed">
+                  <span class="wp-stat-label">已完成</span>
+                  <span class="wp-stat-num" id="wp-count-completed">0</span>
+                </div>
+                <div class="wp-stat-divider"></div>
+                <div class="wp-stat-item" data-status="paused">
+                  <span class="wp-stat-label">暂缓</span>
+                  <span class="wp-stat-num" id="wp-count-paused">0</span>
+                </div>
+              </div>
+
+              <!-- 右上角操作：＋ 新选题 -->
+              <button class="btn btn-primary wp-btn-add-topic" id="btn-open-create-topic">
+                <span>＋ 新选题</span>
+              </button>
+            </div>
+
+            <!-- 5 列看板容器 -->
+            <div class="wp-kanban-board" id="wp-kanban-board">
+              <!-- 由 pipeline 渲染 5 列看板 -->
+            </div>
+
+            <!-- 底部：流程说明（可折叠） -->
+            <div class="wp-process-guide-wrap">
+              <div class="wp-process-guide-header" id="wp-process-guide-toggle">
+                <div class="wp-guide-title-left">
+                  <span class="wp-guide-icon">🗺️</span>
+                  <span class="wp-guide-title">写作流程说明（共 10 步 · ⏸ 需我说话）</span>
+                </div>
+                <button type="button" class="wp-guide-toggle-btn" id="wp-guide-toggle-btn">
+                  <span>展开流程说明</span> ▾
+                </button>
+              </div>
+              <div class="wp-process-guide-body" id="wp-process-guide-body" style="display: none;">
+                <p class="wp-guide-subtext">💡 原帖一般走到第 6 步就拆完了，延伸出的选题从第 7 步接着走。</p>
+                <div class="wp-steps-flow-grid">
+                  <div class="wp-flow-step-card">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">0</span><span class="wp-fstep-role role-ai">AI</span></div>
+                    <div class="wp-fstep-name">建候选页</div>
+                  </div>
+                  <div class="wp-flow-step-card wp-step-highlight">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">1</span><span class="wp-fstep-role role-me">我 ⏸</span></div>
+                    <div class="wp-fstep-name">第一印象</div>
+                  </div>
+                  <div class="wp-flow-step-card">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">2</span><span class="wp-fstep-role role-ai">AI</span></div>
+                    <div class="wp-fstep-name">三个角度拆解</div>
+                  </div>
+                  <div class="wp-flow-step-card">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">3</span><span class="wp-fstep-role role-ai">AI</span></div>
+                    <div class="wp-fstep-name">提炼结构</div>
+                  </div>
+                  <div class="wp-flow-step-card wp-step-highlight">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">4</span><span class="wp-fstep-role role-me">我 ⏸</span></div>
+                    <div class="wp-fstep-name">挑延伸选题</div>
+                  </div>
+                  <div class="wp-flow-step-card wp-step-highlight">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">5</span><span class="wp-fstep-role role-me">我 ⏸</span></div>
+                    <div class="wp-fstep-name">补素材</div>
+                  </div>
+                  <div class="wp-flow-step-card wp-step-highlight">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">6</span><span class="wp-fstep-role role-me">我 ⏸</span></div>
+                    <div class="wp-fstep-name">合并/系列/暂缓</div>
+                  </div>
+                  <div class="wp-flow-step-card">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">7</span><span class="wp-fstep-role role-ai">AI</span></div>
+                    <div class="wp-fstep-name">核实</div>
+                  </div>
+                  <div class="wp-flow-step-card wp-step-highlight">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">8</span><span class="wp-fstep-role role-both">我说写·AI写 ⏸</span></div>
+                    <div class="wp-fstep-name">写初稿</div>
+                  </div>
+                  <div class="wp-flow-step-card">
+                    <div class="wp-fstep-header"><span class="wp-fstep-num">9</span><span class="wp-fstep-role role-both">我确认·AI导出</span></div>
+                    <div class="wp-fstep-name">定稿与导出</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= 视图 3：提示词版本 (Prompts) - 轻量版本管理器 ================= -->
         <section id="view-prompts" class="view-section">
           <div id="prompts-container">
             <!-- 由 app.js 动态渲染轻量版本管理器 -->
@@ -636,6 +750,44 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-ai-export').classList.remove('active')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 模态框 5：＋ 新建选题工作台 ================= -->
+  <div id="modal-create-topic" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 480px;">
+      <div class="modal-header">
+        <div>
+          <h3>＋ 新建选题</h3>
+          <p class="modal-subtitle">录入新选题，开启 10 步流程可视化推进</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-create-topic">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-create-topic" onsubmit="return false;">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="topic-input-title" style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px;">选题标题 *</label>
+            <input type="text" id="topic-input-title" class="input-field" placeholder="例如：听力7分的核心障碍到底是什么" required style="width: 100%; box-sizing: border-box;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px;">选题类型 *</label>
+            <div class="export-pill-group" id="topic-type-group">
+              <button type="button" class="btn-pill-choice active" data-type="original">📌 原帖</button>
+              <button type="button" class="btn-pill-choice" data-type="extension">🌱 延伸</button>
+            </div>
+          </div>
+
+          <div class="form-group" id="topic-parent-group" style="margin-bottom: 16px; display: none;">
+            <label class="form-label" for="topic-select-parent" style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px;">属于哪篇原帖 *</label>
+            <select id="topic-select-parent" class="input-field" style="width: 100%; box-sizing: border-box;"></select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-create-topic">取消</button>
+        <button type="button" class="btn btn-primary" id="btn-submit-create-topic">创建选题</button>
       </div>
     </div>
   </div>

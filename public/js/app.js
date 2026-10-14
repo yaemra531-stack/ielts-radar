@@ -5,10 +5,11 @@
  */
 import { Parser } from './parser.js';
 import { DiffViewer } from './diff.js';
+import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js';
 
 // 全局应用状态
 const state = {
-  currentTab: 'timeline', // 'timeline' | 'prompts' | 'goals'
+  currentTab: 'timeline', // 'timeline' | 'writing' | 'prompts' | 'goals'
   activePromptAgent: 'workbuddy', // 'workbuddy' | 'muse'
   selectedPromptVersion: null, // 当前选中的提示词版本
   data: {
@@ -276,6 +277,8 @@ function renderApp() {
 
   if (state.currentTab === 'timeline') {
     renderTimeline();
+  } else if (state.currentTab === 'writing') {
+    renderWritingPipeline();
   } else if (state.currentTab === 'prompts') {
     renderPrompts();
   } else if (state.currentTab === 'goals') {
@@ -2125,16 +2128,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('hashchange', () => {
     const hash = window.location.hash.replace('#', '');
-    if (['timeline', 'prompts', 'goals'].includes(hash)) {
+    if (['timeline', 'writing', 'prompts', 'goals'].includes(hash)) {
       state.currentTab = hash;
       renderApp();
     }
   });
 
   const initialHash = window.location.hash.replace('#', '');
-  if (['timeline', 'prompts', 'goals'].includes(initialHash)) {
+  if (['timeline', 'writing', 'prompts', 'goals'].includes(initialHash)) {
     state.currentTab = initialHash;
   }
+
+  // 初始化写作进度全局事件
+  initWritingPipelineEvents();
 
   // 2. 导入日报入口
   document.getElementById('btn-open-import')?.addEventListener('click', openImportModal);
