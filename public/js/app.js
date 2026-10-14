@@ -159,6 +159,14 @@ async function loadData() {
       updateSyncStatus(true);
     } catch (_) {}
   }
+
+  // 默认展开所有日期并将活动日期指向最新一天
+  if (state.data.dailyRecords && state.data.dailyRecords.length > 0) {
+    state.data.dailyRecords.forEach(d => state.expandedDates.add(d.date));
+    state.activeTimelineDate = state.data.dailyRecords[0].date;
+  }
+
+  renderApp();
 }
 
 // 智能无损合并引擎：远程新内容与本地用户交互资产（候选/已读/笔记）精准融合
@@ -216,13 +224,6 @@ function mergeRemoteWithLocal(remoteData, cachedData) {
   const merged = { ...remoteData };
   merged.dailyRecords = mergedRecords;
   return merged;
-
-  // 默认展开所有日期
-  if (state.data.dailyRecords && state.data.dailyRecords.length > 0) {
-    state.data.dailyRecords.forEach(d => state.expandedDates.add(d.date));
-  }
-
-  renderApp();
 }
 
 async function persistData(successMessage = '数据已保存') {
