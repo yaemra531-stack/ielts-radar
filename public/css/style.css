@@ -2578,539 +2578,394 @@ textarea.input-field {
 }
 
 /* ==========================================================================
-   写作进度看板 (Writing Pipeline) 专属设计
+   写作流程 (Writing Flow - flow.html 样式与深色模式适配)
    ========================================================================== */
-.writing-pipeline-page {
-  padding: 16px 20px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+:root {
+  --flow-bg: #f6f7f9;
+  --flow-card: #ffffff;
+  --flow-line: #e6e8ee;
+  --flow-text: #1f2330;
+  --flow-sub: #6b7280;
+  --flow-mute: #9aa1ad;
+  --flow-brand: #4f46e5;
+  --flow-brand-soft: #eef0ff;
+  --flow-me: #c2410c;
+  --flow-me-soft: #fff4ec;
+  --flow-ai: #0f766e;
+  --flow-ai-soft: #ebf8f6;
+  --flow-who-both-bg: #f3f4f6;
+  --flow-who-both-color: #4b5563;
+  --flow-bullet: #cfd3dc;
+  --flow-bullet-me: #f4b48b;
+  --flow-bullet-ai: #8dd3c7;
+  --flow-open-border: #d9dcf5;
+  --flow-open-shadow: rgba(79, 70, 229, 0.08);
+  --flow-arrow: #c9cde8;
 }
 
-/* 顶部数字统计栏与操作栏 */
-.wp-top-header {
+[data-theme="dark"] {
+  --flow-bg: #14161b;
+  --flow-card: #1c1f26;
+  --flow-line: #2e3340;
+  --flow-text: #f1f3f7;
+  --flow-sub: #9ca3af;
+  --flow-mute: #6b7280;
+  --flow-brand: #818cf8;
+  --flow-brand-soft: rgba(99, 102, 241, 0.16);
+  --flow-me: #fb923c;
+  --flow-me-soft: rgba(249, 115, 22, 0.16);
+  --flow-ai: #2dd4bf;
+  --flow-ai-soft: rgba(20, 184, 166, 0.16);
+  --flow-who-both-bg: #282c37;
+  --flow-who-both-color: #d1d5db;
+  --flow-bullet: #4b5563;
+  --flow-bullet-me: #fb923c;
+  --flow-bullet-ai: #2dd4bf;
+  --flow-open-border: #434975;
+  --flow-open-shadow: rgba(99, 102, 241, 0.15);
+  --flow-arrow: #434861;
+}
+
+.writing-flow-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 96px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.writing-flow-wrap header {
+  margin-bottom: 40px;
+}
+
+.writing-flow-wrap header h1 {
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: 0.5px;
+  color: var(--flow-text);
+}
+
+.writing-flow-wrap header p {
+  color: var(--flow-sub);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.writing-flow-wrap .legend {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
-  flex-wrap: wrap;
-}
-
-.wp-stats-bar {
-  display: inline-flex;
-  align-items: center;
-  background-color: var(--bg-content);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 16px;
-  box-shadow: var(--shadow-sm);
-  gap: 14px;
-}
-
-.wp-stat-item {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  cursor: default;
-}
-
-.wp-stat-label {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-}
-
-.wp-stat-num {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-title);
-  font-variant-numeric: tabular-nums;
-}
-
-.wp-stat-divider {
-  width: 1px;
-  height: 14px;
-  background-color: var(--border);
-}
-
-.wp-btn-add-topic {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-}
-
-/* 看板主体 (5 列横向排列) */
-.wp-kanban-board {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
-  gap: 14px;
-  align-items: start;
-  overflow-x: auto;
-  padding-bottom: 12px;
-}
-
-@media (max-width: 1180px) {
-  .wp-kanban-board {
-    grid-template-columns: repeat(5, 240px);
-  }
-}
-
-.wp-kanban-col {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  min-height: 480px;
-  overflow: hidden;
-}
-
-.wp-col-header {
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  background-color: rgba(125, 125, 125, 0.03);
-}
-
-.wp-col-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.wp-col-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-title);
-}
-
-.wp-col-count-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 10px;
-  background-color: var(--border);
-  color: var(--text-secondary);
-}
-
-.wp-col-cards-container {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-}
-
-.wp-empty-placeholder {
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  padding: 24px 12px;
-  text-align: center;
-  color: var(--text-muted);
+  margin-top: 18px;
   font-size: 12px;
+  color: var(--flow-sub);
 }
 
-/* 选题卡片 */
-.wp-card {
-  background-color: var(--bg-content);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.wp-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(37, 99, 235, 0.3);
-}
-
-/* 暂缓状态卡片 (灰色调) */
-.wp-card.is-paused {
-  opacity: 0.72;
-  filter: grayscale(0.5);
-  background-color: var(--bg-secondary);
-}
-
-.wp-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.wp-card-title-area {
-  display: flex;
-  align-items: flex-start;
+.writing-flow-wrap .legend span {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+}
+
+.writing-flow-wrap .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.writing-flow-wrap .toggle-all {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--flow-brand);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.writing-flow-wrap .toggle-all:hover {
+  text-decoration: underline;
+}
+
+.writing-flow-wrap .step {
+  position: relative;
+  background: var(--flow-card);
+  border: 1px solid var(--flow-line);
+  border-radius: 16px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.writing-flow-wrap .step:hover {
+  box-shadow: 0 6px 24px rgba(31, 35, 48, 0.06);
+}
+
+.writing-flow-wrap .step.open {
+  border-color: var(--flow-open-border);
+  box-shadow: 0 8px 28px var(--flow-open-shadow);
+}
+
+.writing-flow-wrap .head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.writing-flow-wrap .num {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--flow-brand-soft);
+  color: var(--flow-brand);
+  display: grid;
+  place-items: center;
+  font-weight: 650;
+  font-size: 15px;
+}
+
+.writing-flow-wrap .title {
   flex: 1;
 }
 
-.wp-tag {
-  display: inline-block;
-  font-size: 10.5px;
-  font-weight: 600;
-  padding: 2px 5px;
-  border-radius: 4px;
-  white-space: nowrap;
-  flex-shrink: 0;
+.writing-flow-wrap .title h2 {
+  font-size: 17px;
+  font-weight: 620;
+  color: var(--flow-text);
+}
+
+.writing-flow-wrap .title p {
+  font-size: 13px;
+  color: var(--flow-sub);
   margin-top: 1px;
 }
 
-.wp-tag.tag-original {
-  background-color: rgba(37, 99, 235, 0.1);
-  color: var(--accent);
-}
-
-.wp-tag.tag-extension {
-  background-color: rgba(16, 185, 129, 0.12);
-  color: #059669;
-}
-
-[data-theme="dark"] .wp-tag.tag-extension {
-  color: #34d399;
-}
-
-.wp-card-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-title);
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-/* 卡片菜单操作 */
-.wp-card-menu-wrap {
-  position: relative;
-}
-
-.wp-card-menu-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 2px 4px;
-  font-size: 14px;
-  line-height: 1;
-  border-radius: 4px;
-  transition: color 0.15s, background-color 0.15s;
-}
-
-.wp-card-menu-btn:hover {
-  color: var(--text-title);
-  background-color: var(--bg-secondary);
-}
-
-.wp-card-menu-popover {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: var(--bg-content);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-modal);
-  padding: 4px;
-  z-index: 50;
-  display: none;
-  min-width: 100px;
-}
-
-.wp-card-menu-popover.active {
-  display: flex;
-  flex-direction: column;
-}
-
-.wp-menu-opt-btn {
-  background: transparent;
-  border: none;
-  padding: 6px 8px;
+.writing-flow-wrap .who {
   font-size: 12px;
-  color: var(--text-body);
-  border-radius: 4px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
   white-space: nowrap;
 }
 
-.wp-menu-opt-btn:hover {
-  background-color: var(--bg-secondary);
-  color: var(--text-title);
+.writing-flow-wrap .who.me {
+  background: var(--flow-me-soft);
+  color: var(--flow-me);
 }
 
-.wp-menu-opt-btn.danger {
-  color: #ef4444;
+.writing-flow-wrap .who.ai {
+  background: var(--flow-ai-soft);
+  color: var(--flow-ai);
 }
 
-.wp-menu-opt-btn.danger:hover {
-  background-color: rgba(239, 68, 68, 0.08);
+.writing-flow-wrap .who.both {
+  background: var(--flow-who-both-bg);
+  color: var(--flow-who-both-color);
 }
 
-/* 10 个小圆圈指示行 */
-.wp-step-dots-row {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 0;
-  flex-wrap: nowrap;
+.writing-flow-wrap .chev {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--flow-mute);
+  transition: transform 0.25s ease;
 }
 
-.wp-step-dot {
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  user-select: none;
-  flex-shrink: 0;
-  box-sizing: border-box;
+.writing-flow-wrap .step.open .chev {
+  transform: rotate(180deg);
 }
 
-/* 1. 已完成：实心圆 + 对勾 */
-.wp-step-dot.is-done {
-  background-color: var(--accent);
-  color: #ffffff;
-  border: none;
-}
-
-/* 2. 当前步：高亮空心圆 */
-.wp-step-dot.is-current {
-  border: 2px solid var(--accent);
-  background-color: rgba(37, 99, 235, 0.08);
-  color: var(--accent);
-}
-
-/* 3. 未到达：灰色空心圆 */
-.wp-step-dot.is-pending {
-  border: 1.5px solid var(--border);
-  background-color: transparent;
-  color: transparent;
-}
-
-.wp-step-dot:hover {
-  transform: scale(1.18);
-}
-
-/* 当前步骤名称文字 */
-.wp-step-name-text {
-  font-size: 11.5px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.wp-step-name-text.is-finished {
-  color: #059669;
-  font-weight: 600;
-}
-
-[data-theme="dark"] .wp-step-name-text.is-finished {
-  color: #34d399;
-}
-
-/* 原帖卡片内的延伸选题列表展示 (缩进列出) */
-.wp-card-extensions {
-  background-color: rgba(125, 125, 125, 0.05);
-  border-left: 2px solid var(--accent);
-  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
-  padding: 6px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.wp-ext-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.wp-ext-title {
-  font-size: 11.5px;
-  color: var(--text-body);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.wp-ext-dots-row {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.wp-ext-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-}
-
-.wp-ext-dot.is-done {
-  background-color: var(--accent);
-}
-
-.wp-ext-dot.is-current {
-  border: 1.5px solid var(--accent);
-  background-color: transparent;
-}
-
-.wp-ext-dot.is-pending {
-  border: 1px solid var(--border);
-  background-color: transparent;
-}
-
-/* 底部流程说明（可折叠） */
-.wp-process-guide-wrap {
-  background-color: var(--bg-content);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.wp-process-guide-header {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  background-color: rgba(125, 125, 125, 0.02);
-  user-select: none;
-}
-
-.wp-guide-title-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.wp-guide-icon {
-  font-size: 16px;
-}
-
-.wp-guide-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-title);
-}
-
-.wp-guide-toggle-btn {
-  background: transparent;
-  border: none;
-  font-size: 12.5px;
-  color: var(--accent);
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.wp-process-guide-body {
-  padding: 14px 16px 18px;
-  border-top: 1px solid var(--border);
-}
-
-.wp-guide-subtext {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-
-.wp-steps-flow-grid {
+.writing-flow-wrap .body {
   display: grid;
-  grid-template-columns: repeat(10, minmax(100px, 1fr));
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
 }
 
-@media (max-width: 1024px) {
-  .wp-steps-flow-grid {
-    grid-template-columns: repeat(10, 110px);
-  }
+.writing-flow-wrap .step.open .body {
+  grid-template-rows: 1fr;
 }
 
-.wp-flow-step-card {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.writing-flow-wrap .inner {
+  overflow: hidden;
 }
 
-.wp-flow-step-card.wp-step-highlight {
-  border-color: rgba(37, 99, 235, 0.35);
-  background-color: rgba(37, 99, 235, 0.04);
+.writing-flow-wrap .content {
+  padding: 0 22px 22px 72px;
 }
 
-.wp-fstep-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.writing-flow-wrap .block {
+  margin-top: 14px;
 }
 
-.wp-fstep-num {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.wp-fstep-role {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 1px 4px;
-  border-radius: 3px;
-}
-
-.wp-fstep-role.role-ai {
-  background-color: rgba(125, 125, 125, 0.12);
-  color: var(--text-secondary);
-}
-
-.wp-fstep-role.role-me {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #d97706;
-}
-
-[data-theme="dark"] .wp-fstep-role.role-me {
-  color: #fbbf24;
-}
-
-.wp-fstep-role.role-both {
-  background-color: rgba(37, 99, 235, 0.12);
-  color: var(--accent);
-}
-
-.wp-fstep-name {
+.writing-flow-wrap .block h3 {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-title);
-  line-height: 1.3;
+  letter-spacing: 1px;
+  color: var(--flow-mute);
+  margin-bottom: 8px;
+}
+
+.writing-flow-wrap .block.me h3 {
+  color: var(--flow-me);
+}
+
+.writing-flow-wrap .block.ai h3 {
+  color: var(--flow-ai);
+}
+
+.writing-flow-wrap ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.writing-flow-wrap li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 14px;
+  margin: 4px 0;
+  color: var(--flow-text);
+}
+
+.writing-flow-wrap li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.75em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--flow-bullet);
+}
+
+.writing-flow-wrap .block.me li::before {
+  background: var(--flow-bullet-me);
+}
+
+.writing-flow-wrap .block.ai li::before {
+  background: var(--flow-bullet-ai);
+}
+
+.writing-flow-wrap .q {
+  background: var(--flow-me-soft);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin: 6px 0;
+  color: var(--flow-text);
+}
+
+.writing-flow-wrap .q b {
+  color: var(--flow-me);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.writing-flow-wrap .angle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.writing-flow-wrap .angle div {
+  border: 1px solid var(--flow-line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.writing-flow-wrap .angle strong {
+  display: block;
+  font-size: 14px;
+  color: var(--flow-brand);
+}
+
+.writing-flow-wrap .angle span {
+  font-size: 13px;
+  color: var(--flow-sub);
+}
+
+.writing-flow-wrap .sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.writing-flow-wrap .sub div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 14px;
+  color: var(--flow-text);
+}
+
+.writing-flow-wrap .sub em {
+  font-style: normal;
+  flex: none;
+  font-size: 12px;
+  color: var(--flow-brand);
+  background: var(--flow-brand-soft);
+  border-radius: 6px;
+  padding: 0 7px;
+  font-weight: 600;
+}
+
+.writing-flow-wrap .skill {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--flow-line);
+  font-size: 12px;
+  color: var(--flow-mute);
+}
+
+.writing-flow-wrap .skill code {
+  font-family: inherit;
+  color: var(--flow-brand);
+  background: var(--flow-brand-soft);
+  padding: 1px 8px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+
+.writing-flow-wrap .arrow {
+  display: flex;
+  justify-content: center;
+  height: 34px;
+  position: relative;
+}
+
+.writing-flow-wrap .arrow::before {
+  content: "";
+  width: 1.5px;
+  background: linear-gradient(var(--flow-line), var(--flow-arrow));
+  height: 100%;
+}
+
+.writing-flow-wrap .arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--flow-arrow);
+  border-bottom: 1.5px solid var(--flow-arrow);
+  transform: rotate(45deg);
+}
+
+.writing-flow-wrap footer {
+  text-align: center;
+  color: var(--flow-mute);
+  font-size: 12px;
+  margin-top: 36px;
+}
+
+@media (max-width: 560px) {
+  .writing-flow-wrap .content {
+    padding-left: 22px;
+  }
+  .writing-flow-wrap .angle {
+    grid-template-columns: 1fr;
+  }
 }
 
 
