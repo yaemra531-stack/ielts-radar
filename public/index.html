@@ -108,6 +108,9 @@
               <span>导出 ▾</span>
             </button>
             <div class="dropdown-menu">
+              <button class="dropdown-item" id="btn-export-candidates-dropdown" style="color: var(--accent); font-weight: 600;">
+                <span>⭐</span> 导出精选候选 (定制)
+              </button>
               <button class="dropdown-item" id="btn-export-ai-dropdown">
                 <span>🤖</span> 导出 AI 选题讨论
               </button>
@@ -115,7 +118,7 @@
                 <span>📄</span> 导出复盘 Markdown
               </button>
               <button class="dropdown-item" id="btn-export-json">
-                <span>📦</span> 导出备份 JSON
+                <span>📦</span> 导出全量备份 JSON
               </button>
             </div>
           </div>
@@ -584,25 +587,64 @@
     </div>
   </div>
 
-  <!-- ================= 模态框 4：一键导出 AI 选题研讨 Dossier ================= -->
+  <!-- ================= 模态框 4：一键定制导出工作台 (支持仅候选、按日期筛选、标准 JSON 与 Markdown) ================= -->
   <div id="modal-ai-export" class="modal-backdrop">
-    <div class="modal-window" style="max-width: 780px;">
+    <div class="modal-window" style="max-width: 820px;">
       <div class="modal-header">
         <div>
-          <h3>🤖 今日 AI 选题与创作决策研讨</h3>
-          <p class="modal-subtitle">已自动汇总今日收录情报、三问研究、观众真实痛点与个人笔记，并附带针对 AI 的专业选题决策指令。</p>
+          <h3>📤 导出与选题分发工作台</h3>
+          <p class="modal-subtitle">自由筛选指定日期与候选条目，一键导出为纯净标准 JSON、AI 选题讨论 Prompt 或复盘 Markdown。</p>
         </div>
         <button class="btn-close-modal" id="btn-close-ai-export">✕</button>
       </div>
       <div class="modal-body">
-        <div class="ai-export-toolbar">
-          <span class="ai-export-tip">💡 点击右侧一键复制，直接粘贴给 ChatGPT、Claude 或 Gemini 开启研讨：</span>
+        <!-- 筛选与控制工具栏 -->
+        <div class="export-controls-card">
+          <div class="export-control-row">
+            <div class="export-field-group">
+              <label class="export-label" for="export-date-select">选择日期：</label>
+              <select id="export-date-select" class="export-select"></select>
+            </div>
+            <div class="export-field-group">
+              <label class="export-label">内容范围：</label>
+              <div class="export-pill-group" id="export-scope-group">
+                <button type="button" class="btn-pill-choice active" data-scope="candidate">
+                  ⭐ 仅设为候选 (<span id="export-candidate-count">0</span>)
+                </button>
+                <button type="button" class="btn-pill-choice" data-scope="all">
+                  📑 全部收录 (<span id="export-all-count">0</span>)
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="export-control-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+            <div class="export-field-group" style="width: 100%;">
+              <label class="export-label">导出格式：</label>
+              <div class="export-pill-group" id="export-format-group">
+                <button type="button" class="btn-pill-choice active" data-format="json">
+                  📦 标准 JSON (下游 Agent / 备份)
+                </button>
+                <button type="button" class="btn-pill-choice" data-format="ai">
+                  🤖 AI 选题讨论 (带提示词)
+                </button>
+                <button type="button" class="btn-pill-choice" data-format="md">
+                  📄 复盘 Markdown (文档)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-export-toolbar" style="margin-top: 14px;">
+          <span class="ai-export-tip" id="export-status-tip">
+            💡 已自动匹配 <b id="export-matched-count">0</b> 篇条目，点击右侧一键复制或下载：
+          </span>
           <div class="ai-export-btn-group">
             <button type="button" class="btn btn-primary btn-sm" id="btn-copy-ai-dossier">
               <span id="btn-copy-ai-icon">📋</span> <span id="btn-copy-ai-text">一键复制全文</span>
             </button>
             <button type="button" class="btn btn-secondary btn-sm" id="btn-download-ai-dossier">
-              <span>📥 下载 Markdown</span>
+              <span id="btn-download-ai-icon">📥</span> <span id="btn-download-ai-text">下载文件</span>
             </button>
           </div>
         </div>

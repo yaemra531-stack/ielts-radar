@@ -1816,12 +1816,60 @@ function generateClientMarkdownExport(store) {
   return md;
 }
 
-// 一键生成与 AI 讨论选题与决策的专用 Prompt Dossier
-function generateAiTopicDiscussionPrompt(targetDate) {
+// --------------------------------------------------------------------------
+// 导出工作台核心引擎（支持日期筛选、仅候选条目与多格式生成）
+// --------------------------------------------------------------------------
+const customExportState = {
+  date: '',
+  scope: 'candidate', // 'candidate' | 'all'
+  format: 'json'      // 'json' | 'ai' | 'md'
+};
+
+// 1. 生成定制 JSON（针对候选或全部，支持日期筛选）
+function generateCustomJsonExport(targetDate, onlyCandidates = true) {
+  const store = state.data;
+  const day = (store.dailyRecords || []).find(r => r.date === targetDate);
+  const dayItems = day ? (day.items || []) : [];
+  const exportItems = onlyCandidates ? dayItems.filter(i => i.isCandidate) : dayItems;
+
+  const result = {
+    report_date: targetDate,
+    agent: day?.promptVersionWorkBuddy ? "WorkBuddy" : "WorkBuddy",
+    prompt_version: day?.promptVersionWorkBuddy || "V1.4",
+    coverage: day?.coverage || null,
+    export_filter: onlyCandidates ? "candidates_only" : "all_items",
+    total_count: exportItems.length,
+    exported_at: new Date().toISOString(),
+    items: exportItems.map(item => ({
+      platform: item.platform,
+      title: item.title,
+      author: item.author || null,
+      published_at: item.publishDate || "待确认",
+      likes: item.likes !== undefined ? item.likes : null,
+      favorites: item.favorites !== undefined ? item.favorites : null,
+      score: item.score !== undefined ? item.score : null,
+      url: item.url,
+      content_id: item.stableId ? item.stableId.replace(/^[a-z]+_/, '') : null,
+      discovery_reason: item.discovery_reason || "",
+      summary: item.summary || "",
+      reader_value: item.reader_value || "",
+      comments_checked: item.comments_checked !== undefined ? item.comments_checked : true,
+      audience_questions: Array.isArray(item.audience_questions) ? item.audience_questions : [],
+      is_candidate: !!item.isCandidate,
+      note: item.note || ""
+    }))
+  };
+
+  return JSON.stringify(result, null, 2);
+}
+
+// 2. 一键生成与 AI 讨论选题与决策的专用 Prompt Dossier（支持仅候选筛选）
+function generateAiTopicDiscussionPrompt(targetDate, onlyCandidates = false) {
   const store = state.data;
   const date = targetDate || state.activeTimelineDate || (store.dailyRecords && store.dailyRecords[0]?.date) || new Date().toISOString().slice(0, 10);
   const record = (store.dailyRecords || []).find(r => r.date === date);
-  const items = record ? (record.items || []) : [];
+  const rawItems = record ? (record.items || []) : [];
+  const items = onlyCandidates ? rawItems.filter(i => i.isCandidate) : rawItems;
 
   let coverageText = '全平台';
   if (record && record.coverage) {
@@ -1839,26 +1887,36 @@ function generateAiTopicDiscussionPrompt(targetDate) {
     }
   }
 
-  let text = `# 雅思见闻｜今日 10 篇侦察情报与选题决策讨论\n\n`;
+  const candidateTag = onlyCandidates ? '【⭐ 我锁定的今日精选候选】' : '【全部侦察情报】';
+  let text = `# 雅思见闻｜${date} ${candidateTag}（共 ${items.length} 篇）深度研讨\n\n`;
   text += `> **侦察日期**：${date}\n`;
+  text += `> **筛选范围**：${onlyCandidates ? `仅精选候选（${items.length} 篇）` : `全量收录（${items.length} 篇）`}\n`;
   text += `> **平台分布**：${coverageText}\n`;
-  text += `> **收录总数**：${items.length} 篇\n`;
   text += `> **我的身份**：雅思备考者 兼 AI 内容创作者\n\n`;
 
   text += `## 🎯 讨论目标与需求\n`;
-  text += `你好！以下是我今天通过「雅思见闻（IELTS Radar）」侦察系统筛选出的 ${items.length} 篇高价值社媒内容。\n`;
-  text += `请仔细分析每篇内容的【① 发现原因】、【② 内容理解】、【③ 读者价值】以及【观众真实提问】与【我的备考笔记】，协助我完成以下 3 个维度的讨论与选题决策：\n\n`;
-  text += `1. **【今日选题精选（2~3个）】**：结合当前考生的真实痛点与社媒互动热度，帮我挑选出最值得做成原创深度图文/视频的 2~3 个选题方向，并说明推荐理由。\n`;
-  text += `2. **【切入角度与差异化解法】**：针对选出的题目，如何避开同质化套路？如何直接切入评论区考生的真实困惑（如痛点追问），给出更有穿透力的实操解法？\n`;
-  text += `3. **【备考自用干货沉淀】**：在这 10 篇中，有哪些思维模型、解题框架或考场心法，是我作为考生今天可以立刻吸收并应用到自己备考中的？\n\n`;
+  if (onlyCandidates) {
+    text += `你好！以下是我今天在「雅思见闻（IELTS Radar）」中经过研读后，**重点锁定的 ${items.length} 篇高价值候选选题**。\n`;
+    text += `请结合每篇内容的【① 发现原因】、【② 核心理解】、【③ 读者价值】以及【观众真实提问】和【我的备考/写文笔记】，帮我展开以下 3 个维度的深度决策：\n\n`;
+    text += `1. **【切入角度与差异化爆款钩子】**：针对这 ${items.length} 篇题目，如何避开同行套路，给出更有穿透力的第一句话和反直觉解法？\n`;
+    text += `2. **【直击评论区真实痛点】**：如何精准回应读者在评论区提出的卡点，把内容打造成让人忍不住立刻收藏的硬核实操？\n`;
+    text += `3. **【我的备考实战迁移】**：结合我自己的备考，这里面哪个技巧或方法是我今晚就可以立刻吸收并践行在日记里的？\n\n`;
+  } else {
+    text += `你好！以下是我今天通过「雅思见闻（IELTS Radar）」侦察系统筛选出的 ${items.length} 篇社媒内容。\n`;
+    text += `请仔细分析每篇内容的【① 发现原因】、【② 内容理解】、【③ 读者价值】以及【观众真实提问】与【我的备考笔记】，协助我完成以下 3 个维度的讨论与选题决策：\n\n`;
+    text += `1. **【今日选题精选（2~3个）】**：结合当前考生的真实痛点与社媒互动热度，帮我挑选出最值得做成原创深度图文/视频的 2~3 个选题方向，并说明推荐理由。\n`;
+    text += `2. **【切入角度与差异化解法】**：针对选出的题目，如何避开同质化套路？如何直接切入评论区考生的真实困惑（如痛点追问），给出更有穿透力的实操解法？\n`;
+    text += `3. **【备考自用干货沉淀】**：在这 ${items.length} 篇中，有哪些思维模型、解题框架或考场心法，是我作为考生今天可以立刻吸收并应用到自己备考中的？\n\n`;
+  }
+
   text += `---\n\n`;
-  text += `## 📋 今日情报清单详情\n\n`;
+  text += `## 📋 情报清单详情\n\n`;
 
   if (items.length === 0) {
-    text += `*（当前日期暂无收录内容）*\n`;
+    text += `*（当前筛选条件下暂无条目，请确认是否已在卡片上点击「★ 候选」）*\n`;
   } else {
     items.forEach((item, index) => {
-      text += `### ${index + 1}. 【${item.platform || '未知平台'}】${item.title}${item.isCandidate ? ' ⭐【我锁定的今日重点候选】' : ''}\n`;
+      text += `### ${index + 1}. 【${item.platform || '未知平台'}】${item.title}${item.isCandidate ? ' ⭐【重点候选】' : ''}\n`;
       text += `- **作者**: ${item.author || '未标注'} | **发布日期**: ${item.publishDate || '待确认'} | **数据**: ${item.engagement || (item.score !== null && item.score !== undefined ? `得分 ${item.score}` : '无')}\n`;
       text += `- **① 发现（为何关注）**: ${item.discovery_reason || '尚未分析'}\n`;
       text += `- **② 理解（内容概述）**: ${item.summary || '无'}\n`;
@@ -1872,7 +1930,7 @@ function generateAiTopicDiscussionPrompt(targetDate) {
       }
 
       if (item.note && item.note.trim()) {
-        text += `- **📝 我的个人笔记/心得**: ${item.note.trim()}\n`;
+        text += `- **📝 我的写文思考/备考笔记**: ${item.note.trim()}\n`;
       }
 
       text += `- **原文链接**: ${item.url || '无'}\n\n`;
@@ -1880,20 +1938,114 @@ function generateAiTopicDiscussionPrompt(targetDate) {
   }
 
   text += `---\n\n`;
-  text += `请先给出你的【总体观察与今日热点走向】，然后逐一展开【推荐选题与切入角度】及【备考沉淀建议】。谢谢！\n`;
+  text += `请逐一展开深度分析，并输出实操框架。谢谢！\n`;
 
   return text;
 }
 
-// 打开 AI 选题研讨导出弹窗
-function openAiExportModal() {
-  const modal = document.getElementById('modal-ai-export');
-  const preview = document.getElementById('ai-export-preview');
-  if (!modal || !preview) return;
+// 3. 生成定制复盘 Markdown
+function generateCustomMarkdownExport(targetDate, onlyCandidates = false) {
+  const store = state.data;
+  const date = targetDate || state.activeTimelineDate || (store.dailyRecords && store.dailyRecords[0]?.date) || new Date().toISOString().slice(0, 10);
+  const record = (store.dailyRecords || []).find(r => r.date === date);
+  const rawItems = record ? (record.items || []) : [];
+  const items = onlyCandidates ? rawItems.filter(i => i.isCandidate) : rawItems;
 
-  const content = generateAiTopicDiscussionPrompt(state.activeTimelineDate);
-  preview.value = content;
+  const nowStr = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  let md = `# 雅思见闻 · ${date} ${onlyCandidates ? '精选候选' : '全量复盘'}（共 ${items.length} 篇）\n\n`;
+  md += `> 导出时间：${nowStr}\n`;
+  md += `> 筛选范围：${onlyCandidates ? '⭐ 仅候选条目' : '📑 全部收录条目'}\n\n`;
+
+  if (items.length === 0) {
+    md += `*暂无匹配条目*\n\n`;
+  } else {
+    items.forEach((item, idx) => {
+      md += formatItemForMarkdown(item, idx);
+    });
+  }
+  return md;
+}
+
+// 打开定制导出工作台弹窗
+function openCustomExportModal(initialFormat = 'json', initialScope = 'candidate') {
+  const modal = document.getElementById('modal-ai-export');
+  const dateSelect = document.getElementById('export-date-select');
+  if (!modal || !dateSelect) return;
+
+  const records = state.data.dailyRecords || [];
+  const currentDate = state.activeTimelineDate || (records[0]?.date) || new Date().toISOString().slice(0, 10);
+
+  // 1. 填充日期选择下拉框
+  dateSelect.innerHTML = '';
+  records.forEach(rec => {
+    const candCount = (rec.items || []).filter(i => i.isCandidate).length;
+    const opt = document.createElement('option');
+    opt.value = rec.date;
+    opt.textContent = `${rec.date}（${rec.items?.length || 0}篇 · ${candCount}候选）`;
+    if (rec.date === currentDate) opt.selected = true;
+    dateSelect.appendChild(opt);
+  });
+
+  customExportState.date = dateSelect.value || currentDate;
+  customExportState.format = initialFormat;
+  customExportState.scope = initialScope;
+
+  // 2. 更新按钮高亮
+  syncExportUiButtons();
+
+  // 3. 刷新预览
+  updateExportPreview();
+
   modal.classList.add('active');
+}
+
+function syncExportUiButtons() {
+  document.querySelectorAll('#export-scope-group .btn-pill-choice').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.scope === customExportState.scope);
+  });
+  document.querySelectorAll('#export-format-group .btn-pill-choice').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.format === customExportState.format);
+  });
+}
+
+function updateExportPreview() {
+  const date = customExportState.date;
+  const scope = customExportState.scope;
+  const format = customExportState.format;
+
+  const day = (state.data.dailyRecords || []).find(r => r.date === date);
+  const items = day ? (day.items || []) : [];
+  const candCount = items.filter(i => i.isCandidate).length;
+  const allCount = items.length;
+
+  // 更新计数标签
+  const elCandCount = document.getElementById('export-candidate-count');
+  const elAllCount = document.getElementById('export-all-count');
+  const elMatchedCount = document.getElementById('export-matched-count');
+  const preview = document.getElementById('ai-export-preview');
+  const btnDownloadText = document.getElementById('btn-download-ai-text');
+
+  if (elCandCount) elCandCount.textContent = candCount;
+  if (elAllCount) elAllCount.textContent = allCount;
+
+  const onlyCandidates = (scope === 'candidate');
+  const matchedCount = onlyCandidates ? candCount : allCount;
+  if (elMatchedCount) elMatchedCount.textContent = matchedCount;
+
+  // 根据当前选择格式生成文本
+  let content = '';
+  if (format === 'json') {
+    content = generateCustomJsonExport(date, onlyCandidates);
+    if (btnDownloadText) btnDownloadText.textContent = '下载 .JSON';
+  } else if (format === 'ai') {
+    content = generateAiTopicDiscussionPrompt(date, onlyCandidates);
+    if (btnDownloadText) btnDownloadText.textContent = '下载 .MD (AI)';
+  } else {
+    content = generateCustomMarkdownExport(date, onlyCandidates);
+    if (btnDownloadText) btnDownloadText.textContent = '下载 .MD (复盘)';
+  }
+
+  if (preview) preview.value = content;
 }
 
 // --------------------------------------------------------------------------
@@ -2006,9 +2158,36 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 7.1 AI 选题研讨导出与复制事件
-  document.getElementById('btn-open-ai-export')?.addEventListener('click', openAiExportModal);
-  document.getElementById('btn-export-ai-dropdown')?.addEventListener('click', openAiExportModal);
+  // 7.1 定制导出与选题分发工作台事件绑定
+  document.getElementById('btn-export-candidates-dropdown')?.addEventListener('click', () => openCustomExportModal('json', 'candidate'));
+  document.getElementById('btn-export-ai-dropdown')?.addEventListener('click', () => openCustomExportModal('ai', 'candidate'));
+  document.getElementById('btn-export-markdown')?.addEventListener('click', () => openCustomExportModal('md', 'candidate'));
+  document.getElementById('btn-open-ai-export')?.addEventListener('click', () => openCustomExportModal('json', 'candidate'));
+
+  // 日期选择切换
+  document.getElementById('export-date-select')?.addEventListener('change', (e) => {
+    customExportState.date = e.target.value;
+    updateExportPreview();
+  });
+
+  // 范围选择切换（仅候选 / 全部）
+  document.querySelectorAll('#export-scope-group .btn-pill-choice').forEach(btn => {
+    btn.addEventListener('click', () => {
+      customExportState.scope = btn.dataset.scope;
+      syncExportUiButtons();
+      updateExportPreview();
+    });
+  });
+
+  // 格式选择切换（JSON / AI / MD）
+  document.querySelectorAll('#export-format-group .btn-pill-choice').forEach(btn => {
+    btn.addEventListener('click', () => {
+      customExportState.format = btn.dataset.format;
+      syncExportUiButtons();
+      updateExportPreview();
+    });
+  });
+
   document.getElementById('btn-close-ai-export')?.addEventListener('click', () => {
     document.getElementById('modal-ai-export')?.classList.remove('active');
   });
@@ -2018,18 +2197,21 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // 一键复制内容
   document.getElementById('btn-copy-ai-dossier')?.addEventListener('click', () => {
     const preview = document.getElementById('ai-export-preview');
     if (!preview) return;
     const textToCopy = preview.value;
-    
+    const fmt = customExportState.format;
+    const fmtLabel = fmt === 'json' ? '标准 JSON' : (fmt === 'ai' ? 'AI 选题讨论' : '复盘 Markdown');
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(textToCopy).then(() => {
         const textSpan = document.getElementById('btn-copy-ai-text');
         const iconSpan = document.getElementById('btn-copy-ai-icon');
         if (textSpan) textSpan.textContent = '已复制！';
         if (iconSpan) iconSpan.textContent = '✓';
-        showToast('已复制 AI 选题讨论全文！可直接粘贴至 ChatGPT / Claude / Gemini', 'success');
+        showToast(`已复制 ${fmtLabel}！可直接粘贴使用`, 'success');
         setTimeout(() => {
           if (textSpan) textSpan.textContent = '一键复制全文';
           if (iconSpan) iconSpan.textContent = '📋';
@@ -2037,27 +2219,43 @@ window.addEventListener('DOMContentLoaded', () => {
       }).catch(() => {
         preview.select();
         document.execCommand('copy');
-        showToast('已复制 AI 选题讨论全文！', 'success');
+        showToast(`已复制 ${fmtLabel}！`, 'success');
       });
     } else {
       preview.select();
       document.execCommand('copy');
-      showToast('已复制 AI 选题讨论全文！', 'success');
+      showToast(`已复制 ${fmtLabel}！`, 'success');
     }
   });
 
+  // 下载文件 (按当前格式自适应扩展名与内容类型)
   document.getElementById('btn-download-ai-dossier')?.addEventListener('click', () => {
     const preview = document.getElementById('ai-export-preview');
     if (!preview) return;
-    const date = state.activeTimelineDate || new Date().toISOString().slice(0, 10);
-    const blob = new Blob([preview.value], { type: 'text/markdown; charset=utf-8' });
+    const date = customExportState.date || 'export';
+    const fmt = customExportState.format;
+    const scope = customExportState.scope;
+    const scopeTag = scope === 'candidate' ? 'candidates' : 'all';
+
+    let filename = `ielts-radar-${date}-${scopeTag}.json`;
+    let mimeType = 'application/json; charset=utf-8';
+
+    if (fmt === 'ai') {
+      filename = `ielts-radar-ai-topics-${date}-${scopeTag}.md`;
+      mimeType = 'text/markdown; charset=utf-8';
+    } else if (fmt === 'md') {
+      filename = `ielts-radar-summary-${date}-${scopeTag}.md`;
+      mimeType = 'text/markdown; charset=utf-8';
+    }
+
+    const blob = new Blob([preview.value], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ielts-radar-ai-topics-${date}.md`;
+    a.download = filename;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast('已下载 AI 选题研讨 Markdown 文件', 'success');
+    showToast(`已下载 ${filename}`, 'success');
   });
 
   // 8. 主题
