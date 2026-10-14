@@ -9,7 +9,7 @@
    - 主要强调：#4F46E5 (Linear / Apple 靛紫)
    - 边框颜色：#E5E7EB
    - 字体：中文优先 PingFang SC，系统字体
-   - 单列纵向阅读流、220px 左侧导航、阅读优先、无花哨装饰
+   - 单列纵向阅读流、248px 左侧导航、阅读优先、无花哨装饰
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -138,7 +138,7 @@ button, input, select, textarea {
 }
 
 /* --------------------------------------------------------------------------
-   3. 全局布局结构 (桌面端左侧 220px 导航 + 右侧 960px 内容卡片)
+   3. 全局布局结构 (桌面端左侧 248px 导航 + 右侧 960px 内容卡片)
    -------------------------------------------------------------------------- */
 .app-layout {
   display: flex;
@@ -148,7 +148,7 @@ button, input, select, textarea {
 
 /* 桌面端左侧导航栏 */
 .app-sidebar {
-  width: 220px;
+  width: 248px;
   flex-shrink: 0;
   height: 100vh;
   position: sticky;
@@ -172,13 +172,13 @@ button, input, select, textarea {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 0 8px;
 }
 
 .brand-radar-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
   background-color: var(--accent);
   color: #ffffff;
@@ -188,13 +188,18 @@ button, input, select, textarea {
   flex-shrink: 0;
 }
 
+.brand-radar-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
 .brand-info {
   display: flex;
   flex-direction: column;
 }
 
 .brand-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-title);
   letter-spacing: -0.01em;
@@ -202,7 +207,7 @@ button, input, select, textarea {
 }
 
 .brand-subtitle {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   letter-spacing: 0.02em;
@@ -214,7 +219,7 @@ button, input, select, textarea {
 }
 
 .brand-slogan {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.4;
 }
@@ -241,6 +246,18 @@ button, input, select, textarea {
   cursor: pointer;
   transition: all var(--transition);
   text-align: left;
+}
+
+.sidebar-nav .nav-tab {
+  min-height: 46px;
+  padding: 10px 12px;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.sidebar-nav .nav-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .nav-tab .nav-icon {
@@ -2597,8 +2614,8 @@ textarea.input-field {
   --flow-brand: #4e5c85;
   --flow-hover: #f7f8fb;
   max-width: 1060px;
-  margin: 0;
-  padding: 4px 0 32px;
+  margin: 0 auto;
+  padding: 20px 8px 32px;
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
 }
@@ -2613,12 +2630,7 @@ textarea.input-field {
   --flow-hover: #22262e;
 }
 
-/* 写作页在内容区靠左排布，保留可读的最大行宽。 */
-.app-main:has(#view-writing.active) {
-  padding: 24px 32px 64px;
-  justify-content: flex-start;
-}
-
+/* 写作页沿用主区域的居中布局，保留放大后的阅读宽度。 */
 .main-content-card:has(#view-writing.active) {
   max-width: 1060px;
   background: transparent;
@@ -2933,12 +2945,6 @@ textarea.input-field {
     border-left: 0;
     border-top: 1px solid var(--flow-line);
     padding: 16px 0 0;
-  }
-}
-
-@media (max-width: 767px) {
-  .app-main:has(#view-writing.active) {
-    padding: 8px 0 48px;
   }
 }
 
