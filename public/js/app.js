@@ -5,7 +5,7 @@
  */
 import { Parser } from './parser.js';
 import { DiffViewer } from './diff.js';
-import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js';
+import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js?v=1.6';
 
 // 全局应用状态
 const state = {

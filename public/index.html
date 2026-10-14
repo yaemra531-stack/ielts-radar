@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>雅思见闻 ｜ IELTS Radar</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
-  <link rel="stylesheet" href="./css/style.css?v=1.5">
+  <link rel="stylesheet" href="./css/style.css?v=1.6">
 </head>
 <body>
 
@@ -256,43 +256,46 @@
             <header>
               <h1>写作流程</h1>
               <p>从一篇候选帖，到一篇自己的文章。点开每一步，看你要做什么。</p>
-              <div class="legend">
-                <span><i class="dot" style="background:var(--me)"></i>你来</span>
-                <span><i class="dot" style="background:var(--ai)"></i>AI 来</span>
-                <button class="toggle-all" id="btn-flow-toggle-all">全部展开</button>
+              <div class="flow-toolbar">
+                <span>5 个步骤 · 按需展开</span>
+                <button class="toggle-all" id="btn-flow-toggle-all" type="button">全部展开</button>
               </div>
             </header>
-
-            <!-- 1 -->
-            <section class="step open">
-              <div class="head">
-                <div class="num">1</div>
-                <div class="title"><h2>选题</h2><p>在每日侦察里挑一篇候选</p></div>
+            <div class="flow-document">
+            <details class="step" open>
+              <summary class="head">
+                <h2 class="step-heading">
+                <span class="num" aria-hidden="true">01</span>
+                <span class="title"><span class="step-title">选题</span><span class="step-desc">在每日侦察里挑一篇候选</span></span>
                 <span class="who me">你来</span>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
+                <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </h2>
+              </summary>
               <div class="body"><div class="inner"><div class="content">
+                <div class="flow-columns"><div class="flow-main">
                 <div class="block me"><h3>你要做</h3><ul>
                   <li>在「每日侦察」标一篇为候选</li>
                   <li>点「导出候选」，把内容发给 AI</li>
                 </ul></div>
-                <div class="block ai"><h3>AI 会做</h3><ul>
+                </div><aside class="flow-support" aria-label="AI 会做"><div class="block ai"><h3>AI 会做</h3><ul>
                   <li>在 Notion 建候选页，开头放一张原帖卡片</li>
                 </ul></div>
-                <div class="skill">用到的技能<code>雅思创作·拆帖</code></div>
+                </aside></div>
+                <details class="skill"><summary>用到的技能</summary><div class="skill-names"><code>雅思创作·拆帖</code></div></details>
               </div></div></div>
-            </section>
-            <div class="arrow"></div>
+            </details>
 
-            <!-- 2 -->
-            <section class="step">
-              <div class="head">
-                <div class="num">2</div>
-                <div class="title"><h2>第一印象</h2><p>回答两个问题，发两张截图</p></div>
+            <details class="step">
+              <summary class="head">
+                <h2 class="step-heading">
+                <span class="num" aria-hidden="true">02</span>
+                <span class="title"><span class="step-title">第一印象</span><span class="step-desc">回答两个问题，发两张截图</span></span>
                 <span class="who me">你来</span>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
+                <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </h2>
+              </summary>
               <div class="body"><div class="inner"><div class="content">
+                <div class="flow-columns"><div class="flow-main">
                 <div class="block me"><h3>你要回答</h3>
                   <div class="q"><b>①</b>我为什么选它？</div>
                   <div class="q"><b>②</b>我第一眼什么感觉？</div>
@@ -301,22 +304,23 @@
                   <li>正文截图</li>
                   <li>评论区高赞截图</li>
                 </ul></div>
-                <div class="block ai"><h3>AI 会做</h3><ul>
+                </div><aside class="flow-support" aria-label="AI 会做"><div class="block ai"><h3>AI 会做</h3><ul>
                   <li>记下你的理由，把正文和高赞评论整理进候选页</li>
                 </ul></div>
-                <div class="skill">用到的技能<code>雅思创作·拆帖</code></div>
+                </aside></div>
+                <details class="skill"><summary>用到的技能</summary><div class="skill-names"><code>雅思创作·拆帖</code></div></details>
               </div></div></div>
-            </section>
-            <div class="arrow"></div>
+            </details>
 
-            <!-- 3 -->
-            <section class="step">
-              <div class="head">
-                <div class="num">3</div>
-                <div class="title"><h2>拆帖</h2><p>从三个角度，看它为什么火</p></div>
+            <details class="step">
+              <summary class="head">
+                <h2 class="step-heading">
+                <span class="num" aria-hidden="true">03</span>
+                <span class="title"><span class="step-title">拆帖</span><span class="step-desc">从三个角度，看它为什么火</span></span>
                 <span class="who ai">AI 来</span>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
+                <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </h2>
+              </summary>
               <div class="body"><div class="inner"><div class="content">
                 <div class="block ai"><h3>三个角度</h3>
                   <div class="angle">
@@ -325,27 +329,28 @@
                     <div><strong>价值</strong><span>读完能拿走什么？</span></div>
                   </div>
                 </div>
-                <div class="block ai"><h3>AI 还会补充</h3><ul>
+                <div class="flow-columns"><div class="flow-main"><div class="block ai"><h3>AI 还会补充</h3><ul>
                   <li>你第一印象里没提到的好点</li>
                   <li>哪些对你有用：能学的，和不能照搬的</li>
                   <li>它的结构，用一条箭头链写出来</li>
                 </ul></div>
-                <div class="block me"><h3>你要做</h3><ul>
+                </div><aside class="flow-support" aria-label="你要做"><div class="block me"><h3>你要做</h3><ul>
                   <li>看完说认可，或者哪里不同意</li>
                 </ul></div>
-                <div class="skill">用到的技能<code>雅思创作·拆帖</code></div>
+                </aside></div>
+                <details class="skill"><summary>用到的技能</summary><div class="skill-names"><code>雅思创作·拆帖</code></div></details>
               </div></div></div>
-            </section>
-            <div class="arrow"></div>
+            </details>
 
-            <!-- 4 -->
-            <section class="step">
-              <div class="head">
-                <div class="num">4</div>
-                <div class="title"><h2>延伸选题</h2><p>从别人的帖子，找到自己的话题</p></div>
+            <details class="step">
+              <summary class="head">
+                <h2 class="step-heading">
+                <span class="num" aria-hidden="true">04</span>
+                <span class="title"><span class="step-title">延伸选题</span><span class="step-desc">从别人的帖子，找到自己的话题</span></span>
                 <span class="who both">一起</span>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
+                <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </h2>
+              </summary>
               <div class="body"><div class="inner"><div class="content">
                 <div class="block"><h3>分三小步</h3>
                   <div class="sub">
@@ -359,19 +364,19 @@
                   <div class="q"><b>②</b>立场有多坚定：“我就是这么觉得”，还是“有点拿不准”</div>
                   <div class="q"><b>③</b>有没有想反驳、想吐槽的话</div>
                 </div>
-                <div class="skill">用到的技能<code>雅思创作·延伸选题</code></div>
+                <details class="skill"><summary>用到的技能</summary><div class="skill-names"><code>雅思创作·延伸选题</code></div></details>
               </div></div></div>
-            </section>
-            <div class="arrow"></div>
+            </details>
 
-            <!-- 5 -->
-            <section class="step">
-              <div class="head">
-                <div class="num">5</div>
-                <div class="title"><h2>创作</h2><p>核实、写初稿、定稿</p></div>
+            <details class="step">
+              <summary class="head">
+                <h2 class="step-heading">
+                <span class="num" aria-hidden="true">05</span>
+                <span class="title"><span class="step-title">创作</span><span class="step-desc">核实、写初稿、定稿</span></span>
                 <span class="who both">一起</span>
-                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
+                <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </h2>
+              </summary>
               <div class="body"><div class="inner"><div class="content">
                 <div class="block"><h3>分三小步</h3>
                   <div class="sub">
@@ -380,10 +385,10 @@
                     <div><em>定</em>你改完说“定稿”，AI 导出 Markdown</div>
                   </div>
                 </div>
-                <div class="skill">用到的技能<code>雅思创作·核实</code><code>雅思创作·写稿</code></div>
+                <details class="skill"><summary>用到的技能</summary><div class="skill-names"><code>雅思创作·核实</code><code>雅思创作·写稿</code></div></details>
               </div></div></div>
-            </section>
-
+            </details>
+            </div>
             <footer>发现 → 理解 → 价值 → 写出来</footer>
           </div>
         </section>
@@ -792,6 +797,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- 引入模块化 JS -->
-  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/app.js?v=1.6"></script>
 </body>
 </html>
