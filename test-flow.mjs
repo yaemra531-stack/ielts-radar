@@ -22,16 +22,21 @@ async function runTests() {
   let passed = 0;
   let total = 0;
 
-  function assert(condition, testName) {
-    total++;
-    if (condition) {
-      console.log(`✅ [PASS] ${testName}`);
-      passed++;
-    } else {
-      console.error(`❌ [FAIL] ${testName}`);
-      process.exitCode = 1;
+  const storeFilePath = path.join(__dirname, 'data/radar-store.json');
+  const publicStoreFilePath = path.join(__dirname, 'public/data/radar-store.json');
+  const originalStoreSnapshot = fs.readFileSync(storeFilePath, 'utf-8');
+
+  try {
+    function assert(condition, testName) {
+      total++;
+      if (condition) {
+        console.log(`✅ [PASS] ${testName}`);
+        passed++;
+      } else {
+        console.error(`❌ [FAIL] ${testName}`);
+        process.exitCode = 1;
+      }
     }
-  }
 
   // 1. 服务健康检查
   const resHome = await fetch(`${BASE_URL}/`);
@@ -183,9 +188,23 @@ async function runTests() {
   console.log('\n====================================================');
   console.log(`🎉 测试全部通过！通过数: ${passed}/${total}`);
   console.log('====================================================');
+  } finally {
+    // 无论测试通过还是异常中断，均 100% 还原原始生产数据库，绝不污染真实数据
+    fs.writeFileSync(storeFilePath, originalStoreSnapshot, 'utf-8');
+    fs.writeFileSync(publicStoreFilePath, originalStoreSnapshot, 'utf-8');
+    // 通知后台服务重新加载已还原的数据
+    try {
+      await fetch(`${BASE_URL}/api/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: originalStoreSnapshot
+      });
+    } catch (_) {}
+  }
 }
 
 runTests().catch(err => {
   console.error('测试异常:', err);
   process.exit(1);
 });
+

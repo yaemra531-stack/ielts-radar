@@ -142,15 +142,10 @@ async function loadData() {
     } else {
       try {
         const cached = JSON.parse(cachedRaw);
-        const remoteTime = new Date(remoteData.systemInfo?.updatedAt || 0).getTime();
-        const localTime = new Date(cached.systemInfo?.updatedAt || 0).getTime();
-        // 若远程数据较新则采用远程，否则保留本地最新编辑
-        if (remoteTime > localTime) {
-          state.data = remoteData;
-          localStorage.setItem('ielts_radar_cache', JSON.stringify(remoteData));
-        } else {
-          state.data = cached;
-        }
+        // 关键安全修复：绝不粗暴全量覆盖！采用智能无损合并，严格保留用户的候选、已读和笔记
+        const merged = mergeRemoteWithLocal(remoteData, cached);
+        state.data = merged;
+        localStorage.setItem('ielts_radar_cache', JSON.stringify(merged));
       } catch (_) {
         state.data = remoteData;
       }
@@ -164,6 +159,63 @@ async function loadData() {
       updateSyncStatus(true);
     } catch (_) {}
   }
+}
+
+// 智能无损合并引擎：远程新内容与本地用户交互资产（候选/已读/笔记）精准融合
+function mergeRemoteWithLocal(remoteData, cachedData) {
+  if (!cachedData || !cachedData.dailyRecords) return remoteData;
+  if (!remoteData || !remoteData.dailyRecords) return cachedData;
+
+  const userInteractions = new Map();
+  cachedData.dailyRecords.forEach(day => {
+    (day.items || []).forEach(it => {
+      const key = it.stableId || it.url || it.id;
+      if (key) {
+        userInteractions.set(key, {
+          isCandidate: !!it.isCandidate,
+          isRead: !!it.isRead,
+          note: it.note || ''
+        });
+      }
+    });
+  });
+
+  const mergedRecords = [];
+  const processedDates = new Set();
+
+  remoteData.dailyRecords.forEach(remoteDay => {
+    processedDates.add(remoteDay.date);
+    const dayCopy = { ...remoteDay, items: [] };
+
+    (remoteDay.items || []).forEach(remoteItem => {
+      const key = remoteItem.stableId || remoteItem.url || remoteItem.id;
+      const localState = userInteractions.get(key);
+
+      const mergedItem = { ...remoteItem };
+      if (localState) {
+        if (localState.isCandidate) mergedItem.isCandidate = true;
+        if (localState.isRead) mergedItem.isRead = true;
+        if (localState.note) mergedItem.note = localState.note;
+      }
+      dayCopy.items.push(mergedItem);
+    });
+
+    mergedRecords.push(dayCopy);
+  });
+
+  // 如果本地有远程尚未同步的完整日期记录，无缝保留并合入
+  cachedData.dailyRecords.forEach(localDay => {
+    if (!processedDates.has(localDay.date)) {
+      mergedRecords.push(localDay);
+    }
+  });
+
+  // 始终按日期倒序
+  mergedRecords.sort((a, b) => b.date.localeCompare(a.date));
+
+  const merged = { ...remoteData };
+  merged.dailyRecords = mergedRecords;
+  return merged;
 
   // 默认展开所有日期
   if (state.data.dailyRecords && state.data.dailyRecords.length > 0) {

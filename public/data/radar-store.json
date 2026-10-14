@@ -2,7 +2,7 @@
   "systemInfo": {
     "title": "雅思见闻 ｜ IELTS Radar",
     "createdAt": "2026-10-10T12:00:00.000Z",
-    "updatedAt": "2026-10-14T05:01:59.112Z",
+    "updatedAt": "2026-10-14T05:36:25.259Z",
     "version": "1.0.0"
   },
   "goalsAndThoughts": {
@@ -160,7 +160,7 @@
           "url": "https://www.xiaohongshu.com/explore/6ac04d2f0000000018005683?xsec_token=ABP3Pw3an8b1LqVTRNKZ_F7-FMX14VyLSyLzluEWoETq0=",
           "isRead": false,
           "note": "💡 写文角度：我拼命想考的分数，被人说成「文盲」",
-          "isCandidate": false
+          "isCandidate": true
         },
         {
           "id": "item_20261014_wb_3",
@@ -182,7 +182,7 @@
           "url": "https://www.xiaohongshu.com/explore/6aa969840000000012000a2c?xsec_token=ABpt-hYdLrMxfy2LsKYEuTCIiNvvyfIE8tvlxk7e58jVs=",
           "isRead": false,
           "note": "💡 写文角度：高分帖里的「低起点」，到底有多低",
-          "isCandidate": false
+          "isCandidate": true
         },
         {
           "id": "item_20261014_wb_4",
