@@ -130,7 +130,7 @@ async function loadData() {
   let cacheUnreadable = false;
 
   try {
-    const res = await fetch('/api/data');
+    const res = await fetch('/api/data', { cache: 'no-cache' });
     if (res.ok) {
       remoteData = validateStore(await res.json());
       state.backendAvailable = true;
@@ -139,7 +139,7 @@ async function loadData() {
 
   if (!remoteData) {
     try {
-      const res = await fetch('./data/radar-store.json');
+      const res = await fetch('./data/radar-store.json', { cache: 'no-cache' });
       if (res.ok) remoteData = validateStore(await res.json());
     } catch (_) {}
   }
