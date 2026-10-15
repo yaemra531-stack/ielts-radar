@@ -3200,15 +3200,15 @@ textarea.input-field {
 .writing-flow-wrap .principle .flow-columns, .writing-flow-wrap .principle .sub { margin-top: 10px; }
 .writing-flow-wrap .confirmed { margin-top: 12px; color: var(--flow-sub); font-size: 13px; }
 
-/* 选题步骤的阅读层级试样：范围仅限写作页第一步。 */
-#view-writing .step-focus-preview {
+/* 流程页的阅读层级：主任务突出，配合说明与原因分层。 */
+.writing-flow-wrap {
   --focus-support-bg: #f6f7fa;
 }
-[data-theme="dark"] #view-writing .step-focus-preview {
+[data-theme="dark"] .writing-flow-wrap {
   --focus-support-bg: #232832;
 }
-#view-writing .step-focus-preview[open] > .head { padding-bottom: 18px; }
-#view-writing .step-focus-preview .who {
+.writing-flow-wrap .step[open] > .head { padding-bottom: 18px; }
+.writing-flow-wrap .who {
   padding: 2px 8px;
   border-radius: 5px;
   background: var(--flow-number-active);
@@ -3216,51 +3216,81 @@ textarea.input-field {
   font-size: 12px;
   font-weight: 500;
 }
-#view-writing .step-focus-preview .flow-columns {
+.writing-flow-wrap .flow-columns {
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
-#view-writing .step-focus-preview .flow-main h3 {
+.writing-flow-wrap .content .block h3 {
   margin-bottom: 12px;
   color: var(--flow-text);
   font-size: 16px;
   font-weight: 600;
 }
-#view-writing .step-focus-preview .flow-main li {
+.writing-flow-wrap .content li {
   margin: 8px 0;
   font-size: 17px;
   line-height: 1.75;
 }
-#view-writing .step-focus-preview .flow-main li::marker { color: var(--flow-brand); }
-#view-writing .step-focus-preview .flow-main strong {
+.writing-flow-wrap .content li::marker { color: var(--flow-brand); }
+.writing-flow-wrap .content li strong {
   color: var(--flow-text);
   font-weight: 600;
 }
-#view-writing .step-focus-preview .flow-support { padding-left: 16px; }
-#view-writing .step-focus-preview .flow-support > .block {
+.writing-flow-wrap .flow-support { padding-left: 16px; }
+.writing-flow-wrap .flow-support > .block {
   padding: 13px 15px;
   border-radius: 8px;
   background: var(--focus-support-bg);
 }
-#view-writing .step-focus-preview .flow-support h3 {
+.writing-flow-wrap .content .flow-support h3 {
   margin-bottom: 6px;
   color: var(--flow-brand);
   font-size: 14px;
   font-weight: 600;
 }
-#view-writing .step-focus-preview .flow-support li {
+.writing-flow-wrap .content .flow-support li {
   margin: 0;
   font-size: 14.5px;
   line-height: 1.8;
 }
-#view-writing .step-focus-preview .skill {
+.writing-flow-wrap .content .flow-support li + li { margin-top: 8px; }
+.writing-flow-wrap .content .flow-support li strong { color: inherit; font-weight: 500; }
+.writing-flow-wrap .skill {
   margin-top: 18px;
   padding-top: 0;
   border-top: 0;
   font-size: 13px;
 }
-@media (max-width: 1000px) {
-  #view-writing .step-focus-preview .flow-columns { grid-template-columns: 1fr; gap: 18px; }
-  #view-writing .step-focus-preview .flow-support { padding: 14px 0 0; }
+.writing-flow-wrap .sub div { font-size: 17px; line-height: 1.75; }
+.writing-flow-wrap .sub em { font-weight: 600; }
+.writing-flow-wrap .principle > strong { font-weight: 600; }
+.writing-flow-wrap .principle p.why {
+  margin-top: 8px;
+  padding-left: 12px;
+  border-left: 2px solid var(--flow-line);
 }
+@media (max-width: 1000px) {
+  .writing-flow-wrap .flow-columns { grid-template-columns: 1fr; gap: 18px; }
+  .writing-flow-wrap .flow-support { padding: 14px 0 0; }
+}
+.writing-flow-wrap .flow-columns--solo { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.writing-flow-wrap .flow-support--brief { padding: 0; }
+.writing-flow-wrap .flow-support--brief::before { display: none; }
+.writing-flow-wrap .flow-support--brief > .block {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.writing-flow-wrap .content .flow-support--brief h3 {
+  margin: 0;
+  color: var(--flow-sub);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.writing-flow-wrap .flow-support--brief ul { list-style: none; padding: 0; }
+.writing-flow-wrap .content .flow-support--brief li { color: var(--flow-sub); font-size: 13px; }
