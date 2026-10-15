@@ -3031,3 +3031,29 @@ textarea.input-field {
     transition: none;
   }
 }
+
+
+/* 完整备份入口收在导出弹窗中，保持侧栏简洁。 */
+.backup-panel {
+  margin: 0 0 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--border);
+}
+.backup-entry-button { margin-right: auto; }
+.backup-restore-body > h4 { margin: 0 0 16px; font-size: 15px; color: var(--text-title); }
+.backup-panel h4 { margin: 0 0 8px; font-size: 15px; color: var(--text-title); }
+.backup-panel p, .backup-help, .backup-preview p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.backup-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.backup-restore-body > label { display: block; margin: 0 0 8px; font-size: 13px; font-weight: 500; }
+.backup-restore-body > .input-field { width: 100%; margin-bottom: 16px; box-sizing: border-box; }
+.backup-restore-body input[type="file"] { white-space: normal; }
+.backup-preview { padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-page); }
+.backup-preview .backup-preview-title { font-weight: 600; color: var(--text-title); }
+.backup-error { font-size: 13px; line-height: 1.7; color: var(--danger, #b54545); }
+#btn-confirm-backup-restore:disabled { opacity: .45; cursor: not-allowed; }

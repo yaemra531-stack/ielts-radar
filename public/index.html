@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>雅思见闻 ｜ IELTS Radar</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
-  <link rel="stylesheet" href="./css/style.css?v=1.10">
+  <link rel="stylesheet" href="./css/style.css?v=1.11">
 </head>
 <body>
 
@@ -107,7 +107,7 @@
           </button>
 
           <!-- 导出候选 (直接打开AI分析导出工作台，无浮动菜单，稳固不消失) -->
-          <button class="sidebar-action-btn" id="btn-export-candidates" title="导出候选给AI分析">
+          <button class="sidebar-action-btn" id="btn-export-candidates" title="导出候选或完整备份">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>
@@ -124,7 +124,7 @@
 
         <div class="sidebar-sync-row">
           <span id="sync-indicator" class="status-badge online">
-            <span class="dot-live"></span> 已持久化
+            <span class="dot-warn"></span> 正在读取
           </span>
         </div>
 
@@ -730,7 +730,7 @@
       <div class="modal-header">
         <div>
           <h3>📤 导出候选（AI 分析专用）</h3>
-          <p class="modal-subtitle">专为大模型（AI）分析设计，仅保留核心要素（平台、标题、作者、日期、赞藏、链接、一句话摘要与写文角度），去除一切冗余数据。</p>
+          <p class="modal-subtitle">精简内容用于 AI 分析；保存全部历史数据，请点下方“完整备份与恢复”。</p>
         </div>
         <button class="btn-close-modal" id="btn-close-ai-export">✕</button>
       </div>
@@ -786,9 +786,53 @@
           </div>
         </div>
         <textarea id="ai-export-preview" class="ai-export-textarea" readonly></textarea>
+
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary backup-entry-button" id="btn-open-backup-restore">完整备份与恢复</button>
         <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-ai-export').classList.remove('active')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完整备份恢复：先选择文件和冲突方式，再预览确认。 -->
+  <div id="modal-backup-restore" class="modal-backdrop">
+    <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="backup-restore-title">
+      <div class="modal-header">
+        <div>
+          <h3 id="backup-restore-title">完整备份与恢复</h3>
+          <p class="modal-subtitle">把全站数据另存为文件，需要时再合并恢复。</p>
+        </div>
+        <button type="button" class="btn-close-modal" id="btn-close-backup-restore" aria-label="关闭备份恢复">✕</button>
+      </div>
+      <div class="modal-body backup-restore-body">
+        <section class="backup-panel" aria-labelledby="backup-panel-title">
+          <div>
+            <h4 id="backup-panel-title">备份全部数据</h4>
+            <p id="backup-current-summary"></p>
+            <p>完整保存全站数据。文件保存在你的电脑，清除网站数据或更换浏览器后，可从这里恢复。</p>
+          </div>
+          <div class="backup-actions">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-export-json">下载完整备份</button>
+
+          </div>
+        </section>
+        <h4>从备份恢复</h4>
+        <label for="backup-restore-file">选择完整备份 JSON</label>
+        <input type="file" class="input-field" id="backup-restore-file" accept=".json,application/json">
+        <label for="backup-conflict-policy">同一条记录如何处理</label>
+        <select class="input-field" id="backup-conflict-policy">
+          <option value="current">保留当前记录</option>
+          <option value="backup">以备份为准</option>
+        </select>
+        <p class="backup-help">这项选择也适用于已读、候选、手记、同版本提示词和目标与想法。两边独有的内容都会补回。</p>
+        <div id="backup-restore-preview" class="backup-preview" aria-live="polite" hidden></div>
+        <p id="backup-restore-error" class="backup-error" role="alert" hidden></p>
+        <p class="backup-help">确认恢复时，会先发起当前数据的安全副本下载。请保留这份文件。</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-backup-restore">取消</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-backup-restore" disabled>确认合并恢复</button>
       </div>
     </div>
   </div>
@@ -797,6 +841,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- 引入模块化 JS -->
-  <script type="module" src="./js/app.js?v=1.6"></script>
+  <script type="module" src="./js/app.js?v=1.8"></script>
 </body>
 </html>

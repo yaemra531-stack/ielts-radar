@@ -5,6 +5,7 @@
  */
 import { Parser } from './parser.js';
 import { DiffViewer } from './diff.js';
+import { mergeRemoteWithLocal, validateStore, createBackup, readBackup, storeSummary, previewRestore } from './data-safety.js?v=1.0';
 import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js?v=1.6';
 
 // 全局应用状态
@@ -28,7 +29,8 @@ const state = {
   expandedDates: new Set(),
   expandedItemIds: new Set(),
   selectedDate: null,
-  importPreview: null
+  importPreview: null,
+  backendAvailable: false
 };
 
 // --- 暗黑/亮色主题控制 ---
@@ -113,154 +115,105 @@ function formatMetaDate(dateStr) {
 }
 
 // --- 数据同步与加载 (支持 Node 原生后端与 GitHub Pages 静态环境无缝双模) ---
+function writeLocalCache(data) {
+  try {
+    localStorage.setItem('ielts_radar_cache', JSON.stringify(data));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 async function loadData() {
   let remoteData = null;
+  let cachedData = null;
+  let cacheUnreadable = false;
 
-  // 1. 优先尝试从本地 Node.js 后端服务读取
   try {
     const res = await fetch('/api/data');
     if (res.ok) {
-      remoteData = await res.json();
+      remoteData = validateStore(await res.json());
+      state.backendAvailable = true;
     }
   } catch (_) {}
 
-  // 2. 若无后端（如 GitHub Pages 静态托管），尝试读取同源静态初始数据文件
   if (!remoteData) {
     try {
       const res = await fetch('./data/radar-store.json');
-      if (res.ok) {
-        remoteData = await res.json();
-      }
+      if (res.ok) remoteData = validateStore(await res.json());
     } catch (_) {}
   }
 
-  const cachedRaw = localStorage.getItem('ielts_radar_cache');
-
-  if (remoteData) {
-    if (!cachedRaw) {
-      state.data = remoteData;
-      localStorage.setItem('ielts_radar_cache', JSON.stringify(remoteData));
-    } else {
-      try {
-        const cached = JSON.parse(cachedRaw);
-        // 关键安全修复：绝不粗暴全量覆盖！采用智能无损合并，严格保留用户的候选、已读和笔记
-        const merged = mergeRemoteWithLocal(remoteData, cached);
-        state.data = merged;
-        localStorage.setItem('ielts_radar_cache', JSON.stringify(merged));
-      } catch (_) {
-        state.data = remoteData;
-      }
-    }
-    updateSyncStatus(true);
-  } else if (cachedRaw) {
-    // 3. 兜底纯离线本地缓存
-    try {
-      state.data = JSON.parse(cachedRaw);
-      showToast('已从本地缓存恢复数据', 'info');
-      updateSyncStatus(true);
-    } catch (_) {}
+  try {
+    const raw = localStorage.getItem('ielts_radar_cache');
+    if (raw) cachedData = validateStore(JSON.parse(raw));
+  } catch (_) {
+    cacheUnreadable = true;
+    showToast('浏览器中的原始缓存未覆盖，但暂时无法读取。请保留已有备份文件。', 'error');
   }
 
-  // 默认展开所有日期并将活动日期指向最新一天
-  if (state.data.dailyRecords && state.data.dailyRecords.length > 0) {
-    state.data.dailyRecords.forEach(d => state.expandedDates.add(d.date));
+  if (remoteData || cachedData) {
+    state.data = mergeRemoteWithLocal(remoteData, cachedData);
+    // 合并和写缓存分开处理：容量不足时仍保留内存中的完整结果。
+    const localSaved = !cacheUnreadable && writeLocalCache(state.data);
+    const fileMatches = state.backendAvailable && JSON.stringify(state.data) === JSON.stringify(remoteData);
+    updateSyncStatus(fileMatches ? 'file-read' : (localSaved ? 'browser' : 'unsaved'));
+    if (!remoteData && cachedData) showToast('已从此浏览器恢复数据', 'info');
+  } else {
+    updateSyncStatus('unsaved');
+  }
+
+  if (state.data.dailyRecords?.length) {
+    state.data.dailyRecords.forEach(day => state.expandedDates.add(day.date));
     state.activeTimelineDate = state.data.dailyRecords[0].date;
   }
-
   renderApp();
 }
 
-// 智能无损合并引擎：远程新内容与本地用户交互资产（候选/已读/笔记）精准融合
-function mergeRemoteWithLocal(remoteData, cachedData) {
-  if (!cachedData || !cachedData.dailyRecords) return remoteData;
-  if (!remoteData || !remoteData.dailyRecords) return cachedData;
-
-  const userInteractions = new Map();
-  cachedData.dailyRecords.forEach(day => {
-    (day.items || []).forEach(it => {
-      const key = it.stableId || it.url || it.id;
-      if (key) {
-        userInteractions.set(key, {
-          isCandidate: !!it.isCandidate,
-          isRead: !!it.isRead,
-          note: it.note || ''
-        });
-      }
-    });
-  });
-
-  const mergedRecords = [];
-  const processedDates = new Set();
-
-  remoteData.dailyRecords.forEach(remoteDay => {
-    processedDates.add(remoteDay.date);
-    const dayCopy = { ...remoteDay, items: [] };
-
-    (remoteDay.items || []).forEach(remoteItem => {
-      const key = remoteItem.stableId || remoteItem.url || remoteItem.id;
-      const localState = userInteractions.get(key);
-
-      const mergedItem = { ...remoteItem };
-      if (localState) {
-        if (localState.isCandidate) mergedItem.isCandidate = true;
-        if (localState.isRead) mergedItem.isRead = true;
-        if (localState.note) mergedItem.note = localState.note;
-      }
-      dayCopy.items.push(mergedItem);
-    });
-
-    mergedRecords.push(dayCopy);
-  });
-
-  // 如果本地有远程尚未同步的完整日期记录，无缝保留并合入
-  cachedData.dailyRecords.forEach(localDay => {
-    if (!processedDates.has(localDay.date)) {
-      mergedRecords.push(localDay);
-    }
-  });
-
-  // 始终按日期倒序
-  mergedRecords.sort((a, b) => b.date.localeCompare(a.date));
-
-  const merged = { ...remoteData };
-  merged.dailyRecords = mergedRecords;
-  return merged;
-}
-
-async function persistData(successMessage = '数据已保存') {
-  // 先将状态写入本地 Storage 保障数据不丢失
-  localStorage.setItem('ielts_radar_cache', JSON.stringify(state.data));
-
-  let backendSaved = false;
-  try {
-    const res = await fetch('/api/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.data)
-    });
-    if (res.ok) {
-      backendSaved = true;
-    }
-  } catch (_) {}
-
-  if (successMessage) {
-    showToast(backendSaved ? successMessage : `${successMessage}（已写入本地存储）`, 'success');
+async function persistData(successMessage = '数据已保存', data = state.data, { requireLocal = false } = {}) {
+  const localSaved = writeLocalCache(data);
+  // 恢复时若无法写入浏览器，旧缓存会在下次加载时干扰结果；此时保持原数据。
+  if (requireLocal && !localSaved) {
+    showToast('未恢复：浏览器无法保存这份备份，当前数据保持原样。请保留备份文件。', 'error');
+    return false;
   }
-  updateSyncStatus(true);
+  let backendSaved = false;
+  if (state.backendAvailable) {
+    try {
+      const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      backendSaved = res.ok;
+    } catch (_) {}
+  }
+
+  updateSyncStatus(backendSaved ? 'file' : (localSaved ? 'browser' : 'unsaved'));
+  if (!localSaved && !backendSaved) {
+    showToast('保存失败，当前内容仍在页面中。请立即下载完整备份，暂时不要刷新。', 'error');
+    return false;
+  }
+  if (successMessage) {
+    showToast(backendSaved ? `${successMessage}（已写入本机文件）` : `${successMessage}（仅存此浏览器）`, 'success');
+  }
   return true;
 }
 
-function updateSyncStatus(isOnline) {
+function updateSyncStatus(mode) {
   const badge = document.getElementById('sync-indicator');
-  if (badge) {
-    if (isOnline) {
-      badge.innerHTML = `<span class="dot-live"></span> 已持久化`;
-      badge.className = 'status-badge online';
-    } else {
-      badge.innerHTML = `<span class="dot-warn"></span> 离线缓存`;
-      badge.className = 'status-badge offline';
-    }
-  }
+  if (!badge) return;
+  const labels = {
+    'file-read': ['已读取本机文件', '已从本机服务读取文件；可用“导出”下载完整备份。'],
+    file: ['已保存本机文件', '已写入本机服务的数据文件；可用“导出”另存完整备份。'],
+    browser: ['仅存此浏览器', '尚未备份到服务器。清除网站数据前，请到“导出”下载完整备份。'],
+    unsaved: ['尚未保存', '当前无法确认保存成功，请立即下载完整备份。']
+  };
+  const [label, help] = labels[mode] || labels.unsaved;
+  const savedToFile = mode === 'file' || mode === 'file-read';
+  badge.innerHTML = `<span class="${savedToFile ? 'dot-live' : 'dot-warn'}"></span> ${label}`;
+  badge.className = `status-badge ${savedToFile ? 'online' : 'offline'}`;
+  badge.title = help;
 }
 
 // --- 渲染路由分发 ---
@@ -1492,6 +1445,8 @@ async function confirmImportAndSave() {
     if (coverage) dayRecord.coverage = coverage;
   }
 
+  dayRecord.localEditedAt = new Date().toISOString();
+
   let addedCount = 0;
   let updatedCount = 0;
   let skippedCount = 0;
@@ -1500,6 +1455,7 @@ async function confirmImportAndSave() {
     if (item.isExisting && item.matchedExisting) {
       if (item.userAction === 'update') {
         const target = item.matchedExisting;
+        target.localEditedAt = new Date().toISOString();
         target.title = item.title;
         target.platform = item.platform;
         if (item.author !== undefined) target.author = item.author;
@@ -1526,6 +1482,7 @@ async function confirmImportAndSave() {
       // 全新条目
       const newItem = {
         id: item.id || `item_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        localEditedAt: new Date().toISOString(),
         stableId: item.stableId,
         agent: item.agent,
         title: item.title,
@@ -1633,6 +1590,7 @@ function handleSaveItemEdit(e) {
   if (id) {
     const item = dayRecord.items.find(i => i.id === id);
     if (item) {
+      item.localEditedAt = new Date().toISOString();
       item.agent = agent;
       item.title = title;
       item.platform = platform;
@@ -1648,6 +1606,7 @@ function handleSaveItemEdit(e) {
   } else {
     dayRecord.items.push({
       id: `item_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      localEditedAt: new Date().toISOString(),
       agent,
       title,
       platform,
@@ -1733,6 +1692,7 @@ async function handleSaveGoals() {
   const newThoughts = document.getElementById('goal-input-thoughts').value.trim();
 
   state.data.goalsAndThoughts = state.data.goalsAndThoughts || {};
+  state.data.goalsAndThoughts.localEditedAt = new Date().toISOString();
   state.data.goalsAndThoughts.why = why;
   state.data.goalsAndThoughts.coreGoals = coreGoals;
   state.data.goalsAndThoughts.strategyPrinciples = strategyPrinciples;
@@ -1745,7 +1705,7 @@ async function handleSaveGoals() {
     summary: `更新认知笔记（共 ${why.length + coreGoals.length + strategyPrinciples.length + newThoughts.length} 字）`
   });
 
-  await persistData('目标与想法已持久化保存');
+  await persistData('目标与想法已保存');
   // 切回文档阅读模式
   document.getElementById('goals-edit-view').style.display = 'none';
   document.getElementById('goals-doc-view').style.display = 'flex';
@@ -2028,6 +1988,154 @@ function generateCustomMarkdownExport(targetDate, onlyCandidates = false) {
   return md;
 }
 
+// 完整备份与恢复：与按日精简导出分开，始终包含全站状态。
+let selectedBackup = null;
+let backupReadSequence = 0;
+let restoreInProgress = false;
+
+function downloadFullBackup(data = state.data, tag = 'full') {
+  try {
+    const backup = createBackup(data);
+    const stamp = backup.exportedAt.replace(/[:.]/g, '-');
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json; charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ielts-radar-${tag}-backup-${stamp}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(tag === 'before-restore' ? '已发起恢复前的安全副本下载，请保留文件' : '已发起完整备份下载，请保留文件', 'success');
+    return true;
+  } catch (error) {
+    showToast(`无法生成完整备份：${error.message}`, 'error');
+    return false;
+  }
+}
+
+function renderBackupSummary() {
+  const summary = storeSummary(state.data);
+  const el = document.getElementById('backup-current-summary');
+  if (el) el.textContent = `全部 ${summary.days} 天 · ${summary.items} 条内容 · ${summary.read} 条已读 · ${summary.candidates} 条候选 · ${summary.notes} 条手记 · ${summary.prompts} 个提示词版本，及目标与想法。`;
+}
+
+function closeBackupRestore() {
+  if (restoreInProgress) return;
+  document.getElementById('modal-backup-restore')?.classList.remove('active');
+  backupReadSequence++;
+  selectedBackup = null;
+  document.getElementById('modal-ai-export')?.classList.add('active');
+  document.getElementById('btn-open-backup-restore')?.focus();
+}
+
+function updateRestorePreview() {
+  const previewEl = document.getElementById('backup-restore-preview');
+  const errorEl = document.getElementById('backup-restore-error');
+  const button = document.getElementById('btn-confirm-backup-restore');
+  button.disabled = !selectedBackup;
+  previewEl.hidden = !selectedBackup;
+  errorEl.hidden = true;
+  if (!selectedBackup) return;
+  const preferBackup = document.getElementById('backup-conflict-policy').value === 'backup';
+  const result = previewRestore(state.data, selectedBackup.data, preferBackup);
+  const summary = storeSummary(selectedBackup.data);
+  const dateText = selectedBackup.exportedAt ? new Date(selectedBackup.exportedAt).toLocaleString('zh-CN') : '旧版完整备份';
+  previewEl.innerHTML = `
+    <p class="backup-preview-title">${escapeHtml(selectedBackup.filename)}</p>
+    <p>${escapeHtml(dateText)} · ${summary.start || '暂无日期'}${summary.end && summary.end !== summary.start ? ` 至 ${summary.end}` : ''}</p>
+    <p>备份包含 ${summary.days} 天、${summary.items} 条内容，${summary.read} 条已读、${summary.candidates} 条候选、${summary.notes} 条手记。</p>
+    <p><strong>将补回 ${result.addedDays} 个日期、${result.addedItems} 条内容。</strong>合并后共 ${result.after.days} 天、${result.after.items} 条。</p>
+    <p>${preferBackup ? '同一条记录的内容、已读、候选、手记，以及同版本提示词和目标，将采用备份中的内容。' : '同一条记录的内容、已读、候选、手记，以及同版本提示词和目标，优先保留当前内容。'}</p>
+    <p>双方独有的内容都会保留。清除浏览器数据后恢复时，可选择“以备份为准”找回备份中的个人标记。</p>`;
+}
+
+function initBackupEvents() {
+  const modal = document.getElementById('modal-backup-restore');
+  document.getElementById('btn-open-backup-restore')?.addEventListener('click', () => {
+    selectedBackup = null;
+    backupReadSequence++;
+    document.getElementById('backup-restore-file').value = '';
+    document.getElementById('backup-conflict-policy').value = 'current';
+    updateRestorePreview();
+    document.getElementById('modal-ai-export').classList.remove('active');
+    modal.classList.add('active');
+    document.getElementById('backup-restore-file').focus();
+  });
+  document.getElementById('btn-close-backup-restore')?.addEventListener('click', closeBackupRestore);
+  document.getElementById('btn-cancel-backup-restore')?.addEventListener('click', closeBackupRestore);
+  modal?.addEventListener('click', event => { if (event.target === modal) closeBackupRestore(); });
+  modal?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeBackupRestore();
+    } else if (event.key === 'Tab') {
+      const controls = [...modal.querySelectorAll('button, input, select')].filter(el => !el.disabled);
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  });
+  document.getElementById('backup-conflict-policy')?.addEventListener('change', updateRestorePreview);
+  document.getElementById('backup-restore-file')?.addEventListener('change', async event => {
+    const sequence = ++backupReadSequence;
+    selectedBackup = null;
+    updateRestorePreview();
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      if (file.size > 20 * 1024 * 1024) throw new Error('文件超过 20 MB，请核对是否选中了完整备份。');
+      const backup = readBackup(await file.text());
+      if (sequence !== backupReadSequence) return;
+      selectedBackup = { ...backup, filename: file.name };
+      updateRestorePreview();
+    } catch (error) {
+      if (sequence !== backupReadSequence) return;
+      const el = document.getElementById('backup-restore-error');
+      el.textContent = error.message;
+      el.hidden = false;
+    }
+  });
+  document.getElementById('btn-confirm-backup-restore')?.addEventListener('click', async event => {
+    if (!selectedBackup || event.target.disabled) return;
+    const button = event.target;
+    restoreInProgress = true;
+    button.disabled = true;
+    button.textContent = '正在恢复…';
+    const controls = ['backup-restore-file', 'backup-conflict-policy', 'btn-close-backup-restore', 'btn-cancel-backup-restore'];
+    controls.forEach(id => { document.getElementById(id).disabled = true; });
+    try {
+      const preferBackup = document.getElementById('backup-conflict-policy').value === 'backup';
+      const result = previewRestore(state.data, selectedBackup.data, preferBackup);
+      if (!downloadFullBackup(state.data, 'before-restore')) return;
+      const restoredAt = new Date().toISOString();
+      result.data.dailyRecords.forEach(day => {
+        day.localEditedAt = restoredAt;
+        day.items.forEach(item => { item.localEditedAt = restoredAt; });
+      });
+      result.data.goalsAndThoughts.localEditedAt = restoredAt;
+      if (!await persistData('完整备份已合并恢复', result.data, { requireLocal: true })) return;
+      state.data = result.data;
+      state.selectedPromptVersion = null;
+      state.data.dailyRecords.forEach(day => state.expandedDates.add(day.date));
+      if (!state.data.dailyRecords.some(day => day.date === state.activeTimelineDate)) {
+        state.activeTimelineDate = state.data.dailyRecords[0]?.date || null;
+      }
+      restoreInProgress = false;
+      closeBackupRestore();
+      renderApp();
+      renderBackupSummary();
+      updateExportPreview();
+    } catch (error) {
+      showToast(`未恢复数据：${error.message}`, 'error');
+    } finally {
+      restoreInProgress = false;
+      controls.forEach(id => { document.getElementById(id).disabled = false; });
+      button.textContent = '确认合并恢复';
+      button.disabled = !selectedBackup;
+    }
+  });
+}
+
 // 打开定制导出工作台弹窗
 function openCustomExportModal(initialFormat = 'json', initialScope = 'candidate') {
   const modal = document.getElementById('modal-ai-export');
@@ -2058,6 +2166,7 @@ function openCustomExportModal(initialFormat = 'json', initialScope = 'candidate
   // 3. 刷新预览
   updateExportPreview();
 
+  renderBackupSummary();
   modal.classList.add('active');
 }
 
@@ -2195,20 +2304,8 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // 7. 导出 (支持纯前端 Blob 本地下载与服务端导出双模式)
-  document.getElementById('btn-export-json')?.addEventListener('click', () => {
-    try {
-      const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ielts-radar-backup-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast('已导出 JSON 完整数据备份', 'success');
-    } catch (_) {
-      window.location.href = '/api/export/json';
-    }
-  });
+  document.getElementById('btn-export-json')?.addEventListener('click', () => downloadFullBackup());
+  initBackupEvents();
 
   document.getElementById('btn-export-markdown')?.addEventListener('click', () => {
     try {
