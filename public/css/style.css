@@ -2634,8 +2634,8 @@ textarea.input-field {
   --flow-number-active: #2b3648;
 }
 
-/* 写作页沿用主区域的居中布局，保留放大后的阅读宽度。 */
-.main-content-card:has(#view-writing.active) {
+/* 流程页沿用主区域的居中布局，保留放大后的阅读宽度。 */
+.main-content-card:has(#view-writing.active, #view-rhythm.active, #view-video.active) {
   max-width: 1060px;
   background: transparent;
   border-color: transparent;
@@ -3058,7 +3058,7 @@ textarea.input-field {
 .backup-error { font-size: 13px; line-height: 1.7; color: var(--danger, #b54545); }
 #btn-confirm-backup-restore:disabled { opacity: .45; cursor: not-allowed; }
 
-/* V2.2 阅读概览：只作用于这个版本，沿用其余版本的现有展示。 */
+/* 带 overview 的版本显示阅读概览；其余版本沿用现有展示。 */
 .app-main:has(#view-prompts.active .prompts-manager-layout--visual) .main-content-card { max-width: 1200px; }
 .prompts-manager-layout--visual { grid-template-columns: 208px minmax(0, 1fr); }
 .prompts-detail-pane--visual {
@@ -3166,9 +3166,8 @@ textarea.input-field {
   .pv22-header { flex-direction: column; gap: 10px; }
 }
 @container prompt-v22 (max-width: 400px) {
-  .pv22-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pv22-flow > li:nth-child(3) .pv22-flow-arrow { display: block; }
-  .pv22-flow > li:nth-child(even) .pv22-flow-arrow { display: none; }
+  .pv22-flow { grid-template-columns: 1fr; }
+  .pv22-flow > li .pv22-flow-arrow { display: none; }
   .pv22-quota { padding: 12px 10px; }
   .pv22-heading-line .pd-title { font-size: 24px; }
   .pv22-source > summary > small { display: block; margin: 5px 0 0 17px; }
@@ -3178,3 +3177,25 @@ textarea.input-field {
   .prompts-manager-layout--visual .version-nav-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
   .prompts-manager-layout--visual .version-nav-item { flex: 0 0 148px; min-width: 0; }
 }
+
+/* 六个入口在窄屏内横向浏览，保持正文宽度和原有顶部高度。 */
+@media (max-width: 768px) {
+  .mobile-top-bar { gap: 12px; }
+  .mobile-brand { flex: none; }
+  .mobile-nav-tabs { min-width: 0; overflow-x: auto; gap: 2px; scrollbar-width: none; }
+  .mobile-nav-tabs::-webkit-scrollbar { display: none; }
+  .mobile-nav-tabs .nav-tab { flex: none; width: auto; padding: 4px 6px; }
+  .pv22-flow { grid-template-columns: 1fr; }
+  .pv22-flow > li .pv22-flow-arrow { display: none; }
+}
+
+/* 流程页 · 原则卡（结论 + 原因 + 确认日期） */
+.writing-flow-wrap .principle { padding: 16px 0; border-bottom: 1px solid var(--flow-line); }
+.writing-flow-wrap .principle:first-of-type { padding-top: 4px; }
+.writing-flow-wrap .principle:last-of-type { border-bottom: 0; }
+.writing-flow-wrap .principle > strong { display: block; margin-bottom: 6px; color: var(--flow-text); font-size: 18px; font-weight: 500; }
+.writing-flow-wrap .principle > strong b { margin-right: 8px; color: var(--flow-brand); font-weight: 500; }
+.writing-flow-wrap .principle p { margin: 4px 0; color: var(--flow-body); font-size: 15px; line-height: 1.75; }
+.writing-flow-wrap .principle p.why { color: var(--flow-sub); }
+.writing-flow-wrap .principle .flow-columns, .writing-flow-wrap .principle .sub { margin-top: 10px; }
+.writing-flow-wrap .confirmed { margin-top: 12px; color: var(--flow-sub); font-size: 13px; }

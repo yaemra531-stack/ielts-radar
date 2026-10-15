@@ -5,13 +5,13 @@
  */
 import { Parser } from './parser.js';
 import { DiffViewer } from './diff.js';
-import { renderV22Overview } from './prompt-v22-view.js?v=1.0';
+import { renderV22Overview } from './prompt-v22-view.js?v=1.1';
 import { mergeRemoteWithLocal, validateStore, createBackup, readBackup, storeSummary, previewRestore } from './data-safety.js?v=1.0';
-import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js?v=1.6';
+import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js?v=1.7';
 
 // 全局应用状态
 const state = {
-  currentTab: 'timeline', // 'timeline' | 'writing' | 'prompts' | 'goals'
+  currentTab: 'timeline', // 'timeline' | 'writing' | 'rhythm' | 'video' | 'prompts' | 'goals'
   activePromptAgent: 'workbuddy', // 'workbuddy' | 'muse'
   selectedPromptVersion: null, // 当前选中的提示词版本
   data: {
@@ -231,7 +231,7 @@ function renderApp() {
 
   if (state.currentTab === 'timeline') {
     renderTimeline();
-  } else if (state.currentTab === 'writing') {
+  } else if (['writing', 'rhythm', 'video'].includes(state.currentTab)) {
     renderWritingPipeline();
   } else if (state.currentTab === 'prompts') {
     renderPrompts();
@@ -928,10 +928,10 @@ function renderPrompts() {
 
   const selectedVer = promptList.find(p => p.version === state.selectedPromptVersion) || promptList[promptList.length - 1];
   const latestVer = promptList.length > 0 ? promptList[promptList.length - 1] : null;
-  const isVisualV22 = currentAgent === 'workbuddy' && selectedVer?.version === 'V2.2';
+  const hasOverview = Boolean(selectedVer?.overview && typeof selectedVer.overview === 'object' && !Array.isArray(selectedVer.overview));
 
   let html = `
-    <div class="prompts-manager-layout${isVisualV22 ? ' prompts-manager-layout--visual' : ''}">
+    <div class="prompts-manager-layout${hasOverview ? ' prompts-manager-layout--visual' : ''}">
       <!-- 左侧：版本列表 -->
       <aside class="prompts-sidebar">
         <div class="prompts-agent-switch">
@@ -964,9 +964,9 @@ function renderPrompts() {
       </aside>
 
       <!-- 右侧：当前版本详情与完整提示词 -->
-      <main class="prompts-detail-pane${isVisualV22 ? ' prompts-detail-pane--visual' : ''}">
+      <main class="prompts-detail-pane${hasOverview ? ' prompts-detail-pane--visual' : ''}">
         ${selectedVer ? `
-          ${isVisualV22 ? renderV22Overview(selectedVer, latestVer?.version === selectedVer.version, escapeHtml) : `
+          ${hasOverview ? renderV22Overview(selectedVer, latestVer?.version === selectedVer.version, escapeHtml, currentAgent === 'workbuddy' ? 'WorkBuddy' : 'Muse') : `
           <div class="prompts-detail-header">
             <div>
               <h2 class="pd-title">${currentAgent === 'workbuddy' ? 'WorkBuddy' : 'Muse'} · ${selectedVer.version}</h2>
@@ -1008,7 +1008,7 @@ function renderPrompts() {
               <div class="diff-selector-row">
                 <span>基准版本：</span>
                 <select id="diff-select-a" class="minimal-select">
-                  ${promptList.map((p, i) => `<option value="${p.version}" ${(isVisualV22 ? p.version === 'V2.0' : i === 0) ? 'selected' : ''}>${p.version}</option>`).join('')}
+                  ${promptList.map((p, i) => `<option value="${p.version}" ${(hasOverview ? p.version === 'V2.0' : i === 0) ? 'selected' : ''}>${p.version}</option>`).join('')}
                 </select>
                 <span>➔ 对比版本：</span>
                 <select id="diff-select-b" class="minimal-select">
@@ -2242,18 +2242,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('hashchange', () => {
     const hash = window.location.hash.replace('#', '');
-    if (['timeline', 'writing', 'prompts', 'goals'].includes(hash)) {
+    if (['timeline', 'writing', 'rhythm', 'video', 'prompts', 'goals'].includes(hash)) {
       state.currentTab = hash;
       renderApp();
     }
   });
 
   const initialHash = window.location.hash.replace('#', '');
-  if (['timeline', 'writing', 'prompts', 'goals'].includes(initialHash)) {
+  if (['timeline', 'writing', 'rhythm', 'video', 'prompts', 'goals'].includes(initialHash)) {
     state.currentTab = initialHash;
   }
 
-  // 初始化写作进度全局事件
+  // 初始化各流程参考页的独立展开事件
   initWritingPipelineEvents();
 
   // 2. 导入日报入口

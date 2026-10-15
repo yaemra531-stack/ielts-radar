@@ -1,34 +1,31 @@
 /**
- * 雅思见闻 - 写作流程参考页
- * 五步连续文档使用原生 details，支持鼠标和键盘按需展开。
+ * 流程参考页使用原生 details；每页的展开/收起按钮独立绑定。
  */
-
 export function renderWritingPipeline() {
   initWritingPipelineEvents();
 }
 
-let eventsBound = false;
+const boundWraps = new WeakSet();
 
 export function initWritingPipelineEvents() {
-  const wrap = document.querySelector('.writing-flow-wrap');
-  if (!wrap || eventsBound) return;
-  eventsBound = true;
+  document.querySelectorAll('.writing-flow-wrap').forEach(wrap => {
+    if (boundWraps.has(wrap)) return;
+    boundWraps.add(wrap);
 
-  const steps = [...wrap.querySelectorAll('.flow-document > .step')];
-  const btnToggleAll = document.getElementById('btn-flow-toggle-all');
+    const steps = [...wrap.querySelectorAll('.flow-document > .step')];
+    const btnToggleAll = wrap.querySelector('.flow-toolbar .toggle-all');
 
-  function syncToggleAllButton() {
-    if (!btnToggleAll) return;
-    btnToggleAll.textContent = steps.every(step => step.open) ? '全部收起' : '全部展开';
-  }
+    function syncToggleAllButton() {
+      if (!btnToggleAll) return;
+      btnToggleAll.textContent = steps.every(step => step.open) ? '全部收起' : '全部展开';
+    }
 
-  steps.forEach(step => step.addEventListener('toggle', syncToggleAllButton));
-
-  btnToggleAll?.addEventListener('click', () => {
-    const expand = steps.some(step => !step.open);
-    steps.forEach(step => { step.open = expand; });
+    steps.forEach(step => step.addEventListener('toggle', syncToggleAllButton));
+    btnToggleAll?.addEventListener('click', () => {
+      const expand = steps.some(step => !step.open);
+      steps.forEach(step => { step.open = expand; });
+      syncToggleAllButton();
+    });
     syncToggleAllButton();
   });
-
-  syncToggleAllButton();
 }
