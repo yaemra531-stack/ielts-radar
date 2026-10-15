@@ -5,6 +5,7 @@
  */
 import { Parser } from './parser.js';
 import { DiffViewer } from './diff.js';
+import { renderV22Overview } from './prompt-v22-view.js?v=1.0';
 import { mergeRemoteWithLocal, validateStore, createBackup, readBackup, storeSummary, previewRestore } from './data-safety.js?v=1.0';
 import { renderWritingPipeline, initWritingPipelineEvents } from './pipeline.js?v=1.6';
 
@@ -927,9 +928,10 @@ function renderPrompts() {
 
   const selectedVer = promptList.find(p => p.version === state.selectedPromptVersion) || promptList[promptList.length - 1];
   const latestVer = promptList.length > 0 ? promptList[promptList.length - 1] : null;
+  const isVisualV22 = currentAgent === 'workbuddy' && selectedVer?.version === 'V2.2';
 
   let html = `
-    <div class="prompts-manager-layout">
+    <div class="prompts-manager-layout${isVisualV22 ? ' prompts-manager-layout--visual' : ''}">
       <!-- 左侧：版本列表 -->
       <aside class="prompts-sidebar">
         <div class="prompts-agent-switch">
@@ -962,8 +964,9 @@ function renderPrompts() {
       </aside>
 
       <!-- 右侧：当前版本详情与完整提示词 -->
-      <main class="prompts-detail-pane">
+      <main class="prompts-detail-pane${isVisualV22 ? ' prompts-detail-pane--visual' : ''}">
         ${selectedVer ? `
+          ${isVisualV22 ? renderV22Overview(selectedVer, latestVer?.version === selectedVer.version, escapeHtml) : `
           <div class="prompts-detail-header">
             <div>
               <h2 class="pd-title">${currentAgent === 'workbuddy' ? 'WorkBuddy' : 'Muse'} · ${selectedVer.version}</h2>
@@ -996,6 +999,8 @@ function renderPrompts() {
             </div>
           </div>
 
+          `}
+
           <!-- 版本差异比较 (二级功能，默认折叠) -->
           <details class="diff-collapsible" id="diff-collapsible-wrapper">
             <summary class="diff-summary">版本差异比较 ▾</summary>
@@ -1003,7 +1008,7 @@ function renderPrompts() {
               <div class="diff-selector-row">
                 <span>基准版本：</span>
                 <select id="diff-select-a" class="minimal-select">
-                  ${promptList.map((p, i) => `<option value="${p.version}" ${i === 0 ? 'selected' : ''}>${p.version}</option>`).join('')}
+                  ${promptList.map((p, i) => `<option value="${p.version}" ${(isVisualV22 ? p.version === 'V2.0' : i === 0) ? 'selected' : ''}>${p.version}</option>`).join('')}
                 </select>
                 <span>➔ 对比版本：</span>
                 <select id="diff-select-b" class="minimal-select">
